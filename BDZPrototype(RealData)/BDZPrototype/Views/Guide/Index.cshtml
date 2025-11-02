@@ -2,21 +2,13 @@
 @model GuideViewModel
 @{
     Layout = null;
-    // Calculate scheduled times dynamically adding 30s intervals from now
-    var now = DateTime.Now;
-    int intervalSeconds = 30;
-    for (int i = 0; i < Model.AllPoints.Count; i++)
-    {
-        var dt = now.AddSeconds(intervalSeconds * (i + 1));
-        Model.AllPoints[i].ScheduledTime = dt.ToString("HH:mm:ss");
-    }
 }
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Railway Audio Guide Prototype</title>
+    <title>Railway Audio Guide Prototype — GPS Mode</title>
 
     <style>
         body {
@@ -30,7 +22,7 @@
             margin-bottom: 20px;
         }
 
-        .station-button, #startWelcome {
+        .station-button, #startGPSBtn, #startWelcome {
             padding: 10px 16px;
             background: #eee;
             border: 1px solid #ccc;
@@ -39,9 +31,9 @@
             font-size: 16px;
         }
 
-            .station-button:hover, #startWelcome:hover {
-                background: #ddd;
-            }
+        .station-button:hover, #startGPSBtn:hover, #startWelcome:hover {
+            background: #ddd;
+        }
 
         .point {
             padding: 8px;
@@ -54,25 +46,32 @@
             background: #f0fff0;
             border-color: #8f8;
         }
+
+        #gpsInfo {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
-
 <body>
-    <h1>Railway Audio Guide — Prototype</h1>
+    <h1>Railway Audio Guide — GPS Prototype</h1>
 
-    <!-- Start Welcome Button -->
+    <!-- Start Welcome Audio -->
     <button id="startWelcome" onclick="document.getElementById('welcomeAudio').play()">Start Welcome Audio</button>
-
-    <!-- Welcome Audio -->
     <audio id="welcomeAudio" src="/audio/welcome_message_sonia.mp3"></audio>
 
-    <!-- ✅ Station Click Panel -->
+    <!-- Start GPS Button -->
+    <button id="startGPSBtn">Start Live GPS Tracking</button>
+
+    <!-- GPS info -->
+    <div id="gpsInfo">Current Location: <span id="lat">--</span>, <span id="lon">--</span></div>
+
+    <!-- Station Click Panel (for testing GPS zones) -->
     <div class="station-panel">
-        <button class="station-button" onclick="simulateStation('Razgrad')">Razgrad</button>
-        <button class="station-button" onclick="simulateStation('Kaspichan')">Kaspichan</button>
-        <button class="station-button" onclick="simulateStation('Provadia')">Provadia</button>
-        <button class="station-button" onclick="simulateStation('Ezerovo')">Ezerovo</button>
-        <button class="station-button" onclick="simulateStation('Varna')">Varna</button>
+        @foreach (var p in Model.AllPoints)
+        {
+            <button class="station-button" onclick="simulateGPS(@p.Latitude, @p.Longitude)">@p.Name</button>
+        }
     </div>
 
     <!-- Station audio elements -->
@@ -83,69 +82,97 @@
 
     <script>
         let currentAudio = null;
-        const playedStations = new Set();
-        const routeStations = [
-            @foreach (var p in Model.AllPoints)
-            {
-                    <text>{ name: "@p.Name", time: "@p.ScheduledTime" },</text>
-            }
-        ];
+        let currentPosition = null;
 
-        function simulateStation(stationName) {
-            const audio = document.getElementById("audio_" + stationName.replace(/ /g,''));
-            if (audio) {
-                if (currentAudio && !currentAudio.paused) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                }
-                audio.play();
-                currentAudio = audio;
-            }
+        // Serialize route points safely
+        const routePoints = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.AllPoints.Select(p => new {
+                name = p.Name,
+                lat = p.Latitude,
+                lon = p.Longitude,
+                radius = p.RadiusMeters,
+                audioId = "audio_" + p.Name.Replace(" ", "")
+            })
+        ));
+
+        // Simulate GPS click
+        function simulateGPS(lat, lon) {
+            updateGPSDisplay(lat, lon);
+            checkGPS(lat, lon);
         }
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('currentTime').innerText =
-                now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        // Update displayed latitude/longitude
+        function updateGPSDisplay(lat, lon) {
+            document.getElementById("lat").innerText = lat.toFixed(6);
+            document.getElementById("lon").innerText = lon.toFixed(6);
+        }
 
-            routeStations.forEach(s => {
-                const stationDiv = document.getElementById('station_' + s.name.replace(/ /g,''));
-                const audio = document.getElementById('audio_' + s.name.replace(/ /g,''));
+        // Haversine formula
+        function distanceMeters(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const toRad = x => x * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+            const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
 
-                if (!stationDiv) return;
+        // Check GPS against points
+        function checkGPS(userLat, userLon) {
+            updateGPSDisplay(userLat, userLon);
 
-                const parts = s.time.split(':');
-                const stationDate = new Date();
-                stationDate.setHours(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]), 0);
+            routePoints.forEach(p => {
+                const d = distanceMeters(userLat, userLon, p.lat, p.lon);
+                const audioEl = document.getElementById(p.audioId);
+                const divEl = document.getElementById("station_" + p.name.replace(/ /g,''));
 
-                if (now >= stationDate && !playedStations.has(s.name)) {
-                    stationDiv.classList.add('active');
-                    if (audio) {
-                        if (currentAudio && !currentAudio.paused) {
-                            currentAudio.pause();
-                            currentAudio.currentTime = 0;
-                        }
-                        audio.play();
-                        currentAudio = audio;
+                if (!divEl || !audioEl) return;
+
+                if(d <= p.radius) {
+                    divEl.classList.add('active');
+                    if(currentAudio && !currentAudio.paused && currentAudio !== audioEl) {
+                        currentAudio.pause();
+                        currentAudio.currentTime = 0;
                     }
-                    playedStations.add(s.name);
-                } else if (now < stationDate) {
-                    stationDiv.classList.remove('active');
+                    if(currentAudio !== audioEl) {
+                        audioEl.play();
+                        currentAudio = audioEl;
+                    }
+                } else {
+                    divEl.classList.remove('active');
                 }
             });
         }
 
-        setInterval(updateClock, 1000);
+        // Start GPS tracking when button clicked
+        document.getElementById("startGPSBtn").addEventListener("click", () => {
+            if(!navigator.geolocation) {
+                alert("Geolocation is not supported by your browser.");
+                return;
+            }
+
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    currentPosition = { lat: position.coords.latitude, lon: position.coords.longitude };
+                    checkGPS(currentPosition.lat, currentPosition.lon);
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                    alert("Unable to get location: " + error.message);
+                },
+                { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+            );
+        });
     </script>
 
     <h2>Stations</h2>
-    <div id="currentTime" style="font-size:18px; margin-bottom:10px; font-weight:bold;"></div>
     <div>
         @foreach (var p in Model.AllPoints)
         {
             <div id="station_@p.Name.Replace(" ", "")" class="point">
                 <strong>@p.Name</strong><br />
-                <span class="meta">Scheduled time: @p.ScheduledTime</span>
+                <span class="meta">Radius: @p.RadiusMeters m</span>
             </div>
         }
     </div>
