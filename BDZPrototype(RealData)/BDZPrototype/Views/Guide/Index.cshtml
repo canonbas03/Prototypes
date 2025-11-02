@@ -1,0 +1,153 @@
+﻿@removeTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model GuideViewModel
+@{
+    Layout = null;
+    // Calculate scheduled times dynamically adding 30s intervals from now
+    var now = DateTime.Now;
+    int intervalSeconds = 30;
+    for (int i = 0; i < Model.AllPoints.Count; i++)
+    {
+        var dt = now.AddSeconds(intervalSeconds * (i + 1));
+        Model.AllPoints[i].ScheduledTime = dt.ToString("HH:mm:ss");
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Railway Audio Guide Prototype</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 20px;
+        }
+
+        .station-panel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .station-button, #startWelcome {
+            padding: 10px 16px;
+            background: #eee;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            .station-button:hover, #startWelcome:hover {
+                background: #ddd;
+            }
+
+        .point {
+            padding: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 6px;
+            border-radius: 6px;
+        }
+
+        .active {
+            background: #f0fff0;
+            border-color: #8f8;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Railway Audio Guide — Prototype</h1>
+
+    <!-- Start Welcome Button -->
+    <button id="startWelcome" onclick="document.getElementById('welcomeAudio').play()">Start Welcome Audio</button>
+
+    <!-- Welcome Audio -->
+    <audio id="welcomeAudio" src="/audio/welcome_message_sonia.mp3"></audio>
+
+    <!-- ✅ Station Click Panel -->
+    <div class="station-panel">
+        <button class="station-button" onclick="simulateStation('Razgrad')">Razgrad</button>
+        <button class="station-button" onclick="simulateStation('Kaspichan')">Kaspichan</button>
+        <button class="station-button" onclick="simulateStation('Provadia')">Provadia</button>
+        <button class="station-button" onclick="simulateStation('Ezerovo')">Ezerovo</button>
+        <button class="station-button" onclick="simulateStation('Varna')">Varna</button>
+    </div>
+
+    <!-- Station audio elements -->
+    @foreach (var p in Model.AllPoints)
+    {
+        <audio id="audio_@p.Name.Replace(" ", "")" src="/audio/@p.AudioFile"></audio>
+    }
+
+    <script>
+        let currentAudio = null;
+        const playedStations = new Set();
+        const routeStations = [
+            @foreach (var p in Model.AllPoints)
+            {
+                    <text>{ name: "@p.Name", time: "@p.ScheduledTime" },</text>
+            }
+        ];
+
+        function simulateStation(stationName) {
+            const audio = document.getElementById("audio_" + stationName.replace(/ /g,''));
+            if (audio) {
+                if (currentAudio && !currentAudio.paused) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                }
+                audio.play();
+                currentAudio = audio;
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('currentTime').innerText =
+                now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+
+            routeStations.forEach(s => {
+                const stationDiv = document.getElementById('station_' + s.name.replace(/ /g,''));
+                const audio = document.getElementById('audio_' + s.name.replace(/ /g,''));
+
+                if (!stationDiv) return;
+
+                const parts = s.time.split(':');
+                const stationDate = new Date();
+                stationDate.setHours(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]), 0);
+
+                if (now >= stationDate && !playedStations.has(s.name)) {
+                    stationDiv.classList.add('active');
+                    if (audio) {
+                        if (currentAudio && !currentAudio.paused) {
+                            currentAudio.pause();
+                            currentAudio.currentTime = 0;
+                        }
+                        audio.play();
+                        currentAudio = audio;
+                    }
+                    playedStations.add(s.name);
+                } else if (now < stationDate) {
+                    stationDiv.classList.remove('active');
+                }
+            });
+        }
+
+        setInterval(updateClock, 1000);
+    </script>
+
+    <h2>Stations</h2>
+    <div id="currentTime" style="font-size:18px; margin-bottom:10px; font-weight:bold;"></div>
+    <div>
+        @foreach (var p in Model.AllPoints)
+        {
+            <div id="station_@p.Name.Replace(" ", "")" class="point">
+                <strong>@p.Name</strong><br />
+                <span class="meta">Scheduled time: @p.ScheduledTime</span>
+            </div>
+        }
+    </div>
+</body>
+</html>
