@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using HotelMVCPrototype.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -75,5 +76,49 @@ public class AdminController : Controller
 
         return RedirectToAction("Index");
     }
+
+    // GET: Show the create staff form
+    public IActionResult CreateStaff()
+    {
+        var model = new CreateStaffUserViewModel
+        {
+            Roles = _roleManager.Roles.Select(r => r.Name).ToList()
+        };
+        return View(model);
+    }
+
+    // POST: Handle form submission
+    [HttpPost]
+    public async Task<IActionResult> CreateStaff(CreateStaffUserViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            model.Roles = _roleManager.Roles.Select(r => r.Name).ToList();
+            return View(model);
+        }
+
+        var user = new IdentityUser
+        {
+            UserName = model.Email,
+            Email = model.Email,
+            EmailConfirmed = true
+        };
+
+        var result = await _userManager.CreateAsync(user, model.Password);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+            model.Roles = _roleManager.Roles.Select(r => r.Name).ToList();
+            return View(model);
+        }
+
+        // Assign the selected role
+        await _userManager.AddToRoleAsync(user, model.SelectedRole);
+
+        return RedirectToAction("Index");
+    }
+
+
 }
 
