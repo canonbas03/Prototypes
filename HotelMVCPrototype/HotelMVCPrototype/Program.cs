@@ -21,8 +21,8 @@ namespace HotelMVCPrototype
             {
                 options.SignIn.RequireConfirmedAccount = true;
             })
-     .AddEntityFrameworkStores<ApplicationDbContext>()
-     .AddDefaultTokenProviders().AddDefaultUI();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders().AddDefaultUI();
 
             builder.Services.AddRazorPages(); // Required for Identity UI
 

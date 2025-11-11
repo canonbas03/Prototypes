@@ -2,12 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-public class UserWithRolesViewModel
-{
-    public string Id { get; set; }
-    public string Email { get; set; }
-    public List<string> Roles { get; set; }
-}
+
 
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
