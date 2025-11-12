@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using HotelMVCPrototype.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelMVCPrototype.Data
@@ -9,5 +10,8 @@ namespace HotelMVCPrototype.Data
             : base(options)
         {
         }
+
+        public DbSet<Room> Rooms { get; set; }
+
     }
 }
