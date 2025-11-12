@@ -1,0 +1,31 @@
+﻿@model HotelMVCPrototype.Models.GuestAssignment
+@{
+    ViewData["Title"] = "Check-In Guest";
+}
+
+<h2>Check-In Guest</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="GuestName" class="form-label"></label>
+        <input asp-for="GuestName" class="form-control" />
+        <span asp-validation-for="GuestName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="RoomId" class="form-label"></label>
+        <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-select">
+            <option value="">Select a room</option>
+        </select>
+
+        <span asp-validation-for="RoomId" class="text-danger"></span>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-success">Check-In</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

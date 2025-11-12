@@ -1,0 +1,35 @@
+﻿@model IEnumerable<HotelMVCPrototype.Models.GuestAssignment>
+
+<h2>Guest Assignments</h2>
+<a asp-action="Create" class="btn btn-success mb-3">Check-In Guest</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Guest Name</th>
+            <th>Room Number</th>
+            <th>Check-In</th>
+            <th>Check-Out</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var g in Model)
+        {
+            <tr>
+                <td>@g.GuestName</td>
+                <td>@g.Room.Number</td>
+                <td>@g.CheckInDate</td>
+                <td>@(g.CheckOutDate.HasValue? g.CheckOutDate.Value.ToString() : "-")</td>
+                <td>@(g.IsActive ? "Active" : "Completed")</td>
+                <td>
+                    @if (g.IsActive)
+                    {
+                        <a asp-action="CheckOut" asp-route-id="@g.Id" class="btn btn-sm btn-warning">Check-Out</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

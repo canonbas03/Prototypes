@@ -21,5 +21,8 @@ namespace HotelMVCPrototype.Data
                    .HasIndex(r => r.Number)
                    .IsUnique();
         }
+
+        public DbSet<GuestAssignment> GuestAssignments { get; set; }
+
     }
 }
