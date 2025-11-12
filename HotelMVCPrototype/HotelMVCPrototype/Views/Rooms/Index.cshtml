@@ -1,0 +1,54 @@
+﻿@model IEnumerable<HotelMVCPrototype.Models.Room>
+@using HotelMVCPrototype.Models.Enums
+@{
+    ViewData["Title"] = "Rooms";
+}
+
+<h2>Rooms</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">Add New Room</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>DND</th>
+            <th>Notes</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model)
+        {
+            <tr>
+                <td>@room.Number</td>
+                <td>@room.Type</td>
+                <td>
+                    @switch (room.Status)
+                    {
+                        case RoomStatus.Available:
+                            <span class="badge bg-success">Available</span>
+                            ; break;
+                        case RoomStatus.Occupied:
+                            <span class="badge bg-danger">Occupied</span>
+                            ; break;
+                        case RoomStatus.Cleaning:
+                            <span class="badge bg-warning text-dark">Cleaning</span>
+                            ; break;
+                        case RoomStatus.Maintenance:
+                            <span class="badge bg-secondary">Maintenance</span>
+                            ; break;
+                    }
+                </td>
+                <td>@(room.IsDND ? "Yes" : "No")</td>
+                <td>@room.Notes</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@room.Id" class="btn btn-sm btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@room.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -12,6 +12,14 @@ namespace HotelMVCPrototype.Data
         }
 
         public DbSet<Room> Rooms { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
 
+            // Unique room number
+            builder.Entity<Room>()
+                   .HasIndex(r => r.Number)
+                   .IsUnique();
+        }
     }
 }

@@ -47,6 +47,9 @@ namespace HotelMVCPrototype.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Number")
+                        .IsUnique();
+
                     b.ToTable("Rooms");
                 });
 

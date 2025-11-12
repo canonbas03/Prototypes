@@ -1,0 +1,51 @@
+﻿@model HotelMVCPrototype.Models.Room
+@using HotelMVCPrototype.Models.Enums
+
+<h2>Create Room</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Number" class="form-label"></label>
+        <input asp-for="Number" class="form-control" />
+        <span asp-validation-for="Number" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Type" class="form-label"></label>
+        <select asp-for="Type" class="form-select">
+            @foreach (var type in Enum.GetValues(typeof(RoomType)))
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-select">
+            @foreach (var status in Enum.GetValues(typeof(RoomStatus)))
+            {
+                <option value="@status">@status</option>
+            }
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input asp-for="IsDND" class="form-check-input" />
+        <label asp-for="IsDND" class="form-check-label"></label>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

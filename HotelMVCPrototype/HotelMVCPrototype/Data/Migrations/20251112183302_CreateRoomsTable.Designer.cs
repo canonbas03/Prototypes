@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelMVCPrototype.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251112171213_AddRoomModel")]
-    partial class AddRoomModel
+    [Migration("20251112183302_CreateRoomsTable")]
+    partial class CreateRoomsTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,9 @@ namespace HotelMVCPrototype.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
 
                     b.ToTable("Rooms");
                 });
