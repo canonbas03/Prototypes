@@ -48,27 +48,6 @@ namespace HotelMVCPrototype
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.Use(async (context, next) =>
-            {
-                if (context.User.Identity?.IsAuthenticated == true)
-                {
-                    var userManager = context.RequestServices.GetRequiredService<UserManager<IdentityUser>>();
-                    var user = await userManager.GetUserAsync(context.User);
-
-                    if (user != null && await userManager.IsInRoleAsync(user, "Housekeeping"))
-                    {
-                        var path = context.Request.Path.Value?.ToLower();
-                        if (path == "/" || path == "/home" || path == "/home/index")
-                        {
-                            context.Response.Redirect("/Housekeeping");
-                            return;
-                        }
-                    }
-                }
-
-                await next();
-            });
-
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
