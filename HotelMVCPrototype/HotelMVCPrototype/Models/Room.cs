@@ -24,5 +24,7 @@ namespace HotelMVCPrototype.Models
 
         [Display(Name = "Notes")]
         public string? Notes { get; set; }
+
+        public ICollection<GuestAssignment> GuestAssignments { get; set; } = new List<GuestAssignment>();
     }
 }

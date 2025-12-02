@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HotelMVCPrototype.Data.Migrations
+namespace HotelMVCPrototype.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -285,7 +285,7 @@ namespace HotelMVCPrototype.Data.Migrations
             modelBuilder.Entity("HotelMVCPrototype.Models.GuestAssignment", b =>
                 {
                     b.HasOne("HotelMVCPrototype.Models.Room", "Room")
-                        .WithMany()
+                        .WithMany("GuestAssignments")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -342,6 +342,11 @@ namespace HotelMVCPrototype.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HotelMVCPrototype.Models.Room", b =>
+                {
+                    b.Navigation("GuestAssignments");
                 });
 #pragma warning restore 612, 618
         }

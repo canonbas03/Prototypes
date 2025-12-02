@@ -1,6 +1,7 @@
 ﻿using HotelMVCPrototype.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace HotelMVCPrototype.Data
 {
@@ -12,6 +13,7 @@ namespace HotelMVCPrototype.Data
         }
 
         public DbSet<Room> Rooms { get; set; }
+        public DbSet<GuestAssignment> GuestAssignments { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -20,9 +22,13 @@ namespace HotelMVCPrototype.Data
             builder.Entity<Room>()
                    .HasIndex(r => r.Number)
                    .IsUnique();
+
+            builder.Entity<GuestAssignment>()
+                .Property(g => g.Id)
+                .ValueGeneratedOnAdd();
         }
 
-        public DbSet<GuestAssignment> GuestAssignments { get; set; }
 
+       
     }
 }
