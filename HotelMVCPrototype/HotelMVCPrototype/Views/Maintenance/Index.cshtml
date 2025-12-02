@@ -1,0 +1,38 @@
+﻿@model IEnumerable<HotelMVCPrototype.Models.Room>
+@{
+    ViewData["Title"] = "Maintenance Dashboard";
+}
+
+<h2>Rooms Needing Maintenance</h2>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No rooms currently require maintenance.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Room Number</th>
+                <th>Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var room in Model)
+            {
+                <tr>
+                    <td>@room.Number</td>
+                    <td>@room.Type</td>
+                    <td>
+                        <form asp-action="MarkDone" method="post">
+                            <input type="hidden" name="id" value="@room.Id" />
+                            <button class="btn btn-success btn-sm">Mark Done</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
