@@ -1,12 +1,14 @@
 ﻿@model List<HotelMVCPrototype.Models.MenuItem>
 @{
     ViewData["Title"] = "Place Your Order";
+    var roomNumber = ViewBag.RoomNumber;
+    var roomId = ViewBag.RoomId;
 }
 
-<h2>Place Your Order</h2>
+<h2>Place Your Order - Room @roomNumber</h2>
 
 <form asp-action="PlaceOrder" method="post">
-    <input type="hidden" name="roomId" value="1" /> <!-- replace with actual roomId -->
+    <input type="hidden" name="roomId" value="@roomId" /> <!-- We'll fix this to RoomId -->
 
     <table class="table">
         <thead>

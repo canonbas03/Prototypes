@@ -13,12 +13,20 @@ public class GuestOrdersController : Controller
         _context = context;
     }
 
-    // Show menu and place order
-    public async Task<IActionResult> Index()
+    // Show menu for a specific room
+    public async Task<IActionResult> Index(int roomId)
     {
+        var room = await _context.Rooms.FindAsync(roomId);
+        if (room == null)
+            return NotFound();
+
+        ViewBag.RoomNumber = room.Number; // THIS IS 30
+        ViewBag.RoomId = room.Id;         // THIS IS 3, THE DB ID YOU NEED
+
         var menu = await _context.MenuItems.ToListAsync();
         return View(menu);
     }
+
 
     [HttpPost]
     public async Task<IActionResult> PlaceOrder(int roomId, List<int> menuItemIds, List<int> quantities)
@@ -28,7 +36,7 @@ public class GuestOrdersController : Controller
 
         var order = new Order
         {
-            RoomId = roomId,
+            RoomId =  roomId,
             CreatedAt = DateTime.Now,
             Status = OrderStatus.New,
             Items = new List<OrderItem>()
@@ -46,8 +54,17 @@ public class GuestOrdersController : Controller
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        return RedirectToAction(nameof(ThankYou));
+        // Load order with items for summary
+        var orderWithItems = await _context.Orders
+        .Include(o => o.Room)              // include Room!
+        .Include(o => o.Items)
+        .ThenInclude(i => i.MenuItem)
+        .FirstOrDefaultAsync(o => o.Id == order.Id);
+
+
+        return View("ThankYou", orderWithItems);
     }
 
-    public IActionResult ThankYou() => View();
+    // Thank you page now receives the order to display summary
+    public IActionResult ThankYou(Order order) => View(order);
 }

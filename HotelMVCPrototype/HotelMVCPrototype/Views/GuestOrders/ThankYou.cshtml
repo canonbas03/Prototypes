@@ -1,2 +1,31 @@
-﻿<h2>Thank you!</h2>
-<p>Your order has been placed. The bar will process it shortly.</p>
+﻿@model HotelMVCPrototype.Models.Order
+
+@{
+    ViewData["Title"] = "Thank You";
+}
+
+<h2>Thank You!</h2>
+
+<p>Your order for Room @Model.Room.Number has been placed successfully.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.MenuItem.Name</td>
+                <td>@item.Quantity</td>
+                <td>@((item.MenuItem.Price* item.Quantity).ToString("C"))</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>Total: @Model.Items.Sum(i => i.Quantity * i.MenuItem.Price).ToString("C")</p>
