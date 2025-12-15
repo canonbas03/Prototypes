@@ -57,7 +57,9 @@ namespace HotelMVCPrototype
             {
                 await SeedData.SeedRolesAsync(scope.ServiceProvider);
                 await SeedData.SeedAdminAsync(scope.ServiceProvider);
+                await SeedData.SeedMenuItemsAsync(scope.ServiceProvider);
             }
+
 
 
             app.Run();

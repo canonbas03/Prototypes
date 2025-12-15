@@ -1,0 +1,29 @@
+﻿@model IEnumerable<HotelMVCPrototype.Models.Order>
+
+<h2>Bar Orders</h2>
+
+@foreach (var order in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>Room @order.Room.Number</h5>
+            <p>Status: @order.Status</p>
+
+            <ul>
+                @foreach (var item in order.Items)
+                {
+                    <li>@item.MenuItem.Name x @item.Quantity</li>
+                }
+            </ul>
+
+            <form asp-action="UpdateStatus" method="post">
+                <input type="hidden" name="id" value="@order.Id" />
+                <select name="status" class="form-select">
+                    <option value="InProgress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <button class="btn btn-primary mt-2">Update</button>
+            </form>
+        </div>
+    </div>
+}

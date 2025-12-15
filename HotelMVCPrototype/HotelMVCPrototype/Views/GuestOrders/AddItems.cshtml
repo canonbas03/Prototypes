@@ -1,0 +1,39 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Place Your Order";
+    var menu = ViewBag.Menu as List<HotelMVCPrototype.Models.MenuItem>;
+}
+
+<h2>Place Your Order</h2>
+
+<form asp-action="AddItems" method="post">
+    <input type="hidden" name="orderId" value="@Model" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Menu Item</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in menu)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="menuItemIds" value="@item.Id" />
+                    </td>
+                    <td>@item.Name</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>
+                        <input type="number" name="quantities" value="1" min="1" class="form-control" style="width:70px;" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Order</button>
+</form>

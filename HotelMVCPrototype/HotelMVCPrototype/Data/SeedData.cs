@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HotelMVCPrototype.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace HotelMVCPrototype.Data
 {
@@ -49,6 +50,23 @@ namespace HotelMVCPrototype.Data
 
                 await userManager.AddToRoleAsync(admin, "Admin");
             }
+        }
+
+        public static async Task SeedMenuItemsAsync(IServiceProvider services)
+        {
+            var context = services.GetRequiredService<ApplicationDbContext>();
+
+            if (context.MenuItems.Any())
+                return;
+
+            context.MenuItems.AddRange(
+                new MenuItem { Name = "Coffee", Price = 3.00m },
+                new MenuItem { Name = "Beer", Price = 5.00m },
+                new MenuItem { Name = "Water", Price = 2.00m },
+                new MenuItem { Name = "Whiskey", Price = 7.50m }
+            );
+
+            await context.SaveChangesAsync();
         }
     }
 }
