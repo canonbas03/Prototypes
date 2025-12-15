@@ -2,6 +2,7 @@
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 public class GuestOrdersController : Controller
@@ -65,6 +66,9 @@ public class GuestOrdersController : Controller
                 .ThenInclude(i => i.MenuItem)
             .Include(o => o.Room)
             .FirstOrDefaultAsync(o => o.Id == order.Id);
+
+        var hubContext = HttpContext.RequestServices.GetRequiredService<IHubContext<BarHub>>();
+        await hubContext.Clients.All.SendAsync("ReceiveNewOrder", order.Id);
 
         return View("ThankYou", orderWithItems);
     }

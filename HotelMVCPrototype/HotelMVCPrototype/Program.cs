@@ -25,6 +25,7 @@ namespace HotelMVCPrototype
                 .AddDefaultTokenProviders().AddDefaultUI();
 
             builder.Services.AddRazorPages(); // Required for Identity UI
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -60,6 +61,8 @@ namespace HotelMVCPrototype
                 await SeedData.SeedMenuItemsAsync(scope.ServiceProvider);
             }
 
+
+            app.MapHub<BarHub>("/barHub");
 
 
             app.Run();
