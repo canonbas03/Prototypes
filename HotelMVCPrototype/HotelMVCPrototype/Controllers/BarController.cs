@@ -1,46 +1,43 @@
 ﻿using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotelMVCPrototype.Controllers
+[Authorize(Roles = "Bar")]
+public class BarController : Controller
 {
-    [Authorize(Roles = "Bar")]
-    public class BarController : Controller
+    private readonly ApplicationDbContext _context;
+
+    public BarController(ApplicationDbContext context)
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+    }
 
-        public BarController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var orders = await _context.Orders
+    // Show all new orders
+    public async Task<IActionResult> Index()
+    {
+        var orders = await _context.Orders
+            .Include(o => o.Room)                 // Room number
             .Include(o => o.Items)
-            .ThenInclude(i => i.MenuItem)
-            .Include(o => o.Room)
-            .Where(o => o.Status == OrderStatus.New || o.Status == OrderStatus.InProgress)
-            .OrderBy(o => o.CreatedAt)
+                .ThenInclude(i => i.MenuItem)     // Item details
+            .Where(o => o.Status == OrderStatus.New)
             .ToListAsync();
 
+        return View(orders);
+    }
 
+    // Mark an order as completed
+    [HttpPost]
+    public async Task<IActionResult> Complete(int orderId)
+    {
+        var order = await _context.Orders.FindAsync(orderId);
+        if (order == null) return NotFound();
 
-            return View(orders);
-        }
+        order.Status = OrderStatus.Completed;
+        await _context.SaveChangesAsync();
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateStatus(int id, OrderStatus status)
-        {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null) return NotFound();
-
-            order.Status = status;
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
-        }
+        return RedirectToAction(nameof(Index));
     }
 }

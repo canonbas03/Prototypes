@@ -29,41 +29,46 @@ public class GuestOrdersController : Controller
 
 
     [HttpPost]
-    public async Task<IActionResult> PlaceOrder(int roomId, List<int> menuItemIds, List<int> quantities)
+    public async Task<IActionResult> PlaceOrder(int roomId, Dictionary<int, int> items)
     {
-        if (menuItemIds == null || menuItemIds.Count == 0)
+        if (items == null || !items.Any(i => i.Value > 0))
             return BadRequest("No items selected.");
 
         var order = new Order
         {
-            RoomId =  roomId,
+            RoomId = roomId,
             CreatedAt = DateTime.Now,
             Status = OrderStatus.New,
             Items = new List<OrderItem>()
         };
 
-        for (int i = 0; i < menuItemIds.Count; i++)
+        foreach (var kvp in items)
         {
-            order.Items.Add(new OrderItem
+            int menuItemId = kvp.Key;
+            int quantity = kvp.Value;
+
+            if (quantity > 0)
             {
-                MenuItemId = menuItemIds[i],
-                Quantity = quantities[i]
-            });
+                order.Items.Add(new OrderItem
+                {
+                    MenuItemId = menuItemId,
+                    Quantity = quantity
+                });
+            }
         }
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        // Load order with items for summary
         var orderWithItems = await _context.Orders
-        .Include(o => o.Room)              // include Room!
-        .Include(o => o.Items)
-        .ThenInclude(i => i.MenuItem)
-        .FirstOrDefaultAsync(o => o.Id == order.Id);
-
+            .Include(o => o.Items)
+                .ThenInclude(i => i.MenuItem)
+            .Include(o => o.Room)
+            .FirstOrDefaultAsync(o => o.Id == order.Id);
 
         return View("ThankYou", orderWithItems);
     }
+
 
     // Thank you page now receives the order to display summary
     public IActionResult ThankYou(Order order) => View(order);

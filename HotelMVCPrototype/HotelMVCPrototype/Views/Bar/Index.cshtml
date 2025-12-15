@@ -1,29 +1,43 @@
-﻿@model IEnumerable<HotelMVCPrototype.Models.Order>
-
-<h2>Bar Orders</h2>
-
-@foreach (var order in Model)
-{
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5>Room @order.Room.Number</h5>
-            <p>Status: @order.Status</p>
-
-            <ul>
-                @foreach (var item in order.Items)
-                {
-                    <li>@item.MenuItem.Name x @item.Quantity</li>
-                }
-            </ul>
-
-            <form asp-action="UpdateStatus" method="post">
-                <input type="hidden" name="id" value="@order.Id" />
-                <select name="status" class="form-select">
-                    <option value="InProgress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select>
-                <button class="btn btn-primary mt-2">Update</button>
-            </form>
-        </div>
-    </div>
+﻿@model List<HotelMVCPrototype.Models.Order>
+@{
+    ViewData["Title"] = "Bar Dashboard";
 }
+
+<h2>Bar Dashboard - New Orders</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Room</th>
+            <th>Items</th>
+            <th>Quantities</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Room.Number</td>
+                <td>
+                    @foreach (var item in order.Items)
+                    {
+                        <div>@item.MenuItem.Name</div>
+                    }
+                </td>
+                <td>
+                    @foreach (var item in order.Items)
+                    {
+                        <div>@item.Quantity</div>
+                    }
+                </td>
+                <td>
+                    <form asp-action="Complete" method="post">
+                        <input type="hidden" name="orderId" value="@order.Id" />
+                        <button type="submit" class="btn btn-success">Mark Completed</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

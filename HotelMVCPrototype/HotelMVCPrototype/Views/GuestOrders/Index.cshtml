@@ -1,35 +1,22 @@
-﻿@model List<HotelMVCPrototype.Models.MenuItem>
-@{
-    ViewData["Title"] = "Place Your Order";
-    var roomNumber = ViewBag.RoomNumber;
-    var roomId = ViewBag.RoomId;
-}
-
-<h2>Place Your Order - Room @roomNumber</h2>
-
-<form asp-action="PlaceOrder" method="post">
-    <input type="hidden" name="roomId" value="@roomId" /> <!-- We'll fix this to RoomId -->
+﻿<form asp-action="PlaceOrder" method="post">
+    <input type="hidden" name="roomId" value="@ViewBag.RoomId" />
 
     <table class="table">
         <thead>
             <tr>
-                <th>Select</th>
                 <th>Item</th>
                 <th>Price</th>
                 <th>Quantity</th>
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < Model.Count; i++)
+            @foreach (var item in Model)
             {
                 <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Price.ToString("C")</td>
                     <td>
-                        <input type="checkbox" name="menuItemIds" value="@Model[i].Id" />
-                    </td>
-                    <td>@Model[i].Name</td>
-                    <td>@Model[i].Price.ToString("C")</td>
-                    <td>
-                        <input type="number" name="quantities" value="1" min="1" class="form-control" style="width:70px;" />
+                        <input type="number" name="items[@item.Id]" value="0" min="0" class="form-control" style="width:70px;" />
                     </td>
                 </tr>
             }
