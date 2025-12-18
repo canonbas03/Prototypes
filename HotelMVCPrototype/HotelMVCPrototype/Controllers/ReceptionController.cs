@@ -1,6 +1,7 @@
 ﻿using HotelMVCPrototype.Data;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
+using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,20 +12,30 @@ namespace HotelMVCPrototype.Controllers
     public class ReceptionController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IRoomStatisticsService _statsService;
 
-        public ReceptionController(ApplicationDbContext context)
+        public ReceptionController(ApplicationDbContext context, IRoomStatisticsService statsService)
         {
             _context = context;
+            _statsService = statsService;
         }
+
 
         // GET: Reception Dashboard
         public async Task<IActionResult> Index()
         {
             var rooms = await _context.Rooms
-                .Include(r => r.GuestAssignments.Where(g => g.IsActive))
+                .Include(r => r.GuestAssignments.Where(g => !g.IsActive))
                 .ToListAsync();
 
-            return View(rooms);
+
+            var vm = new ReceptionDashboardViewModel
+            {
+                Rooms = rooms,
+                RoomStatistics = await _statsService.GetStatisticsAsync()
+            };
+
+            return View(vm);
         }
 
         // Quick Check-In (GET)
@@ -41,7 +52,6 @@ namespace HotelMVCPrototype.Controllers
             };
 
             return View(assignment);
-            return View();
         }
 
         // Quick Check-In (POST)

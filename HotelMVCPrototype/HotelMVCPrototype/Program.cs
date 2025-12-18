@@ -1,4 +1,6 @@
 using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Services;
+using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +28,9 @@ namespace HotelMVCPrototype
 
             builder.Services.AddRazorPages(); // Required for Identity UI
             builder.Services.AddSignalR();
+
+            builder.Services.AddScoped<IRoomStatisticsService, RoomStatisticsService>();
+
 
             var app = builder.Build();
 

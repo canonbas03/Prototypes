@@ -1,5 +1,7 @@
 ﻿using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
+using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +12,14 @@ namespace HotelMVCPrototype.Controllers
     public class HousekeepingController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IRoomStatisticsService _statsService;
 
-        public HousekeepingController(ApplicationDbContext context)
+        public HousekeepingController(ApplicationDbContext context, IRoomStatisticsService statsService)
         {
             _context = context;
+            _statsService = statsService;
         }
+
 
         // GET: Housekeeping
         public async Task<IActionResult> Index()
@@ -23,7 +28,13 @@ namespace HotelMVCPrototype.Controllers
                 .Where(r => r.Status == RoomStatus.Cleaning)
                 .ToListAsync();
 
-            return View(cleaningRooms);
+            var vm = new HousekeepingDashboardViewModel
+            {
+                Rooms = cleaningRooms,
+                RoomStatistics = await _statsService.GetStatisticsAsync()
+            };
+
+            return View(vm);
         }
 
         // POST: Mark Cleaned

@@ -1,52 +1,74 @@
-﻿@model IEnumerable<HotelMVCPrototype.Models.Room>
+﻿@model HotelMVCPrototype.Models.ReceptionDashboardViewModel
+
 @{
     ViewData["Title"] = "Reception Dashboard";
 }
 
 <h2>Reception Dashboard</h2>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Room</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Guest</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var room in Model)
-        {
-            <tr>
-                <td>@room.Number</td>
-                <td>@room.Type</td>
-                <td>@room.Status</td>
-                <td>
-                    @if (room.GuestAssignments.Any())
-                    {
-                        @room.GuestAssignments.FirstOrDefault().GuestName
-                    }
-                    else
-                    {
-                        <span class="text-muted">—</span>
-                    }
-                </td>
-                <td>
+<partial name="_RoomStatistics" model="Model.RoomStatistics" />
+
+
+<!-- ===================== -->
+<!-- ROOMS MODULE -->
+<!-- ===================== -->
+<div class="row">
+    @foreach (var room in Model.Rooms)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Room @room.Number
+                    </h5>
+
+                    <p class="mb-1">
+                        <strong>Type:</strong> @room.Type
+                    </p>
+
+                    <p class="mb-1">
+                        <strong>Status:</strong>
+                        <span class="badge bg-secondary">@room.Status</span>
+                    </p>
+
+                    <p class="mb-3">
+                        <strong>Guest:</strong>
+                        @if (room.GuestAssignments.Any())
+                        {
+                            @room.GuestAssignments.First().GuestName
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </p>
+
+                    <!-- ACTIONS -->
                     @if (room.Status == HotelMVCPrototype.Models.Enums.RoomStatus.Available)
                     {
-                        <a asp-action="CheckIn" asp-route-roomId="@room.Id" class="btn btn-success btn-sm">Check-In</a>
+                        <a asp-action="CheckIn"
+                           asp-route-roomId="@room.Id"
+                           class="btn btn-success btn-sm">
+                            Check-In
+                        </a>
                     }
                     else if (room.Status == HotelMVCPrototype.Models.Enums.RoomStatus.Occupied)
                     {
-                        <a asp-controller="GuestAssignments" asp-action="CheckOut" asp-route-id="@room.GuestAssignments.FirstOrDefault()?.Id" class="btn btn-warning btn-sm">Check-Out</a>
+                        <a asp-controller="GuestAssignments"
+                           asp-action="CheckOut"
+                           asp-route-id="@room.GuestAssignments.FirstOrDefault()?.Id"
+                           class="btn btn-warning btn-sm">
+                            Check-Out
+                        </a>
                     }
                     else
                     {
                         <span class="text-muted">No actions</span>
                     }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>

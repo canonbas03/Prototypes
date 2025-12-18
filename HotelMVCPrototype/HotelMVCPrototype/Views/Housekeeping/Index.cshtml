@@ -1,12 +1,14 @@
-﻿@model IEnumerable<HotelMVCPrototype.Models.Room>
+﻿@model HousekeepingDashboardViewModel
 
 @{
     ViewData["Title"] = "Housekeeping";
 }
 
+<partial name="_RoomStatistics" model="Model.RoomStatistics" />
+
 <h2>Rooms That Need Cleaning</h2>
 
-@if (!Model.Any())
+@if (!Model.Rooms.Any())
 {
     <p class="text-muted">No rooms currently need cleaning.</p>
 }
@@ -21,7 +23,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var room in Model)
+            @foreach (var room in Model.Rooms)
             {
                 <tr>
                     <td>@room.Number</td>

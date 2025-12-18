@@ -1,4 +1,6 @@
-﻿using HotelMVCPrototype.Models.ViewModels;
+﻿using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Models.ViewModels;
+using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
