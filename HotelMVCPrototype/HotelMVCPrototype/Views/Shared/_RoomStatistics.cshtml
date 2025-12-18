@@ -1,38 +1,38 @@
 ﻿@model HotelMVCPrototype.Models.RoomStatisticsViewModel
 
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card text-center shadow-sm">
+<div class="row mb-4 p-3" style="background-color:#F0F4F2; border-radius:10px;">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center shadow-sm" style="background-color:#FFFFFF;">
             <div class="card-body">
-                <h6>Available</h6>
-                <h3 class="text-success">@Model.Available</h3>
+                <h6 style="color:#0F172A;">Available</h6>
+                <h3 style="color:#164E63;">@Model.Available</h3>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card text-center shadow-sm">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center shadow-sm" style="background-color:#FFFFFF;">
             <div class="card-body">
-                <h6>Occupied</h6>
-                <h3 class="text-primary">@Model.Occupied</h3>
+                <h6 style="color:#0F172A;">Occupied</h6>
+                <h3 style="color:#86A789;">@Model.Occupied</h3>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card text-center shadow-sm">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center shadow-sm" style="background-color:#FFFFFF;">
             <div class="card-body">
-                <h6>Cleaning</h6>
-                <h3 class="text-warning">@Model.Cleaning</h3>
+                <h6 style="color:#0F172A;">Cleaning</h6>
+                <h3 style="color:#D97706;">@Model.Cleaning</h3> <!-- muted amber -->
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card text-center shadow-sm">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center shadow-sm" style="background-color:#FFFFFF;">
             <div class="card-body">
-                <h6>Maintenance</h6>
-                <h3 class="text-danger">@Model.Maintenance</h3>
+                <h6 style="color:#0F172A;">Maintenance</h6>
+                <h3 style="color:#B91C1C;">@Model.Maintenance</h3> <!-- muted red -->
             </div>
         </div>
     </div>
