@@ -1,22 +1,176 @@
+/* Palette colors */
+.bg-primary-action {
+    background-color: #164E63 !important;
+}
+/* Forest Green */
+.bg-secondary {
+    background-color: #86A789 !important;
+}
+/* Sage */
+.bg-surface {
+    background-color: #FFFFFF !important;
+}
+/* White cards */
+.bg-background {
+    background-color: #F0F4F2 !important;
+}
+/* Soft Mint */
+
+.text-primary-action {
+    color: #164E63 !important;
+}
+
+.text-secondary {
+    color: #86A789 !important;
+}
+
+.text-dark-moss {
+    color: #0F172A !important;
+}
+
+/* Cards with palette background and shadow */
+.card {
+    background-color: #FFFFFF; /* default surface */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 0.5rem;
+}
+
+/* Buttons using palette */
+.btn-primary {
+    background-color: #164E63;
+    border-color: #164E63;
+    color: #fff;
+}
+
+    .btn-primary:hover {
+        background-color: #0F3B50;
+        border-color: #0F3B50;
+    }
+
+.btn-secondary {
+    background-color: #86A789;
+    border-color: #86A789;
+    color: #fff;
+}
+
+    .btn-secondary:hover {
+        background-color: #6E8C73;
+        border-color: #6E8C73;
+    }
+
+
+/* Base font size */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* Body */
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #F0F4F2; /* Soft Mint background */
+    color: #0F172A; /* Dark Moss text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0.25rem;
+    font-weight: 600;
+}
+
+/* Primary / Action Buttons */
+.btn-primary {
+    background-color: #164E63; /* Forest Green */
+    border-color: #164E63;
+    color: #FFFFFF;
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: #0F3B4D; /* slightly darker forest green */
+        border-color: #0F3B4D;
+        color: #FFFFFF;
+    }
+
+/* Secondary / Sage buttons */
+.btn-secondary {
+    background-color: #86A789; /* Sage */
+    border-color: #86A789;
+    color: #FFFFFF;
+}
+
+    .btn-secondary:hover,
+    .btn-secondary:focus {
+        background-color: #729276; /* slightly darker sage */
+        border-color: #729276;
+        color: #FFFFFF;
+    }
+
+/* Focus outlines */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem #FFFFFF, 0 0 0 0.25rem #164E63; /* Forest Green focus ring */
+    outline: none;
+}
+
+/* Inputs */
+.form-control {
+    border: 1px solid #86A789; /* Sage border */
+    border-radius: 0.25rem;
+}
+
+/* Cards / Surfaces */
+.card {
+    background-color: #FFFFFF; /* White cards */
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #0F172A; /* Dark Moss */
+}
+
+/* Text helpers */
+.text-primary {
+    color: #164E63 !important; /* Forest Green */
+}
+
+.text-secondary {
+    color: #86A789 !important; /* Sage */
+}
+
+.text-muted {
+    color: #6B7280 !important; /* muted gray for less important text */
+}
+
+/* Layout helpers */
+.container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.row.bg-surface {
+    background-color: #F0F4F2; /* Soft Mint row background */
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+/* Table adjustments */
+.table th {
+    background-color: #86A789; /* Sage header */
+    color: #FFFFFF;
+}
+
+.table td {
+    vertical-align: middle;
 }
