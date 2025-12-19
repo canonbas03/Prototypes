@@ -6,8 +6,17 @@
 
 <h2>Reception Dashboard</h2>
 
-<partial name="_RoomStatistics" model="Model.RoomStatistics" />
+<div class="row mb-4">
+    <!-- Stats take more space -->
+    <div class="col-md-8">
+        <partial name="_RoomStatistics" model="Model.RoomStatistics" />
+    </div>
 
+    <!-- Requests side window -->
+    <div class="col-md-4">
+        <partial name="_ReceptionRequests" model="Model.NewRequests" />
+    </div>
+</div>
 
 <!-- ===================== -->
 <!-- ROOMS MODULE -->

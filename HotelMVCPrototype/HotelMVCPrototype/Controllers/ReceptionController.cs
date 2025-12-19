@@ -28,11 +28,19 @@ namespace HotelMVCPrototype.Controllers
                 .Include(r => r.GuestAssignments.Where(g => !g.IsActive))
                 .ToListAsync();
 
+            var requests = await _context.ServiceRequests
+                .Include(r => r.Room)
+                .Include(r => r.Items)
+                .Where(r => r.Status == ServiceRequestStatus.New)
+                .OrderBy(r => r.CreatedAt)
+                .Take(3) // side window, not full list
+                .ToListAsync();
 
             var vm = new ReceptionDashboardViewModel
             {
                 Rooms = rooms,
-                RoomStatistics = await _statsService.GetStatisticsAsync()
+                RoomStatistics = await _statsService.GetStatisticsAsync(),
+                NewRequests = requests
             };
 
             return View(vm);

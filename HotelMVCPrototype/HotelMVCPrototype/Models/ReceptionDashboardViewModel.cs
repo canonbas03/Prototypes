@@ -10,5 +10,8 @@ namespace HotelMVCPrototype.Models
 
         // Module 2: room statistics
         public RoomStatisticsViewModel RoomStatistics { get; set; }
+
+        // Side module (new)
+        public List<ServiceRequest> NewRequests { get; set; }
     }
 }
