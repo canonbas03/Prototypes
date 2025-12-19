@@ -8,10 +8,14 @@ using Microsoft.EntityFrameworkCore;
 public class GuestOrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IHubContext<BarHub> _hubContext;
 
-    public GuestOrdersController(ApplicationDbContext context)
+    public GuestOrdersController(
+        ApplicationDbContext context,
+        IHubContext<BarHub> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
     }
 
     // Show menu for a specific room
@@ -21,13 +25,12 @@ public class GuestOrdersController : Controller
         if (room == null)
             return NotFound();
 
-        ViewBag.RoomNumber = room.Number; // THIS IS 30
-        ViewBag.RoomId = room.Id;         // THIS IS 3, THE DB ID YOU NEED
+        ViewBag.RoomNumber = room.Number;
+        ViewBag.RoomId = room.Id;
 
         var menu = await _context.MenuItems.ToListAsync();
         return View(menu);
     }
-
 
     [HttpPost]
     public async Task<IActionResult> PlaceOrder(int roomId, Dictionary<int, int> items)
@@ -43,37 +46,37 @@ public class GuestOrdersController : Controller
             Items = new List<OrderItem>()
         };
 
-        foreach (var kvp in items)
+        foreach (var item in items.Where(i => i.Value > 0))
         {
-            int menuItemId = kvp.Key;
-            int quantity = kvp.Value;
-
-            if (quantity > 0)
+            order.Items.Add(new OrderItem
             {
-                order.Items.Add(new OrderItem
-                {
-                    MenuItemId = menuItemId,
-                    Quantity = quantity
-                });
-            }
+                MenuItemId = item.Key,
+                Quantity = item.Value
+            });
         }
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        var orderWithItems = await _context.Orders
+        // Notify reception
+        await _hubContext.Clients.All.SendAsync("ReceiveNewOrder", order.Id);
+
+        // ✅ Redirect instead of returning View
+        return RedirectToAction(nameof(ThankYou), new { id = order.Id });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ThankYou(int id)
+    {
+        var order = await _context.Orders
             .Include(o => o.Items)
                 .ThenInclude(i => i.MenuItem)
             .Include(o => o.Room)
-            .FirstOrDefaultAsync(o => o.Id == order.Id);
+            .FirstOrDefaultAsync(o => o.Id == id);
 
-        var hubContext = HttpContext.RequestServices.GetRequiredService<IHubContext<BarHub>>();
-        await hubContext.Clients.All.SendAsync("ReceiveNewOrder", order.Id);
+        if (order == null)
+            return NotFound();
 
-        return View("ThankYou", orderWithItems);
+        return View(order);
     }
-
-
-    // Thank you page now receives the order to display summary
-    public IActionResult ThankYou(Order order) => View(order);
 }

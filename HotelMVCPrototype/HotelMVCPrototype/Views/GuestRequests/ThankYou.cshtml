@@ -1,0 +1,44 @@
+﻿@model HotelMVCPrototype.Models.ServiceRequest
+
+@{
+    ViewData["Title"] = "Request Received";
+}
+
+<div class="card shadow-sm p-4">
+    <h2 class="mb-3 text-success">Thank You!</h2>
+
+    <p>
+        Your request for <strong>Room @Model.Room.Number</strong> has been sent to reception.
+        Our staff will deliver the items shortly.
+    </p>
+
+    <hr />
+
+    <h5 class="mb-3">Requested Items</h5>
+
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th class="text-center">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.ItemName</td>
+                    <td class="text-center">@item.Quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="alert alert-info mt-3">
+        If you need anything else, feel free to place another request.
+    </div>
+
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+        Back to Home
+    </a>
+</div>

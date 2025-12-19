@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Request Items";
+    var items = ViewBag.Items as List<string>;
+}
+
+<h2>Request Items for Room</h2>
+
+<form asp-action="PlaceRequest" method="post">
+    <input type="hidden" name="roomId" value="@ViewBag.RoomId" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items)
+            {
+                <tr>
+                    <td>@item</td>
+                    <td>
+                        <input type="number"
+                               name="items[@item]"
+                               value="0"
+                               min="0"
+                               class="form-control"
+                               style="width:80px;" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Send Request</button>
+</form>

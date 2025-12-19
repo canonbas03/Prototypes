@@ -1,0 +1,35 @@
+﻿@model List<HotelMVCPrototype.Models.ServiceRequest>
+
+<h2>Guest Requests</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Room</th>
+            <th>Items</th>
+            <th>Time</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in Model)
+        {
+            <tr>
+                <td>@req.Room.Number</td>
+                <td>
+                    @foreach (var item in req.Items)
+                    {
+                        <div>@item.ItemName × @item.Quantity</div>
+                    }
+                </td>
+                <td>@req.CreatedAt.ToShortTimeString()</td>
+                <td>
+                    <form asp-action="Complete" method="post">
+                        <input type="hidden" name="id" value="@req.Id" />
+                        <button class="btn btn-success btn-sm">Done</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

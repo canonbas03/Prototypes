@@ -32,6 +32,8 @@ namespace HotelMVCPrototype.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
+        public DbSet<ServiceRequest> ServiceRequests { get; set; }
+        public DbSet<ServiceRequestItem> ServiceRequestItems { get; set; }
 
 
     }
