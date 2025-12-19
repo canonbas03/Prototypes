@@ -26,5 +26,14 @@ namespace HotelMVCPrototype.Models
         public string? Notes { get; set; }
 
         public ICollection<GuestAssignment> GuestAssignments { get; set; } = new List<GuestAssignment>();
+
+
+        // Floor plan mapping
+        public int MapTop { get; set; }
+        public int MapLeft { get; set; }
+        public int MapWidth { get; set; }
+        public int MapHeight { get; set; }
+        public int Floor { get; set; }
+
     }
 }

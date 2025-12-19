@@ -14,23 +14,28 @@
         <div class="floor-plan-container" style="position: relative; width: 1408px; height: 736px;">
             <img src="~/images/HotelFlooPlanF3Remastered.png" alt="Floor 1" style="width: 60%; " />
 
-            <!-- Example room -->
-            <div class="room" style="
-        position: absolute;
-        top: 30px;
-        left: 52px;
-        width: 90px;
-        height: 155px;
-        background-color: green; /* status: Available */
-        opacity: 0.7;
-        border: 2px solid #0F172A;
-        text-align: center;
-        line-height: 60px;
-        color: white;
-        font-weight: bold;
-    ">
-                101
-            </div>
+            @foreach (var room in Model.RoomMap)
+            {
+                <div class="room"
+                     style="
+                position:absolute;
+                    top:@($"{room.Top}px");
+                left:@($"{room.Left}px");
+                width:@($"{room.Width}px");
+                height:@($"{room.Height}px");
+                background-color:@room.StatusColor;
+                opacity:0.75;
+                border:2px solid #0F172A;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                color:white;
+                font-weight:600;
+             ">
+                    @room.Number
+                </div>
+            }
+
         </div>
     </div>
 

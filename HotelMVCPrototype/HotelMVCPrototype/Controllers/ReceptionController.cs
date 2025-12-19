@@ -36,11 +36,34 @@ namespace HotelMVCPrototype.Controllers
                 .Take(3) // side window, not full list
                 .ToListAsync();
 
+            var roomMap = rooms
+                .Where(r => r.Floor == 3)
+                .Select(r => new RoomMapViewModel
+                {
+                    RoomId = r.Id,
+                    Number = r.Number,
+                    Top = r.MapTop,
+                    Left = r.MapLeft,
+                    Width = r.MapWidth,
+                    Height = r.MapHeight,
+                    StatusColor = r.Status switch
+                    {
+                        RoomStatus.Available => "#164E63",   // Forest Green
+                        RoomStatus.Occupied => "#86A789",    // Sage
+                        RoomStatus.Cleaning => "#e8c53a",    // Soft Mint
+                        RoomStatus.Maintenance => "#DC3545", // Red
+                        _ => "#FFFFFF"
+                    }
+                })
+                .ToList();
+
+
             var vm = new ReceptionDashboardViewModel
             {
                 Rooms = rooms,
                 RoomStatistics = await _statsService.GetStatisticsAsync(),
-                NewRequests = requests
+                NewRequests = requests,
+                RoomMap = roomMap
             };
 
             return View(vm);

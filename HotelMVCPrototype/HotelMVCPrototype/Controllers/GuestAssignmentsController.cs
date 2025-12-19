@@ -89,7 +89,7 @@ namespace HotelMVCPrototype.Controllers
             assignment.CheckOutDate = DateTime.Now;
             assignment.IsActive = false;
 
-            assignment.Room.Status = Models.Enums.RoomStatus.Available;
+            assignment.Room.Status = Models.Enums.RoomStatus.Cleaning;
 
             await _context.SaveChangesAsync();
 
