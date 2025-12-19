@@ -58,16 +58,33 @@ namespace HotelMVCPrototype.Controllers
         // POST: Rooms/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Room room)
+        public async Task<IActionResult> Edit(int id, Room editedRoom)
         {
-            if (id != room.Id) return NotFound();
-            if (ModelState.IsValid)
-            {
-                _context.Update(room);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(room);
+            if (id != editedRoom.Id)
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return View(editedRoom);
+
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null)
+                return NotFound();
+
+            // Update ONLY editable fields
+            room.Number = editedRoom.Number;
+            room.Status = editedRoom.Status;
+            room.Type = editedRoom.Type;
+
+            // ⚠️ Keep mapping fields untouched
+            // room.Floor stays
+            // room.MapTop stays
+            // room.MapLeft stays
+            // room.MapWidth stays
+            // room.MapHeight stays
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Rooms/Delete/5
