@@ -25,14 +25,13 @@
                 height:@($"{room.Height}px");
                 background-color:@room.StatusColor;
                 opacity:0.75;
-                border:2px solid #0F172A;
+                    border:2px solid @room.StatusColor;
                 display:flex;
                 align-items:center;
                 justify-content:center;
                 color:white;
                 font-weight:600;
              ">
-                    @room.Number
                 </div>
             }
 
