@@ -22,7 +22,7 @@ namespace HotelMVCPrototype.Controllers
 
 
         // GET: Reception Dashboard
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int floor = 1)
         {
             var rooms = await _context.Rooms
                 .Include(r => r.GuestAssignments.Where(g => !g.IsActive))
@@ -37,7 +37,7 @@ namespace HotelMVCPrototype.Controllers
                 .ToListAsync();
 
             var roomMap = rooms
-                .Where(r => r.Floor == 3)
+                .Where(r => r.Floor == floor)
                 .Select(r => new RoomMapViewModel
                 {
                     RoomId = r.Id,
@@ -63,7 +63,8 @@ namespace HotelMVCPrototype.Controllers
                 Rooms = rooms,
                 RoomStatistics = await _statsService.GetStatisticsAsync(),
                 NewRequests = requests,
-                RoomMap = roomMap
+                RoomMap = roomMap,
+                CurrentFloor = floor
             };
 
             return View(vm);

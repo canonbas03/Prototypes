@@ -15,5 +15,7 @@ namespace HotelMVCPrototype.Models
         public List<ServiceRequest> NewRequests { get; set; }
 
         public List<RoomMapViewModel> RoomMap { get; set; }
+
+        public int CurrentFloor { get; set; }
     }
 }
