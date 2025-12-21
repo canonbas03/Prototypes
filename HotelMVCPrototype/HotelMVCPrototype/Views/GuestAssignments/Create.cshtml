@@ -1,31 +1,37 @@
-﻿@model HotelMVCPrototype.Models.GuestAssignment
+﻿@model CreateStayViewModel
+
 @{
-    ViewData["Title"] = "Check-In Guest";
+    ViewData["Title"] = "New Check-In";
 }
 
-<h2>Check-In Guest</h2>
+<h2>New Check-In</h2>
 
 <form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="GuestName" class="form-label"></label>
-        <input asp-for="GuestName" class="form-control" />
-        <span asp-validation-for="GuestName" class="text-danger"></span>
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="RoomId" />
+
+    <div class="row mb-3">
+        <div class="col">
+            <label class="form-label">Arrival</label>
+            <input asp-for="CheckInDate" type="date" class="form-control" />
+        </div>
+        <div class="col">
+            <label class="form-label">Departure</label>
+            <input asp-for="CheckOutDate" type="date" class="form-control" />
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="RoomId" class="form-label"></label>
-        <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-select">
-            <option value="">Select a room</option>
-        </select>
 
-        <span asp-validation-for="RoomId" class="text-danger"></span>
+    <h5 class="mt-4">Guests</h5>
+
+    <div id="guests">
+        @for (int i = 0; i < Model.Guests.Count; i++)
+        {
+            <partial name="_GuestForm" for="@Model.Guests[i]" />
+        }
     </div>
 
-
-
-    <button type="submit" class="btn btn-success">Check-In</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-success mt-3">
+        Check In
+    </button>
 </form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

@@ -129,24 +129,33 @@ namespace HotelMVCPrototype.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateStay(
-                int roomId,
-                string guestName,
-                DateTime checkInDate,
-                DateTime checkOutDate)
+        public async Task<IActionResult> CreateStay(CreateStayViewModel model)
         {
-            var room = await _context.Rooms.FindAsync(roomId);
+            var room = await _context.Rooms.FindAsync(model.RoomId);
             if (room == null)
                 return NotFound();
 
             var stay = new GuestAssignment
             {
-                RoomId = roomId,
-                GuestName = guestName,
-                CheckInDate = checkInDate,
-                CheckOutDate = checkOutDate,
+                RoomId = model.RoomId,
+                CheckInDate = model.CheckInDate,
+                CheckOutDate = model.CheckOutDate,
                 IsActive = true
             };
+
+            foreach (var g in model.Guests)
+            {
+                stay.Guests.Add(new Guest
+                {
+                    FirstName = g.FirstName,
+                    LastName = g.LastName,
+                    EGN = g.EGN,
+                    BirthDate = g.BirthDate,
+                    Sex = g.Sex,
+                    Nationality = g.Nationality,
+                    Phone = g.Phone
+                });
+            }
 
             room.Status = RoomStatus.Occupied;
 
@@ -155,8 +164,9 @@ namespace HotelMVCPrototype.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("RoomDetails", new { id = roomId });
+            return RedirectToAction("RoomDetails", new { id = model.RoomId });
         }
+
 
     }
 }

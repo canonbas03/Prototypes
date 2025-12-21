@@ -14,58 +14,55 @@
     </div>
 </div>
 
-@if (Model.GuestAssignments.Any())
+@if (Model.GuestAssignments.Any(ga => ga.IsActive))
 {
-    var guest = Model.GuestAssignments.First();
+    var stay = Model.GuestAssignments.First(ga => ga.IsActive);
 
     <div class="card shadow-sm">
         <div class="card-header">
-            <strong>Current Guest</strong>
+            <strong>Current Stay</strong>
         </div>
         <div class="card-body">
-            <p><strong>Name:</strong> @guest.GuestName</p>
-            <p><strong>Arrival:</strong> @guest.CheckInDate.ToString("dd MMM yyyy")</p>
-            <p><strong>Departure:</strong> @guest.CheckOutDate?.ToString("dd MMM yyyy")</p>
+            <p><strong>Arrival:</strong> @stay.CheckInDate.ToString("dd MMM yyyy")</p>
+            <p><strong>Departure:</strong> @stay.CheckOutDate.ToString("dd MMM yyyy")</p>
+
+            <hr />
+
+            <h6>Guests</h6>
+            <ul class="list-group">
+                @foreach (var g in stay.Guests)
+                {
+                    <li class="list-group-item">
+                        <strong>@g.FirstName @g.LastName</strong><br />
+                        <small>
+                            @g.Nationality · @g.Sex · Born @g.BirthDate.ToString("dd.MM.yyyy")
+                        </small>
+                    </li>
+                }
+            </ul>
         </div>
     </div>
 }
+
 else if (Model.Status == HotelMVCPrototype.Models.Enums.RoomStatus.Available)
 {
     <div class="card shadow-sm">
         <div class="card-header">
-            <strong>New Check-In</strong>
+            <strong>Room Available</strong>
         </div>
-
         <div class="card-body">
-            <form asp-action="CreateStay" method="post">
-                @Html.AntiForgeryToken()
+            <p>This room is available for check-in.</p>
 
-                <input type="hidden" name="roomId" value="@Model.Id" />
-
-                <div class="mb-3">
-                    <label class="form-label">Guest Name</label>
-                    <input type="text" name="guestName" class="form-control" required />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Arrival Date</label>
-                    <input type="date" name="checkInDate" class="form-control"
-                           value="@DateTime.Today.ToString("yyyy-MM-dd")"
-                           required />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Departure Date</label>
-                    <input type="date" name="checkOutDate" class="form-control" required />
-                </div>
-
-                <button type="submit" class="btn btn-success">
-                    Check In Guest
-                </button>
-            </form>
+            <a asp-controller="GuestAssignments"
+               asp-action="Create"
+               asp-route-roomId="@Model.Id"
+               class="btn btn-success">
+                New Check-In
+            </a>
         </div>
     </div>
 }
+
 
 else
 {

@@ -1,0 +1,41 @@
+﻿@model GuestInputViewModel
+
+<div class="card mb-3 p-3">
+    <div class="row">
+        <div class="col">
+            <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+        </div>
+        <div class="col">
+            <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <input asp-for="EGN" class="form-control" placeholder="EGN" />
+        </div>
+        <div class="col">
+            <input asp-for="BirthDate" type="date" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <select asp-for="Sex" class="form-control">
+                <option value="">Sex</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="col">
+            <input asp-for="Nationality" class="form-control" placeholder="Nationality" />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <input asp-for="Phone" class="form-control" placeholder="Phone (optional)" />
+        </div>
+    </div>
+</div>

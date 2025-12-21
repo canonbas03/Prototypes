@@ -28,51 +28,37 @@ namespace HotelMVCPrototype.Controllers
         // GET: GuestAssignments/Create
 
         // GET: GuestAssignments/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create(int roomId)
         {
-            var rooms = await _context.Rooms
-                            .Where(r => r.Status == Models.Enums.RoomStatus.Available)
-                            .ToListAsync();
-
-            // Create a SelectList for the dropdown
-            ViewBag.Rooms = new SelectList(rooms, "Id", "Number");
-            return View();
+            var model = new CreateStayViewModel
+            {
+                RoomId = roomId,
+                CheckInDate = DateTime.Today,
+                Guests = new List<GuestInputViewModel>
+        {
+            new GuestInputViewModel() // at least 1 guest
         }
+            };
+
+            return View(model);
+        }
+
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(GuestAssignment assignment)
+        public async Task<IActionResult> Create(CreateStayViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var room = await _context.Rooms.FindAsync(assignment.RoomId);
-                if (room == null || room.Status != RoomStatus.Available)
-                {
-                    ModelState.AddModelError("RoomId", "Selected room is not available.");
-                }
-                else
-                {
-                    room.Status = RoomStatus.Occupied;
-                    assignment.Room = room;
+            if (!ModelState.IsValid)
+                return View(model);
 
-                    _context.GuestAssignments.Add(assignment);
-                    await _context.SaveChangesAsync();
+            // create stay
+            // create guests
+            // link them
 
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-
-            // Reload dropdown with selected value preserved
-            ViewBag.Rooms = new SelectList(
-                await _context.Rooms.Where(r => r.Status == RoomStatus.Available).ToListAsync(),
-                "Id",
-                "Number",
-                assignment.RoomId
-            );
-
-            return View(assignment);
+            return RedirectToAction("Details", "Rooms", new { id = model.RoomId });
         }
+
 
 
         // GET: GuestAssignments/CheckOut/5

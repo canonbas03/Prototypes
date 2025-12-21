@@ -8,9 +8,7 @@ namespace HotelMVCPrototype.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [Display(Name = "Guest Name")]
-        public string GuestName { get; set; }
+        
 
         [Required]
         public int RoomId { get; set; }
@@ -26,9 +24,11 @@ namespace HotelMVCPrototype.Models
         public DateTime CheckInDate { get; set; } = DateTime.Now;
 
         [Display(Name = "Check-Out Date")]
-        public DateTime? CheckOutDate { get; set; }
+        public DateTime CheckOutDate { get; set; }
 
         [Display(Name = "Active Assignment")]
         public bool IsActive { get; set; } = true;
+
+        public ICollection<Guest> Guests { get; set; } = new List<Guest>();
     }
 }

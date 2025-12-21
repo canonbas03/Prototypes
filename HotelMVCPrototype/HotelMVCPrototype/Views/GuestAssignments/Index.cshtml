@@ -18,10 +18,10 @@
         @foreach (var g in Model)
         {
             <tr>
-                <td>@g.GuestName</td>
-                <td>@g.Room.Number</td>
+@*                 <td>@g.GuestName</td>
+ *@                <td>@g.Room.Number</td>
                 <td>@g.CheckInDate</td>
-                <td>@(g.CheckOutDate.HasValue? g.CheckOutDate.Value.ToString() : "-")</td>
+                <td>@(g.CheckOutDate)</td>
                 <td>@(g.IsActive ? "Active" : "Completed")</td>
                 <td>
                     @if (g.IsActive)
