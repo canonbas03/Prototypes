@@ -19,10 +19,10 @@ namespace HotelMVCPrototype.Controllers
         // GET: GuestAssignments
         public async Task<IActionResult> Index()
         {
-            var assignments = await _context.GuestAssignments
-                                    .Include(g => g.Room)
-                                    .ToListAsync();
-            return View(assignments);
+            //var assignments = await _context.GuestAssignments
+            //                        .Include(g => g.Room)
+            //                        .ToListAsync();
+            return View();
         }
 
         // GET: GuestAssignments/Create

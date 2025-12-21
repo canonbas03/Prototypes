@@ -3,7 +3,7 @@
 <h2>Guest Assignments</h2>
 <a asp-action="Create" class="btn btn-success mb-3">Check-In Guest</a>
 
-<table class="table table-striped">
+@* <table class="table table-striped">
     <thead>
         <tr>
             <th>Guest Name</th>
@@ -18,8 +18,8 @@
         @foreach (var g in Model)
         {
             <tr>
-@*                 <td>@g.GuestName</td>
- *@                <td>@g.Room.Number</td>
+               <td>@g.GuestName</td>
+               <td>@g.Room.Number</td>
                 <td>@g.CheckInDate</td>
                 <td>@(g.CheckOutDate)</td>
                 <td>@(g.IsActive ? "Active" : "Completed")</td>
@@ -33,3 +33,4 @@
         }
     </tbody>
 </table>
+ *@
