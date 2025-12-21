@@ -20,6 +20,9 @@
             @foreach (var room in Model.RoomMap)
             {
                 <div class="room"
+                     onclick="location.href='@Url.Action("RoomDetails", "Reception", new { id = room.RoomId })'"
+                     data-room-id="@room.RoomId"
+                     data-room-number="@room.Number"
                      style="
                 position:absolute;
                     top:@($"{room.Top}px");

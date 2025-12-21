@@ -112,5 +112,51 @@ namespace HotelMVCPrototype.Controllers
         }
 
         // Optional: Check-Out action (you already have this)
+
+        // GET: Reception/RoomDetails/5
+        public async Task<IActionResult> RoomDetails(int id)
+        {
+            var room = await _context.Rooms
+                .Include(r => r.GuestAssignments
+                    .Where(g => g.IsActive))
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (room == null)
+                return NotFound();
+
+            return View(room);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateStay(
+                int roomId,
+                string guestName,
+                DateTime checkInDate,
+                DateTime checkOutDate)
+        {
+            var room = await _context.Rooms.FindAsync(roomId);
+            if (room == null)
+                return NotFound();
+
+            var stay = new GuestAssignment
+            {
+                RoomId = roomId,
+                GuestName = guestName,
+                CheckInDate = checkInDate,
+                CheckOutDate = checkOutDate,
+                IsActive = true
+            };
+
+            room.Status = RoomStatus.Occupied;
+
+            _context.GuestAssignments.Add(stay);
+            _context.Rooms.Update(room);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("RoomDetails", new { id = roomId });
+        }
+
     }
 }

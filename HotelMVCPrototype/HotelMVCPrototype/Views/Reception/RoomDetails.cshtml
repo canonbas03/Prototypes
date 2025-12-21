@@ -1,0 +1,77 @@
+﻿@model HotelMVCPrototype.Models.Room
+
+@{
+    ViewData["Title"] = $"Room {Model.Number}";
+}
+
+<h2>Room @Model.Number</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <p><strong>Type:</strong> @Model.Type</p>
+        <p><strong>Status:</strong> @Model.Status</p>
+        <p><strong>Floor:</strong> @Model.Floor</p>
+    </div>
+</div>
+
+@if (Model.GuestAssignments.Any())
+{
+    var guest = Model.GuestAssignments.First();
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <strong>Current Guest</strong>
+        </div>
+        <div class="card-body">
+            <p><strong>Name:</strong> @guest.GuestName</p>
+            <p><strong>Arrival:</strong> @guest.CheckInDate.ToString("dd MMM yyyy")</p>
+            <p><strong>Departure:</strong> @guest.CheckOutDate?.ToString("dd MMM yyyy")</p>
+        </div>
+    </div>
+}
+else if (Model.Status == HotelMVCPrototype.Models.Enums.RoomStatus.Available)
+{
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <strong>New Check-In</strong>
+        </div>
+
+        <div class="card-body">
+            <form asp-action="CreateStay" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="roomId" value="@Model.Id" />
+
+                <div class="mb-3">
+                    <label class="form-label">Guest Name</label>
+                    <input type="text" name="guestName" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Arrival Date</label>
+                    <input type="date" name="checkInDate" class="form-control"
+                           value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                           required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Departure Date</label>
+                    <input type="date" name="checkOutDate" class="form-control" required />
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Check In Guest
+                </button>
+            </form>
+        </div>
+    </div>
+}
+
+else
+{
+    <div class="alert alert-info">
+        This room is currently unoccupied.
+    </div>
+}
+
+<a asp-action="Index" class="btn btn-secondary mt-3">← Back to Dashboard</a>

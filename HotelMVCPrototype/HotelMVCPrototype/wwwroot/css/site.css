@@ -174,3 +174,21 @@ h1, h2, h3, h4, h5, h6 {
 .table td {
     vertical-align: middle;
 }
+
+/* Rooms hover and clicks*/
+.room {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+    .room:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35); /* Dark Moss */
+        z-index: 10;
+    }
+
+    .room:active {
+        transform: scale(0.98);
+    }
+
