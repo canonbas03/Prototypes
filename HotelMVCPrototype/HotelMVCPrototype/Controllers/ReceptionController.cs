@@ -128,7 +128,30 @@ namespace HotelMVCPrototype.Controllers
             return View(room);
         }
 
-        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Depart(int assignmentId)
+        {
+            var stay = await _context.GuestAssignments
+                .Include(g => g.Room)
+                .FirstOrDefaultAsync(g => g.Id == assignmentId && g.IsActive);
+
+            if (stay == null)
+                return NotFound();
+
+            stay.IsActive = false;
+            stay.CheckOutDate = DateTime.Now;
+
+            stay.Room.Status = RoomStatus.Cleaning;
+
+            _context.GuestAssignments.Update(stay);
+            _context.Rooms.Update(stay.Room);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("RoomDetails", new { id = stay.RoomId });
+        }
+
 
 
     }
