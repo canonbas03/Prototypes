@@ -35,9 +35,9 @@ namespace HotelMVCPrototype.Controllers
                 RoomId = roomId,
                 CheckInDate = DateTime.Today,
                 Guests = new List<GuestInputViewModel>
-        {
-            new GuestInputViewModel() // at least 1 guest
-        }
+                    {
+                        new GuestInputViewModel(), // at least 1 guest
+                    }
             };
 
             return View(model);
@@ -52,12 +52,42 @@ namespace HotelMVCPrototype.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // create stay
-            // create guests
-            // link them
+            var room = await _context.Rooms.FindAsync(model.RoomId);
+            if (room == null)
+                return NotFound();
 
-            return RedirectToAction("Details", "Rooms", new { id = model.RoomId });
+            var stay = new GuestAssignment
+            {
+                RoomId = model.RoomId,
+                CheckInDate = model.CheckInDate,
+                CheckOutDate = model.CheckOutDate,
+                IsActive = true,
+                Guests = new List<Guest>()
+            };
+
+            foreach (var g in model.Guests)
+            {
+                stay.Guests.Add(new Guest
+                {
+                    FirstName = g.FirstName,
+                    LastName = g.LastName,
+                    EGN = g.EGN,
+                    BirthDate = g.BirthDate,
+                    Sex = g.Sex,
+                    Nationality = g.Nationality,
+                    Phone = g.Phone
+                });
+            }
+
+            room.Status = RoomStatus.Occupied;
+
+            _context.GuestAssignments.Add(stay);
+            _context.Rooms.Update(room);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("RoomDetails", "Reception", new { id = model.RoomId });
         }
+
 
 
 

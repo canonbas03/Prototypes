@@ -119,6 +119,7 @@ namespace HotelMVCPrototype.Controllers
             var room = await _context.Rooms
                 .Include(r => r.GuestAssignments
                     .Where(g => g.IsActive))
+                .ThenInclude(ga => ga.Guests)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (room == null)
@@ -127,45 +128,7 @@ namespace HotelMVCPrototype.Controllers
             return View(room);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateStay(CreateStayViewModel model)
-        {
-            var room = await _context.Rooms.FindAsync(model.RoomId);
-            if (room == null)
-                return NotFound();
-
-            var stay = new GuestAssignment
-            {
-                RoomId = model.RoomId,
-                CheckInDate = model.CheckInDate,
-                CheckOutDate = model.CheckOutDate,
-                IsActive = true
-            };
-
-            foreach (var g in model.Guests)
-            {
-                stay.Guests.Add(new Guest
-                {
-                    FirstName = g.FirstName,
-                    LastName = g.LastName,
-                    EGN = g.EGN,
-                    BirthDate = g.BirthDate,
-                    Sex = g.Sex,
-                    Nationality = g.Nationality,
-                    Phone = g.Phone
-                });
-            }
-
-            room.Status = RoomStatus.Occupied;
-
-            _context.GuestAssignments.Add(stay);
-            _context.Rooms.Update(room);
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("RoomDetails", new { id = model.RoomId });
-        }
+        
 
 
     }
