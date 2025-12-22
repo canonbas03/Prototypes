@@ -65,4 +65,52 @@ public class MenuItemsController : Controller
 
         return RedirectToAction("Index");
     }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+        var item = await _context.MenuItems.FindAsync(id);
+        if (item == null)
+            return NotFound();
+
+        return View(item);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, MenuItem model, IFormFile? image)
+    {
+        if (id != model.Id)
+            return NotFound();
+
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var item = await _context.MenuItems.FindAsync(id);
+        if (item == null)
+            return NotFound();
+
+        // Update fields
+        item.Name = model.Name;
+        item.Price = model.Price;
+        item.Category = model.Category;
+        item.IsVegan = model.IsVegan;
+        item.IsActive = model.IsActive;
+
+        // Image upload (optional)
+        if (image != null && image.Length > 0)
+        {
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+            var path = Path.Combine("wwwroot/images/menu", fileName);
+
+            using var stream = new FileStream(path, FileMode.Create);
+            await image.CopyToAsync(stream);
+
+            item.ImagePath = "/images/menu/" + fileName;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
 }
