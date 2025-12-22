@@ -77,6 +77,12 @@
     const veganInput = document.querySelector('[name="IsVegan"]');
     const imageInput = document.getElementById('Image');
 
+    const previewCategory = document.getElementById('previewCategory');
+
+    // Initialize preview with the selected option
+    previewCategory.innerText =
+        categoryInput.options[categoryInput.selectedIndex].text;
+
     nameInput.addEventListener('input', e => {
         document.getElementById('previewName').innerText =
             e.target.value || 'Item Name';
