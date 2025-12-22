@@ -47,13 +47,13 @@
             {
                 <div class="mb-3">
                     <label class="form-label">Current Image</label><br />
-                    <img src="@Model.ImagePath" width="120" class="rounded shadow-sm" />
+                    <img src="@Model.ImagePath" width="50" class="rounded shadow-sm" />
                 </div>
             }
 
             <div class="mb-3">
                 <label class="form-label">Change Image</label>
-                <input type="file" name="image" class="form-control" />
+                <input type="file" name="Image" id="Image" class="form-control" />
             </div>
 
             <button type="submit" class="btn btn-primary">
@@ -70,9 +70,12 @@
     <div class="col-md-5">
         <div class="card shadow-sm sticky-top" style="top: 20px;">
             <img id="previewImage"
-                 src="/images/menu/placeholder.webp"
+                 src="@(string.IsNullOrEmpty(Model.ImagePath)
+                             ? "/images/menu/placeholder.webp"
+                             : Model.ImagePath)"
                  class="card-img-top"
                  style="height: 200px; object-fit: cover;" />
+
 
             <div class="card-body">
                 <h5 id="previewName">Item Name</h5>
@@ -95,42 +98,66 @@
     </div>
 </div>
 <script>
-    const nameInput = document.querySelector('[name="Name"]');
-    const priceInput = document.querySelector('[name="Price"]');
-    const categoryInput = document.querySelector('[name="Category"]');
-    const veganInput = document.querySelector('[name="IsVegan"]');
-    const imageInput = document.getElementById('Image');
+    document.addEventListener("DOMContentLoaded", () => {
 
-    nameInput.addEventListener('input', e => {
-        document.getElementById('previewName').innerText =
-            e.target.value || 'Item Name';
+        const nameInput = document.querySelector('[name="Name"]');
+        const priceInput = document.querySelector('[name="Price"]');
+        const categoryInput = document.querySelector('[name="Category"]');
+        const veganInput = document.querySelector('[name="IsVegan"]');
+        const imageInput = document.getElementById('Image');
+
+        const previewName = document.getElementById('previewName');
+        const previewPrice = document.getElementById('previewPrice');
+        const previewCategory = document.getElementById('previewCategory');
+        const previewVegan = document.getElementById('previewVegan');
+        const previewImage = document.getElementById('previewImage');
+
+        /* 🔹 INITIALIZE PREVIEW FROM MODEL VALUES */
+        previewName.innerText = nameInput.value || 'Item Name';
+
+           const initialPrice = priceInput.value.replace(',', '.'); // ⚡ handle comma
+    previewPrice.innerText = initialPrice
+        ? `${parseFloat(initialPrice).toFixed(2)} лв.`
+        : '0.00 лв.';
+
+
+        previewCategory.innerText =
+            categoryInput.options[categoryInput.selectedIndex].text;
+
+        previewVegan.classList.toggle('d-none', !veganInput.checked);
+
+        /* 🔹 LIVE UPDATES */
+        nameInput.addEventListener('input', e => {
+            previewName.innerText = e.target.value || 'Item Name';
+        });
+
+            priceInput.addEventListener('input', e => {
+        const val = e.target.value.replace(',', '.'); // handle comma
+        previewPrice.innerText = val
+            ? `${parseFloat(val).toFixed(2)} лв.`
+            : '0.00 лв.';
     });
 
-    priceInput.addEventListener('input', e => {
-        document.getElementById('previewPrice').innerText =
-            e.target.value
-                ? `${Number(e.target.value).toFixed(2)} лв.`
-                : '0.00 лв.';
-    });
 
-    categoryInput.addEventListener('change', e => {
-        document.getElementById('previewCategory').innerText =
-            e.target.options[e.target.selectedIndex].text;
-    });
+        categoryInput.addEventListener('change', e => {
+            previewCategory.innerText =
+                e.target.options[e.target.selectedIndex].text;
+        });
 
-    veganInput.addEventListener('change', e => {
-        document.getElementById('previewVegan')
-            .classList.toggle('d-none', !e.target.checked);
-    });
+        veganInput.addEventListener('change', e => {
+            previewVegan.classList.toggle('d-none', !e.target.checked);
+        });
 
-    imageInput?.addEventListener('change', e => {
-        const file = e.target.files[0];
-        if (!file) return;
+        /* 🔹 IMAGE PREVIEW (ONLY WHEN NEW FILE IS SELECTED) */
+        imageInput?.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = ev => {
-            document.getElementById('previewImage').src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
+            const reader = new FileReader();
+            reader.onload = ev => {
+                previewImage.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
     });
 </script>
