@@ -83,10 +83,13 @@
     });
 
     priceInput.addEventListener('input', e => {
+         const val = e.target.value.replace(',', '.');
         document.getElementById('previewPrice').innerText =
-            e.target.value
-                ? `${Number(e.target.value).toFixed(2)} лв.`
+            val
+                ? `${Number(val).toFixed(2)} лв.`
                 : '0.00 лв.';
+
+
     });
 
     categoryInput.addEventListener('change', e => {
