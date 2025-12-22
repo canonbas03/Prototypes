@@ -6,56 +6,131 @@
 
 <h2>Edit Menu Item</h2>
 
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Id" />
 
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
+
+<div class="row">
+    <!-- Form -->
+    <div class="col-md-7">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <select asp-for="Category"
+                        asp-items="Html.GetEnumSelectList<MenuCategory>()"
+                        class="form-control">
+                </select>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="IsVegan" class="form-check-input" />
+                <label asp-for="IsVegan" class="form-check-label">Vegan</label>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="IsActive" class="form-check-input" />
+                <label asp-for="IsActive" class="form-check-label">Active</label>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <div class="mb-3">
+                    <label class="form-label">Current Image</label><br />
+                    <img src="@Model.ImagePath" width="120" class="rounded shadow-sm" />
+                </div>
+            }
+
+            <div class="mb-3">
+                <label class="form-label">Change Image</label>
+                <input type="file" name="image" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Save Changes
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary ms-2">
+                Cancel
+            </a>
+        </form>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Price" class="form-label"></label>
-        <input asp-for="Price" class="form-control" />
-    </div>
+    <!-- Live Preview -->
+    <div class="col-md-5">
+        <div class="card shadow-sm sticky-top" style="top: 20px;">
+            <img id="previewImage"
+                 src="/images/menu/placeholder.webp"
+                 class="card-img-top"
+                 style="height: 200px; object-fit: cover;" />
 
-    <div class="mb-3">
-        <label asp-for="Category" class="form-label"></label>
-        <select asp-for="Category"
-                asp-items="Html.GetEnumSelectList<MenuCategory>()"
-                class="form-control">
-        </select>
-    </div>
+            <div class="card-body">
+                <h5 id="previewName">Item Name</h5>
 
-    <div class="form-check mb-3">
-        <input asp-for="IsVegan" class="form-check-input" />
-        <label asp-for="IsVegan" class="form-check-label">Vegan</label>
-    </div>
+                <p class="mb-1">
+                    <strong id="previewPrice">0.00 лв.</strong>
+                </p>
 
-    <div class="form-check mb-3">
-        <input asp-for="IsActive" class="form-check-input" />
-        <label asp-for="IsActive" class="form-check-label">Active</label>
-    </div>
+                <span id="previewCategory"
+                      class="badge bg-secondary">
+                    Category
+                </span>
 
-    @if (!string.IsNullOrEmpty(Model.ImagePath))
-    {
-        <div class="mb-3">
-            <label class="form-label">Current Image</label><br />
-            <img src="@Model.ImagePath" width="120" class="rounded shadow-sm" />
+                <span id="previewVegan"
+                      class="badge bg-success ms-2 d-none">
+                    Vegan 🌱
+                </span>
+            </div>
         </div>
-    }
-
-    <div class="mb-3">
-        <label class="form-label">Change Image</label>
-        <input type="file" name="image" class="form-control" />
     </div>
+</div>
+<script>
+    const nameInput = document.querySelector('[name="Name"]');
+    const priceInput = document.querySelector('[name="Price"]');
+    const categoryInput = document.querySelector('[name="Category"]');
+    const veganInput = document.querySelector('[name="IsVegan"]');
+    const imageInput = document.getElementById('Image');
 
-    <button type="submit" class="btn btn-primary">
-        Save Changes
-    </button>
+    nameInput.addEventListener('input', e => {
+        document.getElementById('previewName').innerText =
+            e.target.value || 'Item Name';
+    });
 
-    <a asp-action="Index" class="btn btn-secondary ms-2">
-        Cancel
-    </a>
-</form>
+    priceInput.addEventListener('input', e => {
+        document.getElementById('previewPrice').innerText =
+            e.target.value
+                ? `${Number(e.target.value).toFixed(2)} лв.`
+                : '0.00 лв.';
+    });
+
+    categoryInput.addEventListener('change', e => {
+        document.getElementById('previewCategory').innerText =
+            e.target.options[e.target.selectedIndex].text;
+    });
+
+    veganInput.addEventListener('change', e => {
+        document.getElementById('previewVegan')
+            .classList.toggle('d-none', !e.target.checked);
+    });
+
+    imageInput?.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = ev => {
+            document.getElementById('previewImage').src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
