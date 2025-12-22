@@ -1,0 +1,37 @@
+﻿@model MenuItemCreateViewModel
+
+<h2>Add Menu Item</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label>Name</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Price</label>
+        <input asp-for="Price" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Category</label>
+        <select asp-for="Category"
+                asp-items="Html.GetEnumSelectList<MenuCategory>()"
+                class="form-control">
+        </select>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsVegan" class="form-check-input" />
+        <label class="form-check-label">Vegan</label>
+    </div>
+
+    <div class="mb-3">
+        <label>Image</label>
+        <input asp-for="Image" type="file" class="form-control" />
+    </div>
+
+    <button class="btn btn-success">Save</button>
+</form>

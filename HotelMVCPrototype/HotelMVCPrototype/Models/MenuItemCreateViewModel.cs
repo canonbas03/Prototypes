@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-public class MenuItem
+public class MenuItemCreateViewModel
 {
-    public int Id { get; set; }
-
     [Required]
     public string Name { get; set; }
 
@@ -14,7 +12,5 @@ public class MenuItem
 
     public bool IsVegan { get; set; }
 
-    public string? ImagePath { get; set; }
-
-    public bool IsActive { get; set; } = true;
+    public IFormFile? Image { get; set; }
 }
