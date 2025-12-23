@@ -1,15 +1,17 @@
-﻿using HotelMVCPrototype.Data;
+﻿using Azure.Core;
+using HotelMVCPrototype.Data;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 public class GuestOrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly IHubContext<BarHub> _hubContext;
-
+    private const string CART_KEY = "GuestCart";
     public GuestOrdersController(
         ApplicationDbContext context,
         IHubContext<BarHub> hubContext)
@@ -18,25 +20,43 @@ public class GuestOrdersController : Controller
         _hubContext = hubContext;
     }
 
-    // Show menu for a specific room
     public async Task<IActionResult> Index(int roomId)
     {
-        var room = await _context.Rooms.FindAsync(roomId);
-        if (room == null)
-            return NotFound();
+        var menuItems = await _context.MenuItems
+            .Where(m => m.IsActive)
+            .OrderBy(m => m.Category)
+            .ToListAsync();
 
-        ViewBag.RoomNumber = room.Number;
-        ViewBag.RoomId = room.Id;
 
-        var menu = await _context.MenuItems.ToListAsync();
-        return View(menu);
+        var cart = HttpContext.Session
+        .GetObject<Dictionary<int, int>>(CART_KEY)
+        ?? new Dictionary<int, int>();
+
+        ViewBag.Cart = cart;
+        ViewBag.RoomId = roomId;
+
+        return View(menuItems);
     }
 
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> PlaceOrder(int roomId, Dictionary<int, int> items)
     {
-        if (items == null || !items.Any(i => i.Value > 0))
-            return BadRequest("No items selected.");
+        if (items == null || !items.Any())
+            return RedirectToAction(nameof(Index), new { roomId });
+
+        var roomExists = await _context.Rooms.AnyAsync(r => r.Id == roomId);
+        if (!roomExists)
+        {
+            return BadRequest("Invalid room.");
+        }
+
+        var cart = HttpContext.Session
+                .GetObject<Dictionary<int, int>>(CART_KEY)
+                ?? new Dictionary<int, int>();
+
+        ViewBag.Cart = cart;
 
         var order = new Order
         {
@@ -46,22 +66,18 @@ public class GuestOrdersController : Controller
             Items = new List<OrderItem>()
         };
 
-        foreach (var item in items.Where(i => i.Value > 0))
+        foreach (var (menuItemId, qty) in items)
         {
             order.Items.Add(new OrderItem
             {
-                MenuItemId = item.Key,
-                Quantity = item.Value
+                MenuItemId = menuItemId,
+                Quantity = qty
             });
         }
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        // Notify reception
-        await _hubContext.Clients.All.SendAsync("ReceiveNewOrder", order.Id);
-
-        // ✅ Redirect instead of returning View
         return RedirectToAction(nameof(ThankYou), new { id = order.Id });
     }
 
@@ -79,4 +95,40 @@ public class GuestOrdersController : Controller
 
         return View(order);
     }
+
+    public async Task<IActionResult> Checkout(int roomId)
+    {
+        
+
+        var cart = HttpContext.Session
+            .GetObject<Dictionary<int, int>>(CART_KEY);
+
+        if (cart == null || !cart.Any())
+            return RedirectToAction(nameof(Index), new { roomId });
+
+        var menuItems = await _context.MenuItems
+            .Where(m => cart.Keys.Contains(m.Id))
+            .ToListAsync();
+
+        var model = menuItems.Select(m => new CheckoutItemViewModel
+        {
+            MenuItemId = m.Id,
+            Name = m.Name,
+            Price = m.Price,
+            Quantity = cart[m.Id]
+        }).ToList();
+
+        ViewBag.RoomId = roomId;
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public IActionResult UpdateCart([FromBody] Dictionary<int, int> cart)
+    {
+        HttpContext.Session.SetObject(CART_KEY, cart);
+        return Ok();
+    }
+
+
 }

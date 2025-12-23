@@ -1,27 +1,142 @@
-﻿<form asp-action="PlaceOrder" method="post">
+﻿@model List<MenuItem>
+
+@{
+    var grouped = Model.GroupBy(m => m.Category);
+}
+
+<ul class="nav nav-pills mb-4">
+    @foreach (var cat in grouped)
+    {
+        <li class="nav-item">
+            <button class="nav-link @(cat.Key == MenuCategory.Food ? "active" : "")"
+                    data-category="@cat.Key">
+                @cat.Key
+            </button>
+        </li>
+    }
+</ul>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 menu-item"
+             data-category="@item.Category">
+            <div class="card mb-4">
+                <img src="@(item.ImagePath ?? "/images/menu/placeholder.webp")"
+                     class="card-img-top"
+                     style="height:180px; object-fit:cover" />
+
+                <div class="card-body">
+                    <h6>@item.Name</h6>
+
+                    <strong>@item.Price.ToString("0.00") лв.</strong>
+
+                    @if (item.IsVegan)
+                    {
+                        <span class="badge bg-success ms-2">🌱 Vegan</span>
+                    }
+
+                    <div class="d-flex mt-2">
+                        <input type="number"
+                               min="1"
+                               max="10"
+                               value="1"
+                               class="form-control qty"
+                               data-id="@item.Id"
+                               style="width:80px" />
+
+                        <button class="btn btn-sm btn-primary ms-2 add-to-cart">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<form asp-action="PlaceOrder" method="post" id="orderForm">
+    @Html.AntiForgeryToken()
     <input type="hidden" name="roomId" value="@ViewBag.RoomId" />
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Quantity</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Price.ToString("C")</td>
-                    <td>
-                        <input type="number" name="items[@item.Id]" value="0" min="0" class="form-control" style="width:70px;" />
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <button type="submit" class="btn btn-success">Order</button>
+    <input type="hidden" name="itemsJson" id="itemsJson" />
 </form>
+
+
+<script>
+    document.querySelectorAll('.menu-item').forEach(item => {
+        if (item.dataset.category !== 'Food') {
+            item.style.display = 'none';
+        }
+    });
+</script>
+
+<script>
+    document.querySelectorAll('.nav-link[data-category]').forEach(btn => {
+        btn.addEventListener('click', () => {
+
+            // activate button
+            document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const category = btn.dataset.category;
+
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.style.display =
+                    item.dataset.category === category ? 'block' : 'none';
+            });
+        });
+    });
+</script>
+
+<button id="checkoutBtn"
+        class="btn btn-success position-fixed bottom-0 end-0 m-4 d-none">
+    🛒 Proceed to Checkout (<span id="cartCount">0</span>)
+</button>
+
+
+<script>
+        // Load cart from sessionStorage if exists
+    const cart = @Html.Raw(Json.Serialize(ViewBag.Cart ?? new Dictionary<int, int>()));
+    const cartCount = document.getElementById('cartCount');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+
+    const updateCartUI = () => {
+        const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+        cartCount.innerText = totalItems;
+        checkoutBtn.classList.toggle('d-none', totalItems === 0);
+    };
+
+    updateCartUI();
+
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', async e => {
+            const card = e.target.closest('.card');
+            const qtyInput = card.querySelector('.qty');
+            const id = qtyInput.dataset.id;
+            const qty = parseInt(qtyInput.value) || 1;
+
+            cart[id] = (cart[id] || 0) + qty;
+
+            // 🔥 SAVE TO SESSION
+            await fetch('/GuestOrders/UpdateCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(cart)
+            });
+
+            updateCartUI();
+
+            btn.innerText = "Added ✓";
+            setTimeout(() => btn.innerText = "Add", 800);
+        });
+    });
+
+    const ROOM_ID = '@ViewBag.RoomId';
+
+    checkoutBtn.addEventListener('click', () => {
+        window.location.href = `/GuestOrders/Checkout?roomId=${ROOM_ID}`;
+    });
+</script>

@@ -1,0 +1,194 @@
+﻿@model List<CheckoutItemViewModel>
+
+<h2 class="mb-4">🛒 Review Your Order</h2>
+
+<form asp-action="PlaceOrder" method="post" id="checkoutForm">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="roomId" value="@ViewBag.RoomId" />
+
+    <div id="checkoutTable">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th style="width:140px">Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody id="checkoutBody">
+            @foreach (var item in Model)
+            {
+                <tr data-id="@item.MenuItemId" data-price="@item.Price">
+                    <td>@item.Name</td>
+
+                    <td>
+                        <div class="input-group input-group-sm">
+                            <button type="button" class="btn btn-outline-secondary qty-minus">−</button>
+
+                            <input type="number"
+                                   min="1"
+                                   value="@item.Quantity"
+                                   class="form-control text-center qty-input" />
+
+                            <button type="button" class="btn btn-outline-secondary qty-plus">+</button>
+                        </div>
+
+                        <input type="hidden"
+                               name="items[@item.MenuItemId]"
+                               value="@item.Quantity"
+                               class="qty-hidden" />
+                    </td>
+
+                    <td>@item.Price.ToString("0.00") лв.</td>
+
+                    <td class="row-total">
+                        @item.Total.ToString("0.00") лв.
+                    </td>
+
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm btn-danger remove-item">
+                            ✕
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+
+    <div id="emptyCart"
+         class="alert alert-info text-center d-none mt-4">
+
+        <h5 class="mb-2">🛒 Your cart is empty</h5>
+        <p class="mb-3">You haven’t selected any items yet.</p>
+
+        <a asp-action="Index"
+           asp-route-roomId="@ViewBag.RoomId"
+           class="btn btn-primary">
+            ← Back to menu
+        </a>
+    </div>
+
+    <h4 class="text-end mt-3">
+        Total:
+        <strong id="grandTotal">
+            @Model.Sum(i => i.Total).ToString("0.00") лв.
+        </strong>
+    </h4>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-action="Index"
+           asp-route-roomId="@ViewBag.RoomId"
+           class="btn btn-secondary">
+            ← Back
+        </a>
+
+        <button id="confirmBtn"
+                class="btn btn-success btn-lg">
+            Confirm Order
+        </button>
+    </div>
+</form>
+
+<script>
+    const confirmBtn = document.getElementById('confirmBtn');
+    const emptyCart = document.getElementById('emptyCart');
+    const checkoutTable = document.getElementById('checkoutTable');
+    const grandTotalEl = document.getElementById('grandTotal');
+
+    // Build initial cart from the DOM
+    const buildCart = () => {
+        const rows = document.querySelectorAll('#checkoutBody tr');
+        const cart = {};
+        rows.forEach(row => {
+            const id = parseInt(row.dataset.id);
+            const qty = parseInt(row.querySelector('.qty-input').value);
+            cart[id] = qty;
+        });
+        return cart;
+    };
+
+    // Send cart to server session
+    const saveCart = async () => {
+        const cart = buildCart();
+        const token = document.querySelector('[name="__RequestVerificationToken"]').value;
+
+        await fetch('/GuestOrders/UpdateCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify(cart)
+        });
+    };
+
+    const updateState = async () => {
+        const rows = document.querySelectorAll('#checkoutBody tr');
+        let grandTotal = 0;
+
+        rows.forEach(row => {
+            const price = parseFloat(row.dataset.price);
+            const qtyInput = row.querySelector('.qty-input');
+            const hidden = row.querySelector('.qty-hidden');
+            const rowTotal = row.querySelector('.row-total');
+
+            const qty = parseInt(qtyInput.value);
+            const total = price * qty;
+
+            rowTotal.innerText = total.toFixed(2) + ' лв.';
+            hidden.value = qty;
+
+            grandTotal += total;
+        });
+
+        grandTotalEl.innerText = grandTotal.toFixed(2) + ' лв.';
+
+        const isEmpty = rows.length === 0;
+        confirmBtn.disabled = isEmpty;
+        checkoutTable.classList.toggle('d-none', isEmpty);
+        emptyCart.classList.toggle('d-none', !isEmpty);
+
+        // save updated cart to session
+        await saveCart();
+    };
+
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('qty-plus')) {
+            const input = e.target.closest('tr').querySelector('.qty-input');
+            input.value++;
+            updateState();
+        }
+
+        if (e.target.classList.contains('qty-minus')) {
+            const input = e.target.closest('tr').querySelector('.qty-input');
+            if (input.value > 1) {
+                input.value--;
+                updateState();
+            }
+        }
+
+        if (e.target.classList.contains('remove-item')) {
+            e.target.closest('tr').remove();
+            updateState();
+        }
+    });
+
+    // Also update cart when user manually types in quantity
+    document.querySelectorAll('.qty-input').forEach(input => {
+        input.addEventListener('change', () => {
+            if (input.value < 1) input.value = 1;
+            updateState();
+        });
+    });
+
+    // Initialize on page load
+    updateState();
+</script>
+
+
