@@ -14,28 +14,23 @@ public class GuestRequestsController : Controller
     }
 
     // STEP 1: Show request form
-    public IActionResult Index(int roomId)
+    public async Task<IActionResult> Index(int roomId)
     {
         ViewBag.RoomId = roomId;
+        ViewBag.RoomNumber = _context.Rooms.FirstOrDefault(r => r.Id == roomId).Number;
 
-        ViewBag.Items = new List<string>
-        {
-            "Toothbrush",
-            "Shaving Cream",
-            "Iron",
-            "Extra Towels",
-            "Extra Pillow",
-            "Remote Control Batteries"
-        };
+        var items = await _context.RequestItems
+       .Where(i => i.IsActive)
+       .ToListAsync();
 
-        return View();
+        return View(items);
     }
 
     // STEP 2: Submit request
     [HttpPost]
     public async Task<IActionResult> PlaceRequest(
         int roomId,
-        Dictionary<string, int> items)
+        Dictionary<int, int> items)
     {
         if (items == null || !items.Any(i => i.Value > 0))
             return BadRequest("No items selected.");
@@ -51,7 +46,7 @@ public class GuestRequestsController : Controller
         {
             request.Items.Add(new ServiceRequestItem
             {
-                ItemName = item.Key,
+                RequestItemId = item.Key,
                 Quantity = item.Value
             });
         }

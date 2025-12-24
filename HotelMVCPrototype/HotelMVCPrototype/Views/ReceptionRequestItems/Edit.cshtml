@@ -1,0 +1,34 @@
+﻿@model CreateRequestItemViewModel
+
+<h2>Edit Request Item</h2>
+
+<form asp-action="Edit"
+      asp-route-id="@ViewBag.ItemId"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div class="mb-3">
+        <label>Name</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    @if (ViewBag.ExistingImage != null)
+    {
+        <img src="@ViewBag.ExistingImage"
+             width="80"
+             class="rounded mb-2" />
+    }
+
+    <div class="mb-3">
+        <label>Image (optional)</label>
+        <input asp-for="Image" type="file" class="form-control" />
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label class="form-check-label">Active</label>
+    </div>
+
+    <button class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

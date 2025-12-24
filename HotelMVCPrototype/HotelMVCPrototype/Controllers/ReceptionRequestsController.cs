@@ -1,4 +1,5 @@
 ﻿using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ public class ReceptionRequestsController : Controller
         return View(requests);
     }
 
+
     [HttpPost]
     public async Task<IActionResult> Complete(int id)
     {
@@ -37,4 +39,44 @@ public class ReceptionRequestsController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateRequestItemViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        string? imagePath = null;
+
+        if (model.Image != null)
+        {
+            var fileName = Guid.NewGuid() + Path.GetExtension(model.Image.FileName);
+            var uploadPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot/images/requests"
+            );
+
+            Directory.CreateDirectory(uploadPath);
+
+            var fullPath = Path.Combine(uploadPath, fileName);
+
+            using var stream = new FileStream(fullPath, FileMode.Create);
+            await model.Image.CopyToAsync(stream);
+
+            imagePath = "/images/requests/" + fileName;
+        }
+
+        var item = new RequestItem
+        {
+            Name = model.Name,
+            ImagePath = imagePath,
+            IsActive = model.IsActive
+        };
+
+        _context.RequestItems.Add(item);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
 }

@@ -1,0 +1,50 @@
+﻿@model List<RequestItem>
+
+<h2>Request Items</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">➕ Add Item</a>
+
+<table class="table align-middle">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Active</th>
+            <th style="width:180px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                    {
+                        <img src="@item.ImagePath" width="60" class="rounded" />
+                    }
+                </td>
+                <td>@item.Name</td>
+                <td>
+                    @(item.IsActive ? "Yes" : "No")
+                </td>
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@item.Id"
+                       class="btn btn-sm btn-primary">
+                        ✏️ Edit
+                    </a>
+
+                    <form asp-action="Delete"
+                          asp-route-id="@item.Id"
+                          method="post"
+                          class="d-inline"
+                          onsubmit="return confirm('Delete this item?');">
+                        <button class="btn btn-sm btn-danger">
+                            🗑 Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -7,7 +7,8 @@
         public int ServiceRequestId { get; set; }
         public ServiceRequest ServiceRequest { get; set; }
 
-        public string ItemName { get; set; }   // Toothbrush, Iron, etc.
+        public int RequestItemId { get; set; }
+        public RequestItem RequestItem { get; set; } = null!;
         public int Quantity { get; set; }
     }
 }

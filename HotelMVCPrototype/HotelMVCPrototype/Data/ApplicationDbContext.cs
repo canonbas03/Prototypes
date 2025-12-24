@@ -35,6 +35,8 @@ namespace HotelMVCPrototype.Data
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<ServiceRequestItem> ServiceRequestItems { get; set; }
 
+        public DbSet<RequestItem> RequestItems { get; set; }
+
 
     }
 }

@@ -1,0 +1,36 @@
+﻿@model CreateRequestItemViewModel
+
+<h2 class="mb-4">➕ Add Request Item</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="col-md-6">
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Image" class="form-label">Image (optional)</label>
+        <input asp-for="Image" type="file" class="form-control" accept="image/*" />
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label">
+            Active (visible to guests)
+        </label>
+    </div>
+
+    <button class="btn btn-success">
+        💾 Save Item
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary ms-2">
+        Cancel
+    </a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

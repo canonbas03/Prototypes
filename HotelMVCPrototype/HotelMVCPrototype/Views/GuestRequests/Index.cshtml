@@ -1,37 +1,35 @@
-﻿@{
-    ViewData["Title"] = "Request Items";
-    var items = ViewBag.Items as List<string>;
-}
+﻿@model List<RequestItem>
 
-<h2>Request Items for Room</h2>
+<h2>🛎️ Request Items – Room @ViewBag.RoomNumber</h2>
 
 <form asp-action="PlaceRequest" method="post">
     <input type="hidden" name="roomId" value="@ViewBag.RoomId" />
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in items)
-            {
-                <tr>
-                    <td>@item</td>
-                    <td>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3">
+                <div class="card mb-4 text-center">
+                    <img src="@(item.ImagePath ?? "/images/placeholder.webp")"
+                         class="card-img-top"
+                         style="height:160px; object-fit:cover" />
+
+                    <div class="card-body">
+                        <h6>@item.Name</h6>
+
                         <input type="number"
-                               name="items[@item]"
+                               name="items[@item.Id]"
                                value="0"
                                min="0"
-                               class="form-control"
-                               style="width:80px;" />
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                               class="form-control text-center"
+                               style="width:80px; margin:auto;" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
-    <button type="submit" class="btn btn-primary">Send Request</button>
+    <button class="btn btn-primary btn-lg">
+        Send Request
+    </button>
 </form>

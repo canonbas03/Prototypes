@@ -19,7 +19,7 @@
                 <td>
                     @foreach (var item in req.Items)
                     {
-                        <div>@item.ItemName × @item.Quantity</div>
+                        @* <div>@item.ItemName × @item.Quantity</div> *@
                     }
                 </td>
                 <td>@req.CreatedAt.ToShortTimeString()</td>
