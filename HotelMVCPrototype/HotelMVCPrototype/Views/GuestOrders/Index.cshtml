@@ -10,7 +10,7 @@
         <li class="nav-item">
             <button class="nav-link @(cat.Key == MenuCategory.Food ? "active" : "")"
                     data-category="@cat.Key">
-                @cat.Key
+                @cat.Key.GetDisplayName()
             </button>
         </li>
     }
