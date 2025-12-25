@@ -22,7 +22,7 @@
         <tbody id="checkoutBody">
             @foreach (var item in Model)
             {
-                <tr data-id="@item.MenuItemId" data-price="@item.Price">
+                    <tr data-id="@item.MenuItemId" data-price="@item.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)">
                     <td>@item.Name</td>
 
                     <td>
