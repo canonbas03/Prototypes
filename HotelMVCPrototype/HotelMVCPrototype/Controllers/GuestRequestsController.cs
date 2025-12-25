@@ -35,6 +35,25 @@ public class GuestRequestsController : Controller
         if (items == null || !items.Any(i => i.Value > 0))
             return BadRequest("No items selected.");
 
+        // Load all request items from DB
+        var dbItems = await _context.RequestItems
+            .Where(i => items.Keys.Contains(i.Id))
+            .ToListAsync();
+
+        // Validate quantities
+        foreach (var dbItem in dbItems)
+        {
+            int requestedQty = items[dbItem.Id];
+
+            if (dbItem.MaxQuantity.HasValue &&
+                requestedQty > dbItem.MaxQuantity.Value)
+            {
+                return BadRequest(
+                    $"You can request maximum {dbItem.MaxQuantity} of '{dbItem.Name}'."
+                );
+            }
+        }
+
         var request = new ServiceRequest
         {
             RoomId = roomId,

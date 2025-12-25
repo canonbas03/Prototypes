@@ -10,6 +10,8 @@ namespace HotelMVCPrototype.Models
         public IFormFile? Image { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        public int? MaxQuantity { get; set; }
     }
 
 }

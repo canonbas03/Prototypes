@@ -24,6 +24,15 @@
         <input asp-for="Image" type="file" class="form-control" />
     </div>
 
+    <div class="mb-3">
+        <label class="form-label">Max Quantity</label>
+        <input asp-for="MaxQuantity"
+               type="number"
+               min="1"
+               class="form-control"
+               placeholder="Leave empty for unlimited" />
+    </div>
+
     <div class="form-check mb-3">
         <input asp-for="IsActive" class="form-check-input" />
         <label class="form-check-label">Active</label>

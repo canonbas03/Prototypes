@@ -27,7 +27,9 @@ public class ReceptionRequestItemsController : Controller
         var item = new RequestItem
         {
             Name = model.Name,
-            IsActive = model.IsActive
+            IsActive = model.IsActive,
+            MaxQuantity = model.MaxQuantity
+
         };
 
         if (model.Image != null)
@@ -52,7 +54,9 @@ public class ReceptionRequestItemsController : Controller
         var model = new CreateRequestItemViewModel
         {
             Name = item.Name,
-            IsActive = item.IsActive
+            IsActive = item.IsActive,
+            MaxQuantity = item.MaxQuantity
+
             // Image is NOT set (file inputs can't be prefilled)
         };
 
@@ -72,6 +76,7 @@ public class ReceptionRequestItemsController : Controller
 
         item.Name = model.Name;
         item.IsActive = model.IsActive;
+        item.MaxQuantity = model.MaxQuantity;
 
         if (model.Image != null)
         {
