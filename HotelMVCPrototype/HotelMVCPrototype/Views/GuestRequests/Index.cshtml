@@ -17,20 +17,92 @@
                     <div class="card-body">
                         <h6>@item.Name</h6>
 
-                        <input type="number"
-                               name="items[@item.Id]"
-                               min="0"
-                               max="@(item.MaxQuantity ?? 99)"
-                               value="0"
-                               class="form-control text-center"
-                               style="width:80px; margin:auto;" />
+                        <div class="d-flex align-items-center justify-content-center gap-2 mt-2">
+                            <span class="fw-semibold">Quantity</span>
+
+                            <div class="input-group input-group-sm" style="width:auto;">
+                                <button type="button"
+                                        id="minus-@item.Id"
+                                        class="btn btn-outline-secondary"
+                                        onclick="changeQty(@item.Id, -1)">
+                                    −
+                                </button>
+
+                                <input type="text"
+                                       id="qty-@item.Id"
+                                       name="items[@item.Id]"
+                                       value="0"
+                                       class="form-control text-center bg-light"
+                                       style="width:60px;"
+                                       readonly
+                                       data-max="@(item.MaxQuantity ?? 99)" />
+
+                                <button type="button"
+                                        id="plus-@item.Id"
+                                        class="btn btn-primary"
+                                        onclick="changeQty(@item.Id, 1)">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
+
                 </div>
             </div>
         }
     </div>
 
-    <button class="btn btn-primary btn-lg">
-        Send Request
-    </button>
+    <div class="d-flex justify-content-center mt-4">
+        <button id="submitBtn" class="btn btn-primary btn-lg">
+            Send Request
+        </button>
+    </div>
+
 </form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const submitBtn = document.getElementById("submitBtn");
+        if (!submitBtn) return;
+
+        function updateSubmitButton() {
+            const qtyInputs = document.querySelectorAll("input[id^='qty-']");
+            let hasQty = false;
+
+            qtyInputs.forEach(input => {
+                const value = parseInt(input.value) || 0;
+                if (value > 0) hasQty = true;
+            });
+
+            submitBtn.style.display = hasQty ? "inline-block" : "none";
+        }
+
+        // Attach change events to quantity inputs
+        document.querySelectorAll("input[id^='qty-']").forEach(input => {
+            input.addEventListener("change", updateSubmitButton);
+        });
+
+        // Initialize button visibility
+        updateSubmitButton();
+
+        // Your increment/decrement function
+        window.changeQty = function(id, delta) {
+            const input = document.getElementById(`qty-${id}`);
+            const minusBtn = document.getElementById(`minus-${id}`);
+            const plusBtn = document.getElementById(`plus-${id}`);
+
+            const min = 0;
+            const max = parseInt(input.dataset.max) || 99;
+
+            let value = parseInt(input.value) || 0;
+            value = Math.min(max, Math.max(min, value + delta));
+            input.value = value;
+
+            updateSubmitButton(); // Show/hide submit button
+        };
+    });
+</script>
+
+

@@ -9,6 +9,7 @@
         <tr>
             <th>Image</th>
             <th>Name</th>
+            <th>Max Allowed</th>
             <th>Active</th>
             <th style="width:180px"></th>
         </tr>
@@ -24,6 +25,7 @@
                     }
                 </td>
                 <td>@item.Name</td>
+                <td>@item.MaxQuantity</td>
                 <td>
                     @(item.IsActive ? "Yes" : "No")
                 </td>
