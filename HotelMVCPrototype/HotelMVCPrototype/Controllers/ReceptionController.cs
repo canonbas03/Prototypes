@@ -42,10 +42,10 @@ namespace HotelMVCPrototype.Controllers
                 {
                     RoomId = r.Id,
                     Number = r.Number,
-                    Top = r.MapTop,
-                    Left = r.MapLeft,
-                    Width = r.MapWidth,
-                    Height = r.MapHeight,
+                    TopPercent = r.MapTopPercent,
+                    LeftPercent = r.MapLeftPercent,
+                    WidthPercent = r.MapWidthPercent,
+                    HeightPercent = r.MapHeightPercent,
                     StatusColor = r.Status switch
                     {
                         RoomStatus.Available => "#164E63",   // Forest Green

@@ -19,7 +19,15 @@
                 <td>
                     @foreach (var item in req.Items)
                     {
+<<<<<<< Updated upstream
                         @* <div>@item.RequestItem.Name × @item.Quantity</div> *@
+=======
+<<<<<<< Updated upstream
+                        <div>@item.ItemName × @item.Quantity</div>
+=======
+                        <div>@item.RequestItem.Name × @item.Quantity</div>
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
                     }
                 </td>
                 <td>@req.CreatedAt.ToShortTimeString()</td>

@@ -1,4 +1,5 @@
-﻿@model HotelMVCPrototype.Models.ReceptionDashboardViewModel
+﻿@using System.Globalization
+@model HotelMVCPrototype.Models.ReceptionDashboardViewModel
 
 @{
     ViewData["Title"] = "Reception Dashboard";
@@ -11,11 +12,11 @@
     <div class="col-md-8">
         <partial name="_RoomStatistics" model="Model.RoomStatistics" />
 
-       
-        <div class="floor-plan-container" style="position: relative; width: 1408px; height: 400px;">
+
+        <div class="floor-plan-container" style="position: relative; width:100%; margin:auto; height:auto;">
             <img src="@Url.Content($"~/images/HotelFloorPlanF{Model.CurrentFloor}.png")"
                  alt="Floor @Model.CurrentFloor"
-                 style="width:60%;" />
+                 style="width:100%; height:auto; display:block;" />
 
             @foreach (var room in Model.RoomMap)
             {
@@ -24,35 +25,37 @@
                      data-room-id="@room.RoomId"
                      data-room-number="@room.Number"
                      style="
-                position:absolute;
-                    top:@($"{room.Top}px");
-                left:@($"{room.Left}px");
-                width:@($"{room.Width}px");
-                height:@($"{room.Height}px");
-                background-color:@room.StatusColor;
-                opacity:0.75;
-                    border:2px solid @room.StatusColor;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                color:white;
-                font-weight:600;
-             ">
+                     position:absolute;
+                     top: @room.TopPercent.ToString(System.Globalization.CultureInfo.InvariantCulture)%;
+                     left: @room.LeftPercent.ToString(System.Globalization.CultureInfo.InvariantCulture)%;
+                     width: @room.WidthPercent.ToString(System.Globalization.CultureInfo.InvariantCulture)%;
+                     height: @room.HeightPercent.ToString(System.Globalization.CultureInfo.InvariantCulture)%;
+                     background-color: @room.StatusColor;
+                     opacity:0.75;
+                     border:2px solid @room.StatusColor;
+                     display:flex;
+                     align-items:center;
+                     justify-content:center;
+                     color:white;
+                     font-weight:600;
+                 ">
                 </div>
             }
-
-
         </div>
-        <div class="btn-group mb-5" role="group">
-            @for (int i = 1; i <= 3; i++)
-            {
-                <a asp-action="Index"
-                   asp-route-floor="@i"
-                   class="btn @(Model.CurrentFloor == i ? "btn-primary" : "btn-outline-primary")">
-                    Floor @i
-                </a>
-            }
+
+        <div class="d-flex justify-content-end mb-5">
+            <div class="btn-group" role="group">
+                @for (int i = 1; i <= 3; i++)
+                {
+                    <a asp-action="Index"
+                       asp-route-floor="@i"
+                       class="btn @(Model.CurrentFloor == i ? "btn-primary" : "btn-outline-primary")">
+                        Floor @i
+                    </a>
+                }
+            </div>
         </div>
+
 
     </div>
 
@@ -61,7 +64,7 @@
         <partial name="_ReceptionRequests" model="Model.NewRequests" />
     </div>
 
-   
+
 
 </div>
 

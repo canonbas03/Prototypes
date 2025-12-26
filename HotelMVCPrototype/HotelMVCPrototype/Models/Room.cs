@@ -29,10 +29,10 @@ namespace HotelMVCPrototype.Models
 
 
         // Floor plan mapping
-        public int MapTop { get; set; }
-        public int MapLeft { get; set; }
-        public int MapWidth { get; set; }
-        public int MapHeight { get; set; }
+        public double MapTopPercent { get; set; }
+        public double MapLeftPercent { get; set; }
+        public double MapWidthPercent { get; set; }
+        public double MapHeightPercent { get; set; }
         public int Floor { get; set; }
 
     }
