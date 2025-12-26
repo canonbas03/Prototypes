@@ -1,4 +1,5 @@
 ﻿using HotelMVCPrototype.Models;
+using System.ComponentModel.DataAnnotations;
 
 public class Guest
 {
@@ -11,10 +12,13 @@ public class Guest
     public string LastName { get; set; }
 
     public string EGN { get; set; }          // National ID
+    [Required]
+    [DataType(DataType.Date)]
+    [Display(Name = "Birth Date")]
     public DateTime BirthDate { get; set; }
 
     public string Sex { get; set; }           // "Male", "Female", "Other"
-    public string Nationality { get; set; }
+    public Nationality? Nationality { get; set; }
 
     public string? Phone { get; set; }
 }

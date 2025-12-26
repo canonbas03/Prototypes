@@ -10,26 +10,33 @@
         </div>
     </div>
 
-    <div class="row mt-2">
-        <div class="col">
-            <input asp-for="EGN" class="form-control" placeholder="EGN" />
+        <div class="row mt-2 align-items-center">
+            <div class="col-md-6">
+                <input asp-for="EGN" class="form-control" placeholder="EGN" />
+            </div>
+            <div class="col-md-6 d-flex align-items-center">
+                <label asp-for="BirthDate" class="me-2 mb-0">Birthdate</label>
+            <input asp-for="BirthDate" type="date" class="form-control" value="@(Model.BirthDate.ToString("yyyy-MM-dd"))" />
+            </div>
         </div>
-        <div class="col">
-            <input asp-for="BirthDate" type="date" class="form-control" />
-        </div>
-    </div>
 
     <div class="row mt-2">
         <div class="col">
             <select asp-for="Sex" class="form-control">
                 <option value="">Sex</option>
-                <option>Male</option>
                 <option>Female</option>
+                <option>Male</option>
                 <option>Other</option>
             </select>
         </div>
         <div class="col">
-            <input asp-for="Nationality" class="form-control" placeholder="Nationality" />
+            <select asp-for="Nationality" class="form-control">
+                <option value="">Select Nationality</option>
+                @foreach (var nat in Enum.GetValues(typeof(Nationality)).Cast<Nationality>())
+                {
+                    <option value="@nat">@nat.GetDisplayName()</option>
+                }
+            </select>
         </div>
     </div>
 
