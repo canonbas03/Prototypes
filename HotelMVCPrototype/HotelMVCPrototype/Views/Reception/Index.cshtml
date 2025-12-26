@@ -14,7 +14,7 @@
 
 
         <div class="floor-plan-container" style="position: relative; width:100%; margin:auto; height:auto;">
-            <img src="@Url.Content($"~/images/HotelFloorPlanF{Model.CurrentFloor}.png")"
+            <img class="rounded-3" src="@Url.Content($"~/images/HotelFloorPlanF{Model.CurrentFloor}.png")"
                  alt="Floor @Model.CurrentFloor"
                  style="width:100%; height:auto; display:block;" />
 
@@ -41,20 +41,22 @@
                  ">
                 </div>
             }
-        </div>
 
-        <div class="d-flex justify-content-end mb-5">
-            <div class="btn-group" role="group">
-                @for (int i = 1; i <= 3; i++)
-                {
-                    <a asp-action="Index"
-                       asp-route-floor="@i"
-                       class="btn @(Model.CurrentFloor == i ? "btn-primary" : "btn-outline-primary")">
-                        Floor @i
-                    </a>
-                }
+            <!-- Floor buttons on top of image -->
+            <div style="position:absolute; bottom:5px; right:10px;">
+                <div class="btn-group" role="group">
+                    @for (int i = 1; i <= 3; i++)
+                    {
+                        <a asp-action="Index"
+                           asp-route-floor="@i"
+                           class="btn @(Model.CurrentFloor == i ? "btn-primary" : "btn-outline-primary")">
+                            Floor @i
+                        </a>
+                    }
+                </div>
             </div>
         </div>
+
 
 
     </div>
@@ -68,8 +70,5 @@
 
 </div>
 
-<div class="floor-plan-container" style="position: relative; width: 1408px; height: 736px;">
-    <img src="~/images/HotelFlooPlanF3Remastered.png" alt="Floor 1" style="width: 100%; height: 100%;" />
-</div>
 
 
