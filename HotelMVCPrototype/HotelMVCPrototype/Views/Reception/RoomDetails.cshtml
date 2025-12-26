@@ -7,10 +7,10 @@
 <h2>Room @Model.Number</h2>
 
 <div class="card shadow-sm mb-4">
-    <div class="card-body">
-        <p><strong>Type:</strong> @Model.Type</p>
-        <p><strong>Status:</strong> @Model.Status</p>
-        <p><strong>Floor:</strong> @Model.Floor</p>
+    <div class="card-body d-flex flex-wrap gap-3">
+        <span><strong>Type:</strong> @Model.Type</span>
+        <span><strong>Status:</strong> @Model.Status</span>
+        <span><strong>Floor:</strong> @Model.Floor</span>
     </div>
 </div>
 
@@ -19,10 +19,10 @@
     var stay = Model.GuestAssignments.First(ga => ga.IsActive);
 
     <div class="card shadow-sm">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <strong>Current Stay</strong>
             <form asp-action="Depart" method="post"
-                  onsubmit="return confirm('Are you sure you want to check out this room?');">
+                  onsubmit="return confirm('Are you sure you want to check out this room?');" class="mb-0">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="assignmentId" value="@stay.Id" />
                 <button class="btn btn-danger btn-sm">
