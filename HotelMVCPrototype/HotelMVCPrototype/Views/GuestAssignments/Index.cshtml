@@ -1,35 +1,91 @@
 ﻿@model IEnumerable<HotelMVCPrototype.Models.GuestAssignment>
 
 <h2>Guest Assignments</h2>
-<a asp-action="Create" class="btn btn-success mb-3">Check-In Guest</a>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Guest Name</th>
-            <th>Room Number</th>
-            <th>Check-In</th>
-            <th>Check-Out</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>@* 
-    <tbody>
-        @foreach (var g in Model)
-        {
+<form asp-action="Create" method="get" class="d-flex align-items-end gap-2 mb-4">
+    <div>
+        <label for="roomSelector" class="form-label">Select Room</label>
+        <div class="d-flex align-items-end gap-2">
+            <select id="roomSelector" name="roomId" class="form-select" required>
+                <option value="">-- Select room --</option>
+                @foreach (var room in ViewBag.AvailableRooms)
+                {
+                    <option value="@room.Id">@room.Number</option>
+                }
+            </select>
+            <div>
+                <button type="submit" class="btn btn-success text-nowrap">Check-In Guest</button>
+            </div>
+        </div>
+    </div>
+    
+
+</form>
+
+
+
+
+   
+        @if(Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
             <tr>
-              <td>@g.GuestName</td>
-                 <td>@g.Room.Number</td>
-                <td>@g.CheckInDate</td>
-                <td>@(g.CheckOutDate)</td>
-                <td>@(g.IsActive ? "Active" : "Completed")</td>
-                <td>
-                    @if (g.IsActive)
-                    {
-                        <a asp-action="CheckOut" asp-route-id="@g.Id" class="btn btn-sm btn-warning">Check-Out</a>
-                    }
-                </td>
+                <th>Guest</th>
+                <th>Room</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody> *@
+        </thead>
+        <tbody>
+            @foreach (var stay in Model)
+            {
+                <tr>
+                    <!-- Guests -->
+                    <td>
+                        @foreach (var guest in stay.Guests)
+                        {
+                            <div>
+                                <strong>@guest.FirstName @guest.LastName</strong>
+                            </div>
+                        }
+                    </td>
+
+                    <!-- Room -->
+                    <td>@stay.Room.Number</td>
+
+                    <!-- Dates -->
+                    <td>@stay.CheckInDate.ToShortDateString()</td>
+                    <td>@stay.CheckOutDate.ToShortDateString()</td>
+
+                    <!-- Status -->
+                    <td>
+                        @(stay.IsActive ? "Active" : "Completed")
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        @if (stay.IsActive)
+                        {
+                            <a asp-action="CheckOut"
+                               asp-route-id="@stay.Id"
+                               class="btn btn-warning btn-sm">
+                                Check Out
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+
 </table>
+        }
+        else
+        {
+        <div class="d-flex justify-content-center align-content-center">
+            <p>Currently, there are no guests in the hotel.</p>
+        </div>
+        }
+    

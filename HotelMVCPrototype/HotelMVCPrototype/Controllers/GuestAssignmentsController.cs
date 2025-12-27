@@ -19,11 +19,21 @@ namespace HotelMVCPrototype.Controllers
         // GET: GuestAssignments
         public async Task<IActionResult> Index()
         {
-            //var assignments = await _context.GuestAssignments
-            //                        .Include(g => g.Room)
-            //                        .ToListAsync();
-            return View();
+            var assignments = await _context.GuestAssignments
+                .Include(g => g.Room)
+                .Include(g => g.Guests)
+                .Where(g => g.IsActive)
+                .ToListAsync();
+
+            var availableRooms = await _context.Rooms
+                .Where(r => r.Status == RoomStatus.Available)
+                .ToListAsync();
+
+            ViewBag.AvailableRooms = availableRooms;
+
+            return View(assignments);
         }
+
 
         // GET: GuestAssignments/Create
 
