@@ -192,3 +192,11 @@ h1, h2, h3, h4, h5, h6 {
         transform: scale(0.98);
     }
 
+    .dnd-badge {
+    position: absolute;
+    top: 2px;        /* small offset from top */
+    right: 2px;      /* small offset from right */
+    opacity: 1;      /* fully visible */
+    font-size: 0.7rem;  /* make it smaller if needed */
+    z-index: 20;
+}

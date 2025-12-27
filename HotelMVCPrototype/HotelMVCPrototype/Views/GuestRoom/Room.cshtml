@@ -1,0 +1,19 @@
+﻿@model HotelMVCPrototype.Models.Room
+
+<h2>Room @Model.Number</h2>
+
+<p>Status: @Model.Status</p>
+
+<form asp-action="ToggleDnd" method="post">
+    <input type="hidden" name="roomId" value="@Model.Id" />
+    <button type="submit" class="btn @(Model.IsDND ? "btn-warning" : "btn-outline-secondary")">
+        @(Model.IsDND ? "Disable DND" : "Enable DND")
+    </button>
+</form>
+
+@if (Model.IsDND)
+{
+    <div class="alert alert-warning mt-2">
+        Do Not Disturb is active.
+    </div>
+}

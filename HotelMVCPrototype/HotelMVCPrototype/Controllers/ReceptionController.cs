@@ -53,7 +53,8 @@ namespace HotelMVCPrototype.Controllers
                         RoomStatus.Cleaning => "#e8c53a",    // Soft Mint
                         RoomStatus.Maintenance => "#DC3545", // Red
                         _ => "#FFFFFF"
-                    }
+                    },
+                    IsDND = r.IsDND
                 })
                 .ToList();
 

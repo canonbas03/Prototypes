@@ -11,6 +11,8 @@
         public double HeightPercent { get; set; }
 
         public string StatusColor { get; set; }
+
+        public bool IsDND { get; set; }
     }
 
 }

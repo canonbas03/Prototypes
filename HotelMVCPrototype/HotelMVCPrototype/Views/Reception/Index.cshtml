@@ -39,6 +39,12 @@
                      color:white;
                      font-weight:600;
                  ">
+                    @if (room.IsDND)
+                    {
+                        <span class="badge bg-warning text-black ms-1" style="position:absolute; top:2px; right:2px; opacity:1!important;">
+                            DND
+                        </span>
+                    }
                 </div>
             }
 
