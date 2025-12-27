@@ -1,107 +1,66 @@
 ﻿@model CreateStayViewModel
 
-@{
-    ViewData["Title"] = "New Check-In";
-}
-
 <h2>New Check-In</h2>
 
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     <input type="hidden" asp-for="RoomId" />
 
     <div class="row mb-3">
         <div class="col">
-            <label class="form-label">Arrival</label>
-            <input asp-for="CheckInDate" type="date" class="form-control" />
+            <label>Arrival</label>
+            <input asp-for="CheckInDate" class="form-control" type="date" />
         </div>
         <div class="col">
-            <label class="form-label">Departure</label>
-            <input asp-for="CheckOutDate" type="date" class="form-control" />
+            <label>Departure</label>
+            <input asp-for="CheckOutDate" class="form-control" type="date" />
         </div>
     </div>
 
     <h5 class="mt-4">Guests</h5>
 
-    <button type="button" id="addGuestBtn" class="btn btn-outline-secondary mb-3">
-        + Add Guest baby
-    </button>
+    @{
+        var emptyGuest = new GuestInputViewModel();
+    }
 
     <div id="guests">
-        @for (int i = 0; i < Model.Guests.Count; i++)
+        @if (Model.Guests.Any())
         {
-            <partial name="_GuestForm" for="@Model.Guests[i]" />
+            for (int i = 0; i < Model.Guests.Count; i++)
+            {
+                <partial name="_GuestInput" for="@Model.Guests[i]" />
+            }
+        }
+        else
+        {
+            <partial name="_GuestInput" for="@emptyGuest" />
         }
     </div>
+
+    <button type="button" id="addGuestBtn" class="btn btn-outline-secondary mt-2">
+        + Add Guest
+    </button>
 
     <button type="submit" class="btn btn-success mt-3">
         Check In
     </button>
 </form>
 
-<div id="guest-template" class="d-none">
-    <div class="guest-card card mb-3 p-3">
-        <div class="row">
-            <div class="col">
-                <input name="Guests[__index__].FirstName" class="form-control" placeholder="First Name" />
-            </div>
-            <div class="col">
-                <input name="Guests[__index__].LastName" class="form-control" placeholder="Last Name" />
-            </div>
-        </div>
-
-        <div class="row mt-2 align-items-center">
-            <div class="col-md-6">
-                <input name="Guests[__index__].EGN" class="form-control" placeholder="EGN" />
-            </div>
-            <div class="col-md-6 d-flex align-items-center">
-                <label for="Guests[__index__].BirthDate" class="me-2 mb-0">Birthdate</label>
-                <input name="Guests[__index__].BirthDate" type="date" class="form-control" value="2000-01-01" />
-            </div>
-        </div>
 
 
-
-        <div class="row mt-2">
-            <div class="col">
-                <select name="Guests[__index__].Sex" class="form-control">
-                    <option value="">Sex</option> 
-                    <option>Female</option>
-                    <option>Male</option>
-                    <option>Other</option>
-                </select>
-            </div>
-            <div class="col">
-                <select name="Guests[__index__].Nationality" class="form-control" placeholder="Nationality">
-                    <option value="">Select Nationality</option>
-                    @foreach (var nat in Enum.GetValues(typeof(Nationality)).Cast<Nationality>())
-                    {
-                        <option value="@nat">@nat.GetDisplayName()</option>
-                    }
-                </select>
-            </div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="col">
-                <input name="Guests[__index__].Phone" class="form-control" placeholder="Phone (optional)" />
-            </div>
-        </div>
-
-    </div>
-</div>
 <script>
-    let guestIndex = @Model.Guests.Count;
+        let guestIndex = @Model.Guests.Count; // Start from existing guests
 
-    document.getElementById("addGuestBtn").addEventListener("click", function () {
-        const template = document.getElementById("guest-template").innerHTML;
-        const html = template.replaceAll("__index__", guestIndex);
-
-        const container = document.getElementById("guests");
-        container.insertAdjacentHTML("beforeend", html);
-
-        guestIndex++;
+    document.getElementById("addGuestBtn").addEventListener("click", () => {
+        fetch('@Url.Action("GuestTemplate", "GuestAssignments")')
+            .then(r => r.text())
+            .then(html => {
+                html = html.replace(/__index__/g, guestIndex);
+                document.getElementById("guests").insertAdjacentHTML("beforeend", html);
+                guestIndex++;
+            });
     });
 
     document.addEventListener("click", function (e) {
@@ -110,4 +69,3 @@
         }
     });
 </script>
-

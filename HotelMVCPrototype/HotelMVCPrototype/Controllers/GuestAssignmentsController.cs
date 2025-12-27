@@ -88,6 +88,10 @@ namespace HotelMVCPrototype.Controllers
             return RedirectToAction("RoomDetails", "Reception", new { id = model.RoomId });
         }
 
+        public IActionResult GuestTemplate()
+        {
+            return PartialView("_GuestInput", new GuestInputViewModel());
+        }
 
 
 

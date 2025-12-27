@@ -1,0 +1,48 @@
+﻿@* @model GuestInputViewModel
+
+<div class="guest-card card mb-3 p-3">
+    <div class="row">
+        <div class="col">
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "First name" })
+        </div>
+        <div class="col">
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Last name" })
+        </div>
+    </div>
+
+    <div class="row mt-2 align-items-center">
+        <div class="col-md-6">
+            @Html.TextBoxFor(m => m.EGN, new { @class = "form-control", placeholder = "EGN" })
+        </div>
+
+        <div class="col-md-6 d-flex align-items-center">
+            <label class="me-2 mb-0">Birthdate</label>
+            @Html.TextBoxFor(m => m.BirthDate, "{0:yyyy-MM-dd}",
+            new { @class = "form-control", type = "date" })
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            @Html.DropDownListFor(m => m.Sex,
+                        new SelectList(new[] { "Male", "Female", "Other" }),
+                        "Sex",
+                        new { @class = "form-control" })
+        </div>
+
+        <div class="col">
+            @Html.DropDownListFor(
+                        m => m.Nationality,
+                        Html.GetEnumSelectList<Nationality>(),
+                        "Nationality",
+                        new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", placeholder = "Phone (optional)" })
+        </div>
+    </div>
+</div>
+ *@

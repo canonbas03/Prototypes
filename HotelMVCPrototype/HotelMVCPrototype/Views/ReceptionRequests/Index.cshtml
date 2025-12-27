@@ -1,36 +1,47 @@
 ﻿@model List<HotelMVCPrototype.Models.ServiceRequest>
 
-<h2>Guest Requests</h2>
+<h4 class="mb-3">Guest Requests</h4>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Room</th>
-            <th>Items</th>
-            <th>Time</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-secondary text-center">
+        No active guest requests
+    </div>
+}
+else
+{
+    <div class="list-group shadow-sm">
         @foreach (var req in Model)
         {
-            <tr>
-                <td>@req.Room.Number</td>
-                <td>
-                    @foreach (var item in req.Items)
-                    {
+            <div class="list-group-item p-3">
+                <div class="d-flex justify-content-between align-items-start">
 
-                        <div>@item.RequestItem.Name × @item.Quantity</div>
-                    }
-                </td>
-                <td>@req.CreatedAt.ToShortTimeString()</td>
-                <td>
-                    <form asp-action="Complete" method="post">
+                    <div>
+                        <h6 class="mb-1">
+                            Room <span class="badge bg-primary">@req.Room.Number</span>
+                        </h6>
+
+                        <ul class="mb-1 ps-3">
+                            @foreach (var item in req.Items)
+                            {
+                                <li>@item.RequestItem.Name × @item.Quantity</li>
+                            }
+                        </ul>
+
+                        <small class="text-muted">
+                            Requested at @req.CreatedAt.ToShortTimeString()
+                        </small>
+                    </div>
+
+                    <form asp-action="Complete" method="post" class="ms-3">
                         <input type="hidden" name="id" value="@req.Id" />
-                        <button class="btn btn-success btn-sm">Done</button>
+                        <button class="btn btn-success btn-sm">
+                            ✓ Done
+                        </button>
                     </form>
-                </td>
-            </tr>
+
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+}

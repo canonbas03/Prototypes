@@ -1,0 +1,68 @@
+﻿<div class="guest-card card mb-3 p-3 position-relative">
+
+    <!-- Remove guest button -->
+    <button type="button" class="remove-guest btn btn-danger btn-sm position-absolute top-0 end-0">
+        &times;
+    </button>
+
+    <!-- REQUIRED FOR MODEL BINDING -->
+    <input type="hidden" name="Guests.index" value="__index__" />
+
+    <div class="row">
+        <div class="col">
+            <input name="Guests[__index__].FirstName"
+                   class="form-control"
+                   placeholder="First name" />
+        </div>
+        <div class="col">
+            <input name="Guests[__index__].LastName"
+                   class="form-control"
+                   placeholder="Last name" />
+        </div>
+    </div>
+
+    <div class="row mt-2 align-items-center">
+        <div class="col-md-6">
+            <input name="Guests[__index__].EGN"
+                   class="form-control"
+                   placeholder="EGN" />
+        </div>
+
+        <div class="col-md-6 d-flex align-items-center">
+            <label class="me-2 mb-0">Birthdate</label>
+            <input name="Guests[__index__].BirthDate"
+                   type="date"
+                   class="form-control"
+                   value="2000-01-01" />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <select name="Guests[__index__].Sex" class="form-control">
+                <option value="">Sex</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div class="col">
+            <select name="Guests[__index__].Nationality" class="form-control">
+                    <option value="">Select Nationality</option>
+                    @foreach (var nat in Enum.GetValues(typeof(Nationality)).Cast<Nationality>())
+                    {
+                        <option value="@nat">@nat.GetDisplayName()</option>
+                    }
+            </select>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <input name="Guests[__index__].Phone"
+                   class="form-control"
+                   placeholder="Phone (optional)" />
+        </div>
+    </div>
+</div>
