@@ -82,6 +82,7 @@ public class GuestRequestsController : Controller
     {
         var request = await _context.ServiceRequests
             .Include(r => r.Items)
+            .ThenInclude(i => i.RequestItem)
             .Include(r => r.Room)
             .FirstOrDefaultAsync(r => r.Id == id);
 
