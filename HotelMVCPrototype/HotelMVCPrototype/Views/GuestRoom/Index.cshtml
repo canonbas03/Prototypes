@@ -1,0 +1,39 @@
+﻿@model HotelMVCPrototype.Models.Room
+
+<h2>Room @Model.Number</h2>
+
+<div class="card p-3 mb-3">
+    <h5>Status</h5>
+
+    <p>
+        Do Not Disturb:
+        <strong class="@(Model.IsDND ? "text-warning" : "text-success")">
+            @(Model.IsDND ? "ON" : "OFF")
+        </strong>
+    </p>
+
+    <form asp-action="ToggleDnd" method="post">
+        <input type="hidden" name="roomId" value="@Model.Id" />
+        <button class="btn btn-warning">
+            @(Model.IsDND ? "Disable DND" : "Enable DND")
+        </button>
+    </form>
+</div>
+
+<hr />
+
+<div class="d-grid gap-3">
+    <a class="btn btn-primary"
+       asp-controller="GuestOrders"
+       asp-action="Index"
+       asp-route-roomId="@Model.Id">
+        🍽 Order Food & Drinks
+    </a>
+
+    <a class="btn btn-secondary"
+       asp-controller="GuestRequests"
+       asp-action="Index"
+       asp-route-roomId="@Model.Id">
+        🧹 Request Service
+    </a>
+</div>

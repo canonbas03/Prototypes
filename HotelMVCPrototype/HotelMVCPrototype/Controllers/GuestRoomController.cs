@@ -1,5 +1,6 @@
 ﻿using HotelMVCPrototype.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 public class GuestRoomController : Controller
 {
@@ -8,6 +9,18 @@ public class GuestRoomController : Controller
     public GuestRoomController(ApplicationDbContext context)
     {
         _context = context;
+    }
+
+    public async Task<IActionResult> Index(int roomId)
+    {
+        var room = await _context.Rooms
+            .Include(r => r.GuestAssignments)
+            .FirstOrDefaultAsync(r => r.Id == roomId);
+
+        if (room == null)
+            return NotFound();
+
+        return View(room);
     }
 
     // QR link landing page
