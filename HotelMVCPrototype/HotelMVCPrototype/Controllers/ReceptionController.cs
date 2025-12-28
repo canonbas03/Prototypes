@@ -31,6 +31,7 @@ namespace HotelMVCPrototype.Controllers
             var requests = await _context.ServiceRequests
                 .Include(r => r.Room)
                 .Include(r => r.Items)
+                .ThenInclude(i => i.RequestItem)
                 .Where(r => r.Status == ServiceRequestStatus.New)
                 .OrderBy(r => r.CreatedAt)
                 .Take(3) // side window, not full list

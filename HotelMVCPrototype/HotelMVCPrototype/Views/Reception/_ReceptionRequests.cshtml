@@ -20,8 +20,8 @@
                     <ul class="mb-1 ps-3">
                         @foreach (var item in request.Items)
                         {
-@*                             <li>@item.ItemName × @item.Quantity</li>
- *@                        }
+                            <li>@item.RequestItem.Name × @item.Quantity</li>
+                        }
                     </ul>
 
                     <small class="text-muted">
