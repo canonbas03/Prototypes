@@ -78,6 +78,8 @@ public class GuestOrdersController : Controller
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
+        await _hubContext.Clients.All.SendAsync("ReceiveNewOrder", order.Id);
+
         return RedirectToAction(nameof(ThankYou), new { id = order.Id });
     }
 

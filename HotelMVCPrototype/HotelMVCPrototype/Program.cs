@@ -77,6 +77,7 @@ namespace HotelMVCPrototype
 
 
             app.MapHub<BarHub>("/barHub");
+            app.MapHub<GuestRoomHub>("/guestRoomHub");
 
 
             app.Run();

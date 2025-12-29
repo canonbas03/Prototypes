@@ -1,14 +1,17 @@
 ﻿using HotelMVCPrototype.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 public class GuestRoomController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IHubContext<GuestRoomHub> _hub;
 
-    public GuestRoomController(ApplicationDbContext context)
+    public GuestRoomController(ApplicationDbContext context, IHubContext<GuestRoomHub> hub)
     {
         _context = context;
+        _hub = hub;
     }
 
     public async Task<IActionResult> Index(int roomId)
@@ -40,6 +43,8 @@ public class GuestRoomController : Controller
 
         room.IsDND = !room.IsDND;
         await _context.SaveChangesAsync();
+
+        await _hub.Clients.All.SendAsync("ReceiveDndUpdate", room.Id, room.IsDND);
 
         return Content(room.IsDND ? "true" : "false");
 

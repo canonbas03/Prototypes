@@ -75,6 +75,44 @@
 
 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+<script>
+    // const connection = new signalR.HubConnectionBuilder()
+    //     .withUrl("/guestRoomHub")
+    //     .build();
+
+    // connection.start().catch(err => console.error(err.toString()));
+
+    // // Listen for updates
+    // connection.on("ReceiveDndUpdate", (roomId, isDnd) => {
+    //     const badge = document.querySelector(`#room-${roomId} .dnd-badge`);
+    //     if (badge) {
+    //         badge.style.display = isDnd ? "block" : "none";
+    //     } else if (isDnd) {
+    //         // Create badge if it doesn't exist
+    //         const roomDiv = document.getElementById(`room-${roomId}`);
+    //         const span = document.createElement("span");
+    //         span.className = "badge bg-warning text-black dnd-badge";
+    //         span.style.position = "absolute";
+    //         span.style.top = "2px";
+    //         span.style.right = "2px";
+    //         span.textContent = "DND";
+    //         roomDiv.appendChild(span);
+    //     }
+    // });
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/guestRoomHub")
+        .build();
+
+      connection.on("ReceiveDndUpdate", function(orderId) {
+            // Reload the dashboard or fetch new orders via AJAX
+            location.reload();
+        });
+
+        connection.start().catch(err => console.error(err.toString()));
+</script>
+
 
 
 
