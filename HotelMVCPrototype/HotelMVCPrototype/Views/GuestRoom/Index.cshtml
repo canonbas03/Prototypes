@@ -1,61 +1,41 @@
 ﻿@model HotelMVCPrototype.Models.Room
 
-<div class="card shadow-sm mb-4 p-4">
-    <h2 class="mb-3">Room @Model.Number</h2>
+<!-- Centered hotel logo -->
+<div class="text-center my-4">
+    <img src="~/images/le-vins-logo.png" alt="Hotel Logo" style="height:60px;" />
+    <h2 class="mt-2">Le' Vins</h2>
+</div>
 
-    <div class="mb-3">
-        <h5>Set Room Status</h5>
-        <div id="dnd-wrapper">
-            <partial name="_DndToggle" model="Model" />
-        </div>
-    </div>
+<!-- Room info card -->
+<div class="card shadow-sm p-3 mb-4 mx-3">
+    <h4>Room @Model.Number</h4>
 
-    <hr />
-
-    <div class="d-grid gap-3">
-        <a class="btn btn-primary btn-lg"
-           asp-controller="GuestOrders"
-           asp-action="Index"
-           asp-route-roomId="@Model.Id">
-            🍽 Order Food & Drinks
-        </a>
-
-        <a class="btn btn-secondary btn-lg"
-           asp-controller="GuestRequests"
-           asp-action="Index"
-           asp-route-roomId="@Model.Id">
-            🧹 Request Service
-        </a>
+    <!-- DND Toggle -->
+    <div class="my-3 text-center">
+        <button id="dnd-toggle-btn"
+                class="btn @(Model.IsDND ? "btn-warning" : "btn-outline-secondary") btn-lg w-75"
+                data-room-id="@Model.Id">
+            @(Model.IsDND ? "🔕 Do Not Disturb: ON" : "🔔 Do Not Disturb: OFF")
+        </button>
     </div>
 </div>
 
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const btn = document.getElementById("dnd-toggle-btn");
-
-        btn.addEventListener("click", () => {
-            const roomId = btn.dataset.roomId;
-
-            fetch(`/GuestRoom/ToggleDnd?roomId=${roomId}`, {
-                method: "POST",
-                headers: {
-                    "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]')?.value
-                }
-            })
-            .then(r => r.text())
-            .then(isDnd => {
-                if (isDnd === "true") {
-                    btn.classList.remove("btn-outline-secondary");
-                    btn.classList.add("btn-warning");
-                    btn.textContent = "Do Not Disturb: ON";
-                } else {
-                    btn.classList.remove("btn-warning");
-                    btn.classList.add("btn-outline-secondary");
-                    btn.textContent = "Do Not Disturb: OFF";
-                }
-            });
-        });
-    });
-</script>
-
+<!-- Actions cards side by side -->
+<div class="row mx-3 g-3">
+    <div class="col-6">
+        <a class="card text-center p-3 shadow-sm h-100"
+           asp-controller="GuestOrders" asp-action="Index" asp-route-roomId="@Model.Id"
+           style="text-decoration:none; color:inherit;">
+            <img src="~/images/order-menu.png" alt="Order Food" class="img-fluid mb-2" style="height:80px;">
+            <h5>Order Food & Drinks</h5>
+        </a>
+    </div>
+    <div class="col-6">
+        <a class="card text-center p-3 shadow-sm h-100"
+           asp-controller="GuestRequests" asp-action="Index" asp-route-roomId="@Model.Id"
+           style="text-decoration:none; color:inherit;">
+            <img src="~/images/request-service.png" alt="Request Service" class="img-fluid mb-2" style="height:80px;">
+            <h5>Request Service</h5>
+        </a>
+    </div>
+</div>
