@@ -202,7 +202,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-body {
+.guest-body {
     background-color: #F0F4F2;
     margin: 0;
     font-family: 'Kalnia', sans-serif;
