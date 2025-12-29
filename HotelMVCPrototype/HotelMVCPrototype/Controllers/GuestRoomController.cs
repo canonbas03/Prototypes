@@ -41,6 +41,8 @@ public class GuestRoomController : Controller
         room.IsDND = !room.IsDND;
         await _context.SaveChangesAsync();
 
-        return RedirectToAction(nameof(Room), new { roomId });
+        return Content(room.IsDND ? "true" : "false");
+
+        //return RedirectToAction(nameof(Room), new { roomId });
     }
 }

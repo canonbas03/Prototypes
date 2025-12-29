@@ -5,7 +5,11 @@
 <div class="card p-3 mb-3">
     <h5>Status</h5>
 
-    <p>
+    <div id="dnd-wrapper">
+        <partial name="_DndToggle" model="Model" />
+    </div>
+
+   @*  <p>
         Do Not Disturb:
         <strong class="@(Model.IsDND ? "text-warning" : "text-success")">
             @(Model.IsDND ? "ON" : "OFF")
@@ -17,7 +21,7 @@
         <button class="btn btn-warning">
             @(Model.IsDND ? "Disable DND" : "Enable DND")
         </button>
-    </form>
+    </form> *@
 </div>
 
 <hr />
@@ -37,3 +41,33 @@
         🧹 Request Service
     </a>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("dnd-toggle-btn");
+
+        btn.addEventListener("click", () => {
+            const roomId = btn.dataset.roomId;
+
+            fetch(`/GuestRoom/ToggleDnd?roomId=${roomId}`, {
+                method: "POST",
+                headers: {
+                    "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                }
+            })
+            .then(r => r.text())
+            .then(isDnd => {
+                if (isDnd === "true") {
+                    btn.classList.remove("btn-outline-secondary");
+                    btn.classList.add("btn-warning");
+                    btn.textContent = "Do Not Disturb: ON";
+                } else {
+                    btn.classList.remove("btn-warning");
+                    btn.classList.add("btn-outline-secondary");
+                    btn.textContent = "Do Not Disturb: OFF";
+                }
+            });
+        });
+    });
+</script>
+

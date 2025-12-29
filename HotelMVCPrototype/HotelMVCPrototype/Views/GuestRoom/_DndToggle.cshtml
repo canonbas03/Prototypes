@@ -1,0 +1,21 @@
+﻿@model HotelMVCPrototype.Models.Room
+
+<div id="dnd-container">
+    <p>
+        <strong>DND Status:</strong>
+        <span class="@(Model.IsDND ? "text-warning" : "text-success")">
+            @(Model.IsDND ? "ON" : "OFF")
+        </span>
+    </p>
+
+
+<div id="dnd-container">
+    <button type="button"
+            class="btn @(Model.IsDND ? "btn-warning" : "btn-outline-secondary")"
+            data-room-id="@Model.Id"
+            id="dnd-toggle-btn">
+        @(Model.IsDND ? "Do Not Disturb: ON" : "Do Not Disturb: OFF")
+    </button>
+</div>
+
+</div>
