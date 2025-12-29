@@ -200,3 +200,42 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.7rem;  /* make it smaller if needed */
     z-index: 20;
 }
+
+
+body {
+    background-color: #F0F4F2;
+    margin: 0;
+    font-family: 'Kalnia', sans-serif;
+}
+
+.guest-header {
+    background: #164E63;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.guest-logo {
+    height: 122px;
+    max-width: 90%;
+}
+
+.room-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 10px 0;
+}
+
+.room-text {
+    font-size: 32px;
+    font-weight: 500; /* medium */
+    color: #2f2f2f;
+}
+    .room-title .ornament {
+        height: 23px; /* adjust to taste */
+        opacity: 0.7;
+    }
+
+        .room-title .ornament.right {
+            transform: scaleX(-1); /* mirror horizontally */
+        }
