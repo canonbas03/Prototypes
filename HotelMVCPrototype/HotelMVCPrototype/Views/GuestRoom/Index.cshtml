@@ -1,4 +1,7 @@
-﻿@model HotelMVCPrototype.Models.Room
+﻿@{
+    Layout = "_GuestLayout";
+}
+@model HotelMVCPrototype.Models.Room
 
 <!-- Centered hotel logo -->
 <div class="text-center my-4">
@@ -17,6 +20,13 @@
                 data-room-id="@Model.Id">
             @(Model.IsDND ? "🔕 Do Not Disturb: ON" : "🔔 Do Not Disturb: OFF")
         </button>
+    </div>
+</div>
+
+<div class="card shadow-sm p-3 mb-4 mx-3">
+    <h5>Set Room Status</h5>
+    <div id="dnd-wrapper">
+        <partial name="_DndToggle" model="Model" />
     </div>
 </div>
 
