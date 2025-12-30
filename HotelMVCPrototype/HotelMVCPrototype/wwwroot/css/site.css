@@ -293,18 +293,34 @@ body {
     justify-content: space-evenly; /* vertical centering */
     align-items: center;
 }
-.dnd-card {
-    background: #FFC107;
+.action-cards a{
+    text-decoration: none;
+    color: inherit;
+}
+/* SHARED CARD STYLE */
+.dnd-card,
+.report-card {
     width: 141px;
     height: 69px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* vertical centering */
+    justify-content: center;
     align-items: center;
-    gap: 0px;
-    box-shadow: 0px 3px 3px 1px rgba(0,0,0,0.20);
+    box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+/* Individual colors */
+.dnd-card {
+    background: #FFC107;
+}
+
+.report-card {
+    background: #E1696B;
+}
+
 .dnd-text {
     font-weight: 500;
     font-size: 16px;
@@ -316,28 +332,12 @@ body {
     line-height: 0.9;
 }
 
-.dnd-card {
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+.dnd-card:hover,
+.report-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
 }
 
-    .dnd-card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 14px rgba(0,0,0,0.2);
-    }
-
-.report-card {
-    background: #E1696B;
-    width: 141px;
-    height: 69px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* vertical centering */
-    align-items: center;
-    gap: 0px;
-    box-shadow: 0px 3px 3px 1px rgba(0,0,0,0.20);
-}
 
 .report-text {
     font-weight: 500;

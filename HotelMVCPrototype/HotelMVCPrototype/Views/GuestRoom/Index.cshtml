@@ -5,7 +5,7 @@
 
 <div class="room-title">
     <img src="/images/ornament.png" class="ornament left" alt="">
-    <span class="room-text">Room 312</span>
+    <span class="room-text">Room @Model.Number</span>
     <img src="/images/ornament.png" class="ornament right" alt="">
 </div>
 
@@ -33,12 +33,16 @@
 
 <!-- DND Toggle -->
 <div class="action-cards">
-    <div class="dnd-card">
-        <div class="dnd-text">
-            Do Not Disturb
-        </div>
-        <div class="dnd-status-text">
-            ON
+    <div class="dnd-card"
+         id="dnd-card"
+         data-room-id="@Model.Id"
+         data-is-dnd="@Model.IsDND.ToString().ToLower()"
+         role="button"
+         tabindex="0">
+
+        <div class="dnd-text">Do Not Disturb</div>
+        <div class="dnd-status-text" id="dnd-status">
+            @(Model.IsDND ? "ON" : "OFF")
         </div>
     </div>
 
@@ -90,22 +94,33 @@
     </div>
 </div>
 
-<!-- Actions cards side by side -->
-<div class="row mx-3 g-3">
-    <div class="col-6">
-        <a class="card text-center p-3 shadow-sm h-100"
-           asp-controller="GuestOrders" asp-action="Index" asp-route-roomId="@Model.Id"
-           style="text-decoration:none; color:inherit;">
-            <img src="~/images/order-menu.png" alt="Order Food" class="img-fluid mb-2" style="height:80px;">
-            <h5>Order Food & Drinks</h5>
-        </a>
-    </div>
-    <div class="col-6">
-        <a class="card text-center p-3 shadow-sm h-100"
-           asp-controller="GuestRequests" asp-action="Index" asp-route-roomId="@Model.Id"
-           style="text-decoration:none; color:inherit;">
-            <img src="~/images/request-service.png" alt="Request Service" class="img-fluid mb-2" style="height:80px;">
-            <h5>Request Service</h5>
-        </a>
-    </div>
-</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const card = document.getElementById("dnd-card");
+        const statusText = document.getElementById("dnd-status");
+        const cardInner = document.getElementById("dnd-card-inner");
+
+        let isDnd = card.dataset.isDnd === "true";
+        card.style.backgroundColor = isDnd ? "#FFC107" : "#E5E7EB";
+
+        card.addEventListener("click", () => {
+            const roomId = card.dataset.roomId;
+
+            fetch(`/GuestRoom/ToggleDnd?roomId=${roomId}`, {
+                method: "POST",
+                headers: {
+                    "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                }
+            })
+            .then(res => res.text())
+            .then(isDnd => {
+                const enabled = isDnd === "true";
+
+                statusText.textContent = enabled ? "ON" : "OFF";
+
+                card.style.backgroundColor = enabled ? "#FFC107" : "#E5E7EB";
+            });
+        });
+    });
+</script>
