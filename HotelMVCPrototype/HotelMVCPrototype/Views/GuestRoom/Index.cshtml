@@ -9,51 +9,42 @@
     <img src="/images/ornament.png" class="ornament right" alt="">
 </div>
 
-<hr />
+<div class="card-collection">
+    <a asp-action="Index" asp-controller="GuestOrders" asp-route-roomId="@Model.Id" class="room-card">
+        <div class="card-inner">
+            <img src="~/images/order-menu.png" alt="Food" class="card-image">
 
-<!-- Centered hotel logo -->
-<div class="text-center my-4">
-    <img src="~/images/le-vins-logo.png" alt="Hotel Logo" style="height:60px;" />
-    <h2 class="mt-2">Le' Vins</h2>
+            <div class="card-text">
+                Order Food & Drinks
+            </div>
+        </div>
+    </a>
+
+    <a asp-action="Index" asp-controller="GuestRequests" asp-route-roomId="@Model.Id" class="room-card">
+        <div class="card-inner">
+            <img src="~/images/request-service.png" alt="Services" class="card-image">
+
+            <div class="card-text">
+                Request Service
+            </div>
+        </div>
+    </a>
 </div>
 
-<!-- Room info card -->
-<div class="card shadow-sm p-3 mb-4 mx-3">
-    <h4>Room @Model.Number</h4>
+<!-- DND Toggle -->
+<div class="action-cards">
+    <partial name="_DndToggle" model="Model" />
 
-    <!-- DND Toggle -->
-    <div class="my-3 text-center">
-        <button id="dnd-toggle-btn"
-                class="btn @(Model.IsDND ? "btn-warning" : "btn-outline-secondary") btn-lg w-75"
-                data-room-id="@Model.Id">
-            @(Model.IsDND ? "🔕 Do Not Disturb: ON" : "🔔 Do Not Disturb: OFF")
-        </button>
-    </div>
+    @* Change this *@
+    <a asp-action="Index"
+       asp-controller="GuestRequests"
+       asp-route-roomId="@Model.Id"
+       class="card-link">
+
+        <div class="report-card">
+            <div class="dnd-text">Report</div>
+        </div>
+
+    </a>
 </div>
 
-<div class="card shadow-sm p-3 mb-4 mx-3">
-    <h5>Set Room Status</h5>
-    <div id="dnd-wrapper">
-        <partial name="_DndToggle" model="Model" />
-    </div>
-</div>
-
-<!-- Actions cards side by side -->
-<div class="row mx-3 g-3">
-    <div class="col-6">
-        <a class="card text-center p-3 shadow-sm h-100"
-           asp-controller="GuestOrders" asp-action="Index" asp-route-roomId="@Model.Id"
-           style="text-decoration:none; color:inherit;">
-            <img src="~/images/order-menu.png" alt="Order Food" class="img-fluid mb-2" style="height:80px;">
-            <h5>Order Food & Drinks</h5>
-        </a>
-    </div>
-    <div class="col-6">
-        <a class="card text-center p-3 shadow-sm h-100"
-           asp-controller="GuestRequests" asp-action="Index" asp-route-roomId="@Model.Id"
-           style="text-decoration:none; color:inherit;">
-            <img src="~/images/request-service.png" alt="Request Service" class="img-fluid mb-2" style="height:80px;">
-            <h5>Request Service</h5>
-        </a>
-    </div>
-</div>

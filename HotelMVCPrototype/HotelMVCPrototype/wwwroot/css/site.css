@@ -210,7 +210,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .guest-header {
     background: #164E63;
-    border-bottom: 1px solid #e5e7eb;
+   /* border-bottom: 1px solid #e5e7eb;*/
 }
 
 .guest-logo {
@@ -223,7 +223,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    margin: 10px 0;
+    margin: 25px 0;
 }
 
 .room-text {
@@ -239,3 +239,109 @@ h1, h2, h3, h4, h5, h6 {
         .room-title .ornament.right {
             transform: scaleX(-1); /* mirror horizontally */
         }
+
+
+.card-collection{
+    margin-bottom: 55px;
+}
+
+.room-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    width: 383px;
+    /*height: 267px;*/
+    margin: auto;
+    margin-bottom: 33px;
+}
+
+.card-inner {
+    background: #ffffff;
+    border-radius: 10px;
+/*    padding: 7px;
+*/    box-shadow: 0px 3px 5px 3px rgba(0,0,0,0.20);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 7px 7px 101px;
+    padding: 7px 7px 15px;
+}
+
+.room-card:hover .card-inner {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+
+/* Image with equal padding on top/left/right */
+.card-image {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+}
+
+/* Text at bottom */
+.card-text {
+    margin-top: 5px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 500;
+    color: #0F172A;
+}
+
+
+.action-cards {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly; /* vertical centering */
+    align-items: center;
+    margin-bottom: 40px;
+}
+.action-cards a{
+    text-decoration: none;
+    color: inherit;
+}
+/* SHARED CARD STYLE */
+.dnd-card,
+.report-card {
+    width: 141px;
+    height: 69px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Individual colors */
+.dnd-card {
+    background: #FFC107;
+}
+
+.report-card {
+    background: #E1696B;
+}
+
+.dnd-text {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.2;
+}
+.dnd-status-text {
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 0.9;
+}
+
+.dnd-card:hover,
+.report-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+
+
+.report-text {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.2;
+}

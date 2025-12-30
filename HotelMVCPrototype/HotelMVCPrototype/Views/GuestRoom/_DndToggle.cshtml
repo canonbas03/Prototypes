@@ -1,14 +1,43 @@
 ﻿@model HotelMVCPrototype.Models.Room
 
-<div id="dnd-container">
+<div class="dnd-card"
+     id="dnd-card"
+     data-room-id="@Model.Id"
+     data-is-dnd="@Model.IsDND.ToString().ToLower()"
+     role="button"
+     tabindex="0">
 
-<div id="dnd-container">
-    <button type="button"
-            class="btn @(Model.IsDND ? "btn-warning" : "btn-outline-secondary")"
-            data-room-id="@Model.Id"
-            id="dnd-toggle-btn">
-        @(Model.IsDND ? "Do Not Disturb: ON" : "Do Not Disturb: OFF")
-    </button>
+    <div class="dnd-text">Do Not Disturb</div>
+    <div class="dnd-status-text" id="dnd-status">
+        @(Model.IsDND ? "ON" : "OFF")
+    </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const card = document.getElementById("dnd-card");
+        const statusText = document.getElementById("dnd-status");
+        const cardInner = document.getElementById("dnd-card-inner");
 
-</div>
+        let isDnd = card.dataset.isDnd === "true";
+        card.style.backgroundColor = isDnd ? "#FFC107" : "#E5E7EB";
+
+        card.addEventListener("click", () => {
+            const roomId = card.dataset.roomId;
+
+            fetch(`/GuestRoom/ToggleDnd?roomId=${roomId}`, {
+                method: "POST",
+                headers: {
+                    "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                }
+            })
+            .then(res => res.text())
+            .then(isDnd => {
+                const enabled = isDnd === "true";
+
+                statusText.textContent = enabled ? "ON" : "OFF";
+
+                card.style.backgroundColor = enabled ? "#FFC107" : "#E5E7EB";
+            });
+        });
+    });
+</script>
