@@ -9,6 +9,58 @@
     <img src="/images/ornament.png" class="ornament right" alt="">
 </div>
 
+<div class="card-collection">
+    <a asp-action="Index" asp-controller="GuestOrders" asp-route-roomId="@Model.Id" class="room-card">
+        <div class="card-inner">
+            <img src="~/images/order-menu.png" alt="Food" class="card-image">
+
+            <div class="card-text">
+                Order Food & Drinks
+            </div>
+        </div>
+    </a>
+
+    <a asp-action="Index" asp-controller="GuestRequests" asp-route-roomId="@Model.Id" class="room-card">
+        <div class="card-inner">
+            <img src="~/images/request-service.png" alt="Services" class="card-image">
+
+            <div class="card-text">
+                Request Service
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- DND Toggle -->
+<div class="action-cards">
+    <div class="dnd-card">
+        <div class="dnd-text">
+            Do Not Disturb
+        </div>
+        <div class="dnd-status-text">
+            ON
+        </div>
+    </div>
+
+    @* Change this *@
+    <a asp-action="Index"
+       asp-controller="GuestRequests"
+       asp-route-roomId="@Model.Id"
+       class="card-link">
+
+        <div class="report-card">
+            <div class="dnd-text">Report</div>
+        </div>
+
+    </a>
+</div>
+
+<button id="dnd-toggle-btn"
+        class="btn @(Model.IsDND ? "btn-warning" : "btn-outline-secondary") btn-lg w-75"
+        data-room-id="@Model.Id">
+    @(Model.IsDND ? "🔕 Do Not Disturb: ON" : "🔔 Do Not Disturb: OFF")
+</button>
+
 <hr />
 
 <!-- Centered hotel logo -->
