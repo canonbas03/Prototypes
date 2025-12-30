@@ -292,6 +292,7 @@ body {
     flex-direction: row;
     justify-content: space-evenly; /* vertical centering */
     align-items: center;
+    margin-bottom: 40px;
 }
 .action-cards a{
     text-decoration: none;

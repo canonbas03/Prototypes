@@ -33,18 +33,7 @@
 
 <!-- DND Toggle -->
 <div class="action-cards">
-    <div class="dnd-card"
-         id="dnd-card"
-         data-room-id="@Model.Id"
-         data-is-dnd="@Model.IsDND.ToString().ToLower()"
-         role="button"
-         tabindex="0">
-
-        <div class="dnd-text">Do Not Disturb</div>
-        <div class="dnd-status-text" id="dnd-status">
-            @(Model.IsDND ? "ON" : "OFF")
-        </div>
-    </div>
+    <partial name="_DndToggle" model="Model" />
 
     @* Change this *@
     <a asp-action="Index"
@@ -59,42 +48,3 @@
     </a>
 </div>
 
-
-
-<div class="card shadow-sm p-3 mb-4 mx-3">
-    <h5>Set Room Status</h5>
-    <div id="dnd-wrapper">
-        <partial name="_DndToggle" model="Model" />
-    </div>
-</div>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const card = document.getElementById("dnd-card");
-        const statusText = document.getElementById("dnd-status");
-        const cardInner = document.getElementById("dnd-card-inner");
-
-        let isDnd = card.dataset.isDnd === "true";
-        card.style.backgroundColor = isDnd ? "#FFC107" : "#E5E7EB";
-
-        card.addEventListener("click", () => {
-            const roomId = card.dataset.roomId;
-
-            fetch(`/GuestRoom/ToggleDnd?roomId=${roomId}`, {
-                method: "POST",
-                headers: {
-                    "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]')?.value
-                }
-            })
-            .then(res => res.text())
-            .then(isDnd => {
-                const enabled = isDnd === "true";
-
-                statusText.textContent = enabled ? "ON" : "OFF";
-
-                card.style.backgroundColor = enabled ? "#FFC107" : "#E5E7EB";
-            });
-        });
-    });
-</script>
