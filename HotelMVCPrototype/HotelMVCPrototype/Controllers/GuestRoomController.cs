@@ -26,7 +26,7 @@ public class GuestRoomController : Controller
         return View(room);
     }
 
-    // QR link landing page
+    // QR link landing page (MIGHT BE UNNECESARRY)
     public async Task<IActionResult> Room(int roomId)
     {
         var room = await _context.Rooms.FindAsync(roomId);
