@@ -59,33 +59,7 @@
     </a>
 </div>
 
-<button id="dnd-toggle-btn"
-        class="btn @(Model.IsDND ? "btn-warning" : "btn-outline-secondary") btn-lg w-75"
-        data-room-id="@Model.Id">
-    @(Model.IsDND ? "🔕 Do Not Disturb: ON" : "🔔 Do Not Disturb: OFF")
-</button>
 
-<hr />
-
-<!-- Centered hotel logo -->
-<div class="text-center my-4">
-    <img src="~/images/le-vins-logo.png" alt="Hotel Logo" style="height:60px;" />
-    <h2 class="mt-2">Le' Vins</h2>
-</div>
-
-<!-- Room info card -->
-<div class="card shadow-sm p-3 mb-4 mx-3">
-    <h4>Room @Model.Number</h4>
-
-    <!-- DND Toggle -->
-    <div class="my-3 text-center">
-        <button id="dnd-toggle-btn"
-                class="btn @(Model.IsDND ? "btn-warning" : "btn-outline-secondary") btn-lg w-75"
-                data-room-id="@Model.Id">
-            @(Model.IsDND ? "🔕 Do Not Disturb: ON" : "🔔 Do Not Disturb: OFF")
-        </button>
-    </div>
-</div>
 
 <div class="card shadow-sm p-3 mb-4 mx-3">
     <h5>Set Room Status</h5>
