@@ -28,14 +28,14 @@ namespace HotelMVCPrototype.Controllers
                 .Include(r => r.GuestAssignments.Where(g => !g.IsActive))
                 .ToListAsync();
 
-            var requests = await _context.ServiceRequests
-                .Include(r => r.Room)
-                .Include(r => r.Items)
-                .ThenInclude(i => i.RequestItem)
-                .Where(r => r.Status == ServiceRequestStatus.New)
-                .OrderBy(r => r.CreatedAt)
-                .Take(3) // side window, not full list
-                .ToListAsync();
+            //var requests = await _context.ServiceRequests
+            //    .Include(r => r.Room)
+            //    .Include(r => r.Items)
+            //    .ThenInclude(i => i.RequestItem)
+            //    .Where(r => r.Status == ServiceRequestStatus.New)
+            //    .OrderBy(r => r.CreatedAt)
+            //    .Take(3) // side window, not full list
+            //    .ToListAsync();
 
             var roomMap = rooms
                 .Where(r => r.Floor == floor)
@@ -64,7 +64,7 @@ namespace HotelMVCPrototype.Controllers
             {
                 Rooms = rooms,
                 RoomStatistics = await _statsService.GetStatisticsAsync(),
-                NewRequests = requests,
+                //NewRequests = requests,
                 RoomMap = roomMap,
                 CurrentFloor = floor
             };

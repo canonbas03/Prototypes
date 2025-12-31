@@ -1,4 +1,4 @@
-﻿@model List<HotelMVCPrototype.Models.ServiceRequest>
+﻿@* @model List<HotelMVCPrototype.Models.ServiceRequest>
 
 <div class="card shadow-sm">
     <div class="card-header bg-primary-action text-white">
@@ -8,7 +8,7 @@
     <div class="card-body p-2">
         @if (!Model.Any())
         {
-            <p class="text-muted mb-0">No new requests</p>
+            <p class="text-muted mb-0 text-center">No new requests</p>
         }
         else
         {
@@ -40,9 +40,6 @@
                     </ul>
                 </div>
             }
-
-
-
         }
     </div>
 </div>
@@ -57,19 +54,24 @@
         btn.disabled = true;
         btn.textContent = "Completing...";
 
+        // Mark request as completed
         const response = await fetch(`/ReceptionRequests/Complete?id=${id}`, {
             method: "POST"
         });
 
-        if (response.ok) {
-            // Smooth remove animation
-            const card = btn.closest(".request-card");
-            card.style.opacity = "0";
-            setTimeout(() => card.remove(), 250);
-        } else {
+        if (!response.ok) {
             btn.textContent = "Error";
             btn.disabled = false;
+            return;
         }
+
+        // Reload the partial view
+        const partial = await fetch('/ReceptionRequests/PartialRequests');
+        const html = await partial.text();
+
+        document.getElementById("requests-container").innerHTML = html;
     });
 </script>
 
+
+ *@
