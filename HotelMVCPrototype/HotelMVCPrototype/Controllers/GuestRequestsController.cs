@@ -2,18 +2,15 @@
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 public class GuestRequestsController : Controller
 {
     private readonly ApplicationDbContext _context;
-    private readonly IHubContext<RequestsHub> _hub;
 
-    public GuestRequestsController(ApplicationDbContext context, IHubContext<RequestsHub> hub)
+    public GuestRequestsController(ApplicationDbContext context)
     {
         _context = context;
-        _hub = hub;
     }
 
     // STEP 1: Show request form
@@ -75,8 +72,6 @@ public class GuestRequestsController : Controller
 
         _context.ServiceRequests.Add(request);
         await _context.SaveChangesAsync();
-
-        await _hub.Clients.All.SendAsync("NewRequest");
 
         // ✅ Redirect to its OWN ThankYou page
         return RedirectToAction(nameof(ThankYou), new { id = request.Id });
