@@ -1,0 +1,76 @@
+﻿@model List<HotelMVCPrototype.Models.ServiceRequest>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary-action text-white">
+        <strong>New Requests</strong>
+    </div>
+
+    <div class="card-body p-2">
+        @if (!Model.Any())
+        {
+            <p class="text-muted mb-0 text-center">No new requests</p>
+        }
+        else
+        {
+            @foreach (var request in Model)
+            {
+                <div class="request-card mb-3 p-3 border rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>Room @request.Room.Number</strong>
+                            <span class="text-muted ms-2">
+                                @request.CreatedAt.ToShortTimeString()
+                            </span>
+                        </div>
+
+                        <button class="btn btn-success btn-sm fulfill-btn"
+                                data-id="@request.Id">
+                            ✔ Done
+                        </button>
+                    </div>
+
+                    <ul class="mb-0 ps-3">
+                        @foreach (var item in request.Items)
+                        {
+                            <li>@item.RequestItem.Name × @item.Quantity</li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+
+
+<script>
+        document.addEventListener("click", async (e) => {
+        if (!e.target.classList.contains("fulfill-btn")) return;
+
+        const btn = e.target;
+        const id = btn.dataset.id;
+
+        btn.disabled = true;
+        btn.textContent = "Completing...";
+
+        // Mark request as completed
+        const response = await fetch(`/ReceptionRequests/Complete?id=${id}`, {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            btn.textContent = "Error";
+            btn.disabled = false;
+            return;
+        }
+
+        // Reload the entire card partial
+        const partial = await fetch('/ReceptionRequests/PartialRequests');
+        const html = await partial.text();
+
+        document.getElementById("requests-container").innerHTML = html;
+    });
+
+</script>
+
+

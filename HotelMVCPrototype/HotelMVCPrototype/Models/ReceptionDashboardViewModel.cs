@@ -12,7 +12,7 @@ namespace HotelMVCPrototype.Models
         public RoomStatisticsViewModel RoomStatistics { get; set; }
 
         // Side module (new)
-        public List<ServiceRequest> NewRequests { get; set; }
+        //public List<ServiceRequest> NewRequests { get; set; }
 
         public List<RoomMapViewModel> RoomMap { get; set; }
 

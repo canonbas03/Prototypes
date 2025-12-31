@@ -8,7 +8,6 @@
 <h2>Reception Dashboard</h2>
 
 <div class="row mb-4">
-    <!-- Stats take more space -->
     <div class="col-md-8">
         <partial name="_RoomStatistics" model="Model.RoomStatistics" />
 
@@ -67,9 +66,13 @@
 
     </div>
 
-    <!-- Requests side window -->
-    <div class="col-md-4">
+ @*    <!-- Requests side window -->
+    <div class="col-md-4" id="requests-container">
         <partial name="_ReceptionRequests" model="Model.NewRequests" />
+    </div> *@
+
+    <div class="col-md-4" id="requests-container">
+        @await Component.InvokeAsync("ReceptionRequests")
     </div>
 
 

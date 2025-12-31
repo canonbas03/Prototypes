@@ -17,22 +17,20 @@ public class ReceptionRequestsController : Controller
 
     public async Task<IActionResult> Index()
     {
-        //var s = await _context.ServiceRequests
-        //    .Include(r => r.Room)
-        //    .Include(r => r.Items)
-        //    .Where(r => r.Status == ServiceRequestStatus.New)
-        //    .OrderBy(r => r.CreatedAt) // queue
-        //    .ToListAsync();
-
         var requests = await _context.ServiceRequests
         .Include(r => r.Room)
         .Include(r => r.Items)
             .ThenInclude(i => i.RequestItem)
             .Where(r => r.Status == ServiceRequestStatus.New)
             .OrderBy(r => r.CreatedAt)
+            .Take(5)
         .ToListAsync();
 
         return View(requests);
+    }
+    public IActionResult PartialRequests()
+    {
+        return ViewComponent("ReceptionRequests");
     }
 
 
@@ -45,7 +43,7 @@ public class ReceptionRequestsController : Controller
         request.Status = ServiceRequestStatus.Completed;
         await _context.SaveChangesAsync();
 
-        return RedirectToAction(nameof(Index));
+        return Ok();
     }
 
     [HttpPost]
@@ -86,5 +84,4 @@ public class ReceptionRequestsController : Controller
 
         return RedirectToAction(nameof(Index));
     }
-
 }
