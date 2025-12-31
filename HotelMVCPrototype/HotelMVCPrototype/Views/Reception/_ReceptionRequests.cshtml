@@ -14,21 +14,62 @@
         {
             @foreach (var request in Model)
             {
-                <div class="border-bottom py-2">
-                    <strong>Room @request.Room.Number</strong>
+                <div class="request-card mb-3 p-3 border rounded">
 
-                    <ul class="mb-1 ps-3">
+                    <!-- Top row -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>Room @request.Room.Number</strong>
+                            <span class="text-muted ms-2">
+                                @request.CreatedAt.ToShortTimeString()
+                            </span>
+                        </div>
+
+                        <button class="btn btn-success btn-sm fulfill-btn"
+                                data-id="@request.Id">
+                            ✔ Done
+                        </button>
+                    </div>
+
+                    <!-- Items -->
+                    <ul class="mb-0 ps-3">
                         @foreach (var item in request.Items)
                         {
                             <li>@item.RequestItem.Name × @item.Quantity</li>
                         }
                     </ul>
-
-                    <small class="text-muted">
-                        @request.CreatedAt.ToShortTimeString()
-                    </small>
                 </div>
             }
+
+
+
         }
     </div>
 </div>
+
+<script>
+    document.addEventListener("click", async (e) => {
+        if (!e.target.classList.contains("fulfill-btn")) return;
+
+        const btn = e.target;
+        const id = btn.dataset.id;
+
+        btn.disabled = true;
+        btn.textContent = "Completing...";
+
+        const response = await fetch(`/ReceptionRequests/Complete?id=${id}`, {
+            method: "POST"
+        });
+
+        if (response.ok) {
+            // Smooth remove animation
+            const card = btn.closest(".request-card");
+            card.style.opacity = "0";
+            setTimeout(() => card.remove(), 250);
+        } else {
+            btn.textContent = "Error";
+            btn.disabled = false;
+        }
+    });
+</script>
+
