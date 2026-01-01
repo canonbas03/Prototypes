@@ -13,6 +13,7 @@
         public string StatusColor { get; set; }
 
         public bool IsDND { get; set; }
+        public bool HasOpenRequest { get; set; }
     }
 
 }

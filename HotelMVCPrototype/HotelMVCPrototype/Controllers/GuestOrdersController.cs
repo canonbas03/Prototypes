@@ -100,8 +100,6 @@ public class GuestOrdersController : Controller
 
     public async Task<IActionResult> Checkout(int roomId)
     {
-        
-
         var cart = HttpContext.Session
             .GetObject<Dictionary<int, int>>(CART_KEY);
 
@@ -131,6 +129,4 @@ public class GuestOrdersController : Controller
         HttpContext.Session.SetObject(CART_KEY, cart);
         return Ok();
     }
-
-
 }
