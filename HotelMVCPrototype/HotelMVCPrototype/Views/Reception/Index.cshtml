@@ -38,12 +38,17 @@
                      color:white;
                      font-weight:600;
                  ">
-                    @if (room.IsDND)
-                    {
-                        <span class="badge bg-warning text-black ms-1" style="position:absolute; top:2px; right:2px; opacity:1!important;">
-                            DND
-                        </span>
-                    }
+                    <div style="position:absolute; top:2px; right:2px; display:flex; flex-direction:column; gap:2px;">
+                        @if (room.IsDND)
+                        {
+                            <span class="badge bg-warning text-black">DND</span>
+                        }
+
+                        @if (room.HasOpenRequest)
+                        {
+                            <span class="badge bg-danger text-white">🔔</span>
+                        }
+                    </div>
                 </div>
             }
 

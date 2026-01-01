@@ -37,6 +37,12 @@ namespace HotelMVCPrototype.Controllers
             //    .Take(3) // side window, not full list
             //    .ToListAsync();
 
+            var roomsWithRequests = await _context.ServiceRequests
+                .Where(r => r.Status == ServiceRequestStatus.New)
+                .Select(r => r.RoomId)
+                .Distinct()
+                .ToListAsync();
+
             var roomMap = rooms
                 .Where(r => r.Floor == floor)
                 .Select(r => new RoomMapViewModel
@@ -55,7 +61,8 @@ namespace HotelMVCPrototype.Controllers
                         RoomStatus.Maintenance => "#DC3545", // Red
                         _ => "#FFFFFF"
                     },
-                    IsDND = r.IsDND
+                    IsDND = r.IsDND,
+                    HasOpenRequest = roomsWithRequests.Contains(r.Id)
                 })
                 .ToList();
 
