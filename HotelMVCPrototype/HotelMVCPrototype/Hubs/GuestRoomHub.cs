@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
+// OLD
 public class GuestRoomHub : Hub
 {
     // Method to notify all connected clients that a room's DND changed

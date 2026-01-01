@@ -1,18 +1,22 @@
 ﻿using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Hubs;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 [Authorize(Roles = "Reception")]
 public class ReceptionRequestsController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IHubContext<HotelHub> _hub;
 
-    public ReceptionRequestsController(ApplicationDbContext context)
+    public ReceptionRequestsController(ApplicationDbContext context, IHubContext<HotelHub> hub)
     {
         _context = context;
+        _hub = hub;
     }
 
     public async Task<IActionResult> Index()
@@ -42,6 +46,14 @@ public class ReceptionRequestsController : Controller
 
         request.Status = ServiceRequestStatus.Completed;
         await _context.SaveChangesAsync();
+
+        bool hasRequests = await _context.ServiceRequests.AnyAsync(r => r.RoomId == request.RoomId && r.Status == ServiceRequestStatus.New);
+
+        if (!hasRequests)
+        {
+
+            await _hub.Clients.All.SendAsync("RequestCompleted", request.RoomId);
+        }
 
         return Ok();
     }

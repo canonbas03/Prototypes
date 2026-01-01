@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Hubs;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,11 @@ using System.Text.Json;
 public class GuestOrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
-    private readonly IHubContext<BarHub> _hubContext;
+    private readonly IHubContext<HotelHub> _hubContext;
     private const string CART_KEY = "GuestCart";
     public GuestOrdersController(
         ApplicationDbContext context,
-        IHubContext<BarHub> hubContext)
+        IHubContext<HotelHub> hubContext)
     {
         _context = context;
         _hubContext = hubContext;

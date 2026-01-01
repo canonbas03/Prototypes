@@ -21,6 +21,7 @@
             {
                 <div class="room"
                      onclick="location.href='@Url.Action("RoomDetails", "Reception", new { id = room.RoomId })'"
+                     id="room-@room.RoomId"
                      data-room-id="@room.RoomId"
                      data-room-number="@room.Number"
                      style="
@@ -38,7 +39,7 @@
                      color:white;
                      font-weight:600;
                  ">
-                    <div style="position:absolute; top:2px; right:2px; display:flex; flex-direction:column; gap:2px;">
+                    <div class="room-badges" style="position:absolute; top:2px; right:2px; display:flex; flex-direction:column; gap:2px;">
                         @if (room.IsDND)
                         {
                             <span class="badge bg-warning text-black">DND</span>
@@ -46,7 +47,7 @@
 
                         @if (room.HasOpenRequest)
                         {
-                            <span class="badge bg-danger text-white">🔔</span>
+                            <span class="badge bg-danger text-white request-badge">🔔</span>
                         }
                     </div>
                 </div>
@@ -83,31 +84,98 @@
 
 
 </div>
-@* <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script> *@
-@* <script>
-    // const connection = new signalR.HubConnectionBuilder()
-    //     .withUrl("/guestRoomHub")
-    //     .build();
 
-    // connection.start().catch(err => console.error(err.toString()));
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
 
-    // // Listen for updates
-    // connection.on("ReceiveDndUpdate", (roomId, isDnd) => {
-    //     const badge = document.querySelector(`#room-${roomId} .dnd-badge`);
-    //     if (badge) {
-    //         badge.style.display = isDnd ? "block" : "none";
-    //     } else if (isDnd) {
-    //         // Create badge if it doesn't exist
-    //         const roomDiv = document.getElementById(`room-${roomId}`);
-    //         const span = document.createElement("span");
-    //         span.className = "badge bg-warning text-black dnd-badge";
-    //         span.style.position = "absolute";
-    //         span.style.top = "2px";
-    //         span.style.right = "2px";
-    //         span.textContent = "DND";
-    //         roomDiv.appendChild(span);
-    //     }
-    // });
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/hotelHub")
+        .build();
+
+    connection.start().catch(err => console.error(err));
+</script>
+<script>
+        connection.on("DndChanged", (roomId, isDnd) => {
+        const room = document.getElementById(`room-${roomId}`);
+        if (!room) return;
+
+        let badge = room.querySelector(".dnd-badge");
+
+        if (isDnd) {
+            if (!badge) {
+                badge = document.createElement("span");
+                badge.className = "badge bg-warning text-black dnd-badge";
+                badge.textContent = "DND";
+                room.querySelector(".room-badges").appendChild(badge);
+            }
+        } else if (badge) {
+            badge.remove();
+        }
+    });
+
+
+    connection.on("NewRequest", async () => {
+        const res = await fetch('/ReceptionRequests/PartialRequests');
+        const html = await res.text();
+        document.getElementById("requests-container").innerHTML = html;
+    });
+
+</script>
+
+<script>
+        connection.on("NewRequest", (roomId) => {
+        const room = document.getElementById(`room-${roomId}`);
+        if (!room) return;
+
+        let badge = room.querySelector(".request-badge");
+
+        if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "badge bg-danger request-badge";
+            badge.textContent = "🔔";
+            room.querySelector(".room-badges").appendChild(badge);
+        }
+    });
+
+        connection.on("RequestCompleted", (roomId) => {
+        const room = document.getElementById(`room-${roomId}`);
+        if (!room) return;
+
+        const badge = room.querySelector(".request-badge");
+        badge?.remove();
+    });
+
+
+</script>
+
+
+
+
+@*< script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/guestRoomHub")
+        .build();
+
+    connection.start().catch(err => console.error(err.toString()));
+
+    // Listen for updates
+    connection.on("ReceiveDndUpdate", (roomId, isDnd) => {
+        const badge = document.querySelector(`#room-${roomId} .dnd-badge`);
+        if (badge) {
+            badge.style.display = isDnd ? "block" : "none";
+        } else if (isDnd) {
+            // Create badge if it doesn't exist
+            const roomDiv = document.getElementById(`room-${roomId}`);
+            const span = document.createElement("span");
+            span.className = "badge bg-warning text-black dnd-badge";
+            span.style.position = "absolute";
+            span.style.top = "2px";
+            span.style.right = "2px";
+            span.textContent = "DND";
+            roomDiv.appendChild(span);
+        }
+    });
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/guestRoomHub")
@@ -119,8 +187,8 @@
         });
 
         connection.start().catch(err => console.error(err.toString()));
-</script>
-
+</script> *@
+@*
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
 <script>
     const connection = new signalR.HubConnectionBuilder()

@@ -1,4 +1,5 @@
 using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Hubs;
 using HotelMVCPrototype.Services;
 using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -76,9 +77,10 @@ namespace HotelMVCPrototype
             }
 
 
-            app.MapHub<BarHub>("/barHub");
+            //app.MapHub<BarHub>("/barHub");
+            //app.MapHub<RequestsHub>("/requestsHub");
             app.MapHub<GuestRoomHub>("/guestRoomHub");
-            app.MapHub<RequestsHub>("/requestsHub");
+            app.MapHub<HotelHub>("/hotelHub");
 
 
             app.Run();
