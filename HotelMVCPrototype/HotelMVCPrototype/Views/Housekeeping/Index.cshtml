@@ -4,9 +4,23 @@
     ViewData["Title"] = "Housekeeping";
 }
 
-<partial name="_RoomStatistics" model="Model.RoomStatistics" />
 
-<partial name="_RoomMap" model="Model.RoomMapPage" />
+
+<h2>Housekeeping Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <partial name="_RoomStatistics" model="Model.RoomStatistics" />
+
+        <partial name="_RoomMap" model="Model.RoomMapPage" />
+
+
+    </div>
+
+    <div class="col-md-4" id="cleanings-container">
+        @await Html.PartialAsync("_TodaysCleanings", Model.TodaysCleanings)
+    </div>
+</div>
 
 
 <h2>Rooms That Need Cleaning</h2>

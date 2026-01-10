@@ -42,6 +42,16 @@ namespace HotelMVCPrototype.Controllers
                 })
                 .ToList();
 
+            var currentUser = User.Identity?.Name;
+
+            // Fetch today's cleanings for this housekeeper
+            var today = DateTime.Now.Date;
+            var todaysCleanings = await _context.CleaningLogs
+                .Include(l => l.Room)
+                .Where(l => l.CreatedAt.Date == today && l.Housekeeper == currentUser)
+                .OrderByDescending(l => l.CreatedAt)
+                .ToListAsync();
+
             var vm = new HousekeepingDashboardViewModel
             {
                 Rooms = cleaningRooms,
@@ -51,7 +61,8 @@ namespace HotelMVCPrototype.Controllers
                     CurrentFloor = floor,
                     Mode = RoomMapMode.Housekeeping,
                     Rooms = roomMap
-                }
+                },
+                TodaysCleanings = todaysCleanings
             };
 
             return View(vm);
@@ -71,8 +82,26 @@ namespace HotelMVCPrototype.Controllers
                 return BadRequest("Room is not in cleaning state.");
             }
 
+           
+
             room.Status = RoomStatus.Available;
-            await _context.SaveChangesAsync();
+            _context.Rooms.Update(room);
+
+
+            var log = new CleaningLog
+            {
+                RoomId = room.Id,
+                CreatedAt = DateTime.Now,      // current server time
+                Housekeeper = User?.Identity?.Name,
+                Notes = null
+            };
+            _context.CleaningLogs.Add(log);
+
+
+                await _context.SaveChangesAsync();
+
+                //// Optionally notify SignalR clients
+                //await _hub.Clients.All.SendAsync("CleaningLogged", room.Id);
 
             return RedirectToAction(nameof(Index));
         }

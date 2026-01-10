@@ -11,5 +11,7 @@
         //public List<RoomMapViewModel> RoomMap { get; set; } = [];
 
         public RoomMapPageViewModel RoomMapPage { get; set; }
+
+        public List<CleaningLog> TodaysCleanings { get; set; } = new();
     }
 }

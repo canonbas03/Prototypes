@@ -1,0 +1,36 @@
+﻿@model List<HotelMVCPrototype.Models.CleaningLog>
+
+<div class="card shadow-sm mt-3">
+    <div class="card-header bg-primary-action text-white">
+        <strong>Today's Cleanings</strong>
+    </div>
+
+    <div class="card-body p-2">
+        @if (!Model.Any())
+        {
+            <p class="text-muted mb-0 text-center">No cleanings done yet today.</p>
+        }
+        else
+        {
+            @foreach (var log in Model.OrderByDescending(l => l.CreatedAt))
+            {
+                <div class="request-card mb-3 p-3 border rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>Room @log.Room?.Number</strong>
+                            <span class="text-muted ms-2">@log.CreatedAt.ToString("HH:mm")</span>
+                        </div>
+
+                        @* Optional: you could have a "Notes" button or just show static notes *@
+                        <span class="badge bg-info">🧹</span>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(log.Notes))
+                    {
+                        <p class="mb-0 ps-3 text-muted">@log.Notes</p>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
