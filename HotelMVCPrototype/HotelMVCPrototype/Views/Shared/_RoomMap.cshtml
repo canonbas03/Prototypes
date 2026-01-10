@@ -68,66 +68,33 @@
     </div>
 </div>
 
-@* <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
 <script>
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/hotelHub")
         .build();
 
     connection.start().catch(err => console.error(err));
-</script>
-<script>
-        connection.on("DndChanged", (roomId, isDnd) => {
+
+    connection.on("RoomCleaned", (roomId) => {
         const room = document.getElementById(`room-${roomId}`);
         if (!room) return;
 
-        let badge = room.querySelector(".dnd-badge");
-
-        if (isDnd) {
-            if (!badge) {
-                badge = document.createElement("span");
-                badge.className = "badge bg-warning text-black dnd-badge";
-                badge.textContent = "DND";
-                room.querySelector(".room-badges").appendChild(badge);
-            }
-        } else if (badge) {
-            badge.remove();
-        }
-    });
-
-
-    connection.on("NewRequest", async () => {
-        const res = await fetch('/ReceptionRequests/PartialRequests');
-        const html = await res.text();
-        document.getElementById("requests-container").innerHTML = html;
-    });
-
-</script>
-
-<script>
-        connection.on("NewRequest", (roomId) => {
-        const room = document.getElementById(`room-${roomId}`);
-        if (!room) return;
-
-        let badge = room.querySelector(".request-badge");
-
-        if (!badge) {
-            badge = document.createElement("span");
-            badge.className = "badge bg-danger request-badge";
-            badge.textContent = "🔔";
-            room.querySelector(".room-badges").appendChild(badge);
-        }
-    });
-
-        connection.on("RequestCompleted", (roomId) => {
-        const room = document.getElementById(`room-${roomId}`);
-        if (!room) return;
-
-        const badge = room.querySelector(".request-badge");
+        // Remove the housekeeping badge
+        const badge = room.querySelector(".room-badges .bg-info");
         badge?.remove();
+
+        // Optional: update room color to indicate available
+        room.style.backgroundColor = "#164E63"; // match Available color
+        room.style.borderColor = "#164E63";
+    });
+</script>
+<script>
+        connection.on("CleaningLogged", async (logId) => {
+        const res = await fetch('/Housekeeping/PartialTodaysCleanings');
+        const html = await res.text();
+        document.getElementById("todays-cleanings-container").innerHTML = html;
     });
 
-
-</script> *@
+</script>
 

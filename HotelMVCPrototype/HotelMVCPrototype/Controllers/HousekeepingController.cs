@@ -1,9 +1,11 @@
 ﻿using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Hubs;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelMVCPrototype.Controllers
@@ -13,11 +15,13 @@ namespace HotelMVCPrototype.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IRoomStatisticsService _statsService;
+        private readonly IHubContext<HotelHub> _hub;
 
-        public HousekeepingController(ApplicationDbContext context, IRoomStatisticsService statsService)
+        public HousekeepingController(ApplicationDbContext context, IRoomStatisticsService statsService, IHubContext<HotelHub> hub)
         {
             _context = context;
             _statsService = statsService;
+            _hub = hub;
         }
 
 
@@ -82,7 +86,7 @@ namespace HotelMVCPrototype.Controllers
                 return BadRequest("Room is not in cleaning state.");
             }
 
-           
+
 
             room.Status = RoomStatus.Available;
             _context.Rooms.Update(room);
@@ -98,10 +102,21 @@ namespace HotelMVCPrototype.Controllers
             _context.CleaningLogs.Add(log);
 
 
-                await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-                //// Optionally notify SignalR clients
-                //await _hub.Clients.All.SendAsync("CleaningLogged", room.Id);
+            //// Optionally notify SignalR clients
+            //await _hub.Clients.All.SendAsync("CleaningLogged", room.Id);
+
+            await _hub.Clients.All.SendAsync("RoomCleaned", room.Id);
+            await _hub.Clients.All.SendAsync("CleaningLogged", log.Id);
+            await _hub.Clients.All.SendAsync("RoomStatusChanged", new
+            {
+                RoomId = room.Id,
+                Color = "#164E63",
+                Stats = await _statsService.GetStatisticsAsync() // send updated stats
+            });
+
+
 
             return RedirectToAction(nameof(Index));
         }

@@ -150,62 +150,43 @@
 
 </script>
 
-
-
-
-@*< script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
 <script>
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/guestRoomHub")
-        .build();
+        connection.on("RoomStatusChanged", data => {
+        console.log("RoomStatusChanged payload:", data);
 
-    connection.start().catch(err => console.error(err.toString()));
+        const room = document.getElementById(`room-${data.roomId}`);
+        if (!room) return;
 
-    // Listen for updates
-    connection.on("ReceiveDndUpdate", (roomId, isDnd) => {
-        const badge = document.querySelector(`#room-${roomId} .dnd-badge`);
-        if (badge) {
-            badge.style.display = isDnd ? "block" : "none";
-        } else if (isDnd) {
-            // Create badge if it doesn't exist
-            const roomDiv = document.getElementById(`room-${roomId}`);
-            const span = document.createElement("span");
-            span.className = "badge bg-warning text-black dnd-badge";
-            span.style.position = "absolute";
-            span.style.top = "2px";
-            span.style.right = "2px";
-            span.textContent = "DND";
-            roomDiv.appendChild(span);
+        // Update room color
+        room.style.backgroundColor = data.color;
+        room.style.borderColor = data.color;
+
+        // Update stats from the payload
+        const stats = data.stats;
+        if (stats) {
+            updateStat("stat-available", stats.available);
+            updateStat("stat-occupied", stats.occupied);
+            updateStat("stat-cleaning", stats.cleaning);
+            updateStat("stat-maintenance", stats.maintenance);
         }
     });
 
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/guestRoomHub")
-        .build();
+    // helper to update a stat element
+    function updateStat(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = value;
+    }
 
-      connection.on("ReceiveDndUpdate", function(orderId) {
-            // Reload the dashboard or fetch new orders via AJAX
-            location.reload();
-        });
 
-        connection.start().catch(err => console.error(err.toString()));
-</script> *@
-@*
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
-<script>
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/requestsHub")
-        .build();
 
-    connection.start().catch(err => console.error(err.toString()));
 
-    connection.on("NewRequest", async (requestId) => {
-        // Fetch updated ViewComponent
-        const res = await fetch('/ReceptionRequests/PartialRequests');
-        const html = await res.text();
-        document.getElementById("requests-container").innerHTML = html;
-    });
-</script> *@
+</script>
+
+
+
+
+
 
 
 
