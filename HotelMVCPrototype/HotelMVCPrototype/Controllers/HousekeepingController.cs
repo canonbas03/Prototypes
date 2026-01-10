@@ -22,20 +22,42 @@ namespace HotelMVCPrototype.Controllers
 
 
         // GET: Housekeeping
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Housekeeping")]
+        public async Task<IActionResult> Index(int floor = 1)
         {
             var cleaningRooms = await _context.Rooms
-                .Where(r => r.Status == RoomStatus.Cleaning)
-                .ToListAsync();
+    .Where(r => r.Status == RoomStatus.Cleaning && r.Floor == floor)
+    .ToListAsync();
+
+            var roomMap = cleaningRooms
+                .Select(r => new RoomMapViewModel
+                {
+                    RoomId = r.Id,
+                    Number = r.Number,
+                    TopPercent = r.MapTopPercent,
+                    LeftPercent = r.MapLeftPercent,
+                    WidthPercent = r.MapWidthPercent,
+                    HeightPercent = r.MapHeightPercent,
+                    StatusColor = "#0dcaf0"
+                })
+                .ToList();
 
             var vm = new HousekeepingDashboardViewModel
             {
                 Rooms = cleaningRooms,
-                RoomStatistics = await _statsService.GetStatisticsAsync()
+                RoomStatistics = await _statsService.GetStatisticsAsync(),
+                RoomMapPage = new RoomMapPageViewModel
+                {
+                    CurrentFloor = floor,
+                    Mode = RoomMapMode.Housekeeping,
+                    Rooms = roomMap
+                }
             };
 
             return View(vm);
         }
+
+
 
         // POST: Mark Cleaned
         [HttpPost]

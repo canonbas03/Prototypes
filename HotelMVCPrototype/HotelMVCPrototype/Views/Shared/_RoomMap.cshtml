@@ -1,0 +1,133 @@
+﻿@using System.Globalization
+@model RoomMapPageViewModel
+
+<div class="floor-plan-container" style="position: relative; width:75%; margin-top: 0; height:auto;">
+    <img class="rounded-3"
+         src="@Url.Content($"~/images/HotelFloorPlanF{Model.CurrentFloor}.png")"
+         style="width:100%;  height:auto; display:block;" />
+
+    @foreach (var room in Model.Rooms)
+    {
+        <div class="room"
+             id="room-@room.RoomId"
+             style="
+                    position:absolute;
+                    top:@room.TopPercent.ToString(CultureInfo.InvariantCulture)%;
+                    left:@room.LeftPercent.ToString(CultureInfo.InvariantCulture)%;
+                    width:@room.WidthPercent.ToString(CultureInfo.InvariantCulture)%;
+                    height:@room.HeightPercent.ToString(CultureInfo.InvariantCulture)%;
+                    background-color:@room.StatusColor;
+                    border:2px solid @room.StatusColor;
+                    display:flex;
+                         align-items:center;
+                         justify-content:center;
+                         color:white;
+                         font-weight:600;
+                                             opacity:0.75;
+
+                 ">
+
+            <div class="room-badges">
+
+                @* Reception only *@
+                @if (Model.Mode == RoomMapMode.Reception)
+                {
+                    if (room.IsDND)
+                    {
+                        <span class="badge bg-warning text-black dnd-badge">DND</span>
+                    }
+
+                    if (room.HasOpenRequest)
+                    {
+                        <span class="badge bg-danger request-badge">🔔</span>
+                    }
+                }
+
+                @* Housekeeping only *@
+                @if (Model.Mode == RoomMapMode.Housekeeping)
+                {
+                    <span class="badge bg-info">🧹</span>
+                }
+
+            </div>
+        </div>
+    }
+
+    <!-- Floor buttons on top of image -->
+    <div style="position:absolute; bottom:5px; right:10px;">
+        <div class="btn-group" role="group">
+            @for (int i = 1; i <= 3; i++)
+            {
+                <a asp-action="Index"
+                   asp-route-floor="@i"
+                   class="btn @(Model.CurrentFloor == i ? "btn-primary" : "btn-outline-primary")">
+                    Floor @i
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@* <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/hotelHub")
+        .build();
+
+    connection.start().catch(err => console.error(err));
+</script>
+<script>
+        connection.on("DndChanged", (roomId, isDnd) => {
+        const room = document.getElementById(`room-${roomId}`);
+        if (!room) return;
+
+        let badge = room.querySelector(".dnd-badge");
+
+        if (isDnd) {
+            if (!badge) {
+                badge = document.createElement("span");
+                badge.className = "badge bg-warning text-black dnd-badge";
+                badge.textContent = "DND";
+                room.querySelector(".room-badges").appendChild(badge);
+            }
+        } else if (badge) {
+            badge.remove();
+        }
+    });
+
+
+    connection.on("NewRequest", async () => {
+        const res = await fetch('/ReceptionRequests/PartialRequests');
+        const html = await res.text();
+        document.getElementById("requests-container").innerHTML = html;
+    });
+
+</script>
+
+<script>
+        connection.on("NewRequest", (roomId) => {
+        const room = document.getElementById(`room-${roomId}`);
+        if (!room) return;
+
+        let badge = room.querySelector(".request-badge");
+
+        if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "badge bg-danger request-badge";
+            badge.textContent = "🔔";
+            room.querySelector(".room-badges").appendChild(badge);
+        }
+    });
+
+        connection.on("RequestCompleted", (roomId) => {
+        const room = document.getElementById(`room-${roomId}`);
+        if (!room) return;
+
+        const badge = room.querySelector(".request-badge");
+        badge?.remove();
+    });
+
+
+</script> *@
+
