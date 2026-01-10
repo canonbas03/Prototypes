@@ -37,6 +37,10 @@ namespace HotelMVCPrototype.Data
 
         public DbSet<RequestItem> RequestItems { get; set; }
 
+      
+        public DbSet<CleaningLog> CleaningLogs { get; set; }
+
+
 
     }
 }
