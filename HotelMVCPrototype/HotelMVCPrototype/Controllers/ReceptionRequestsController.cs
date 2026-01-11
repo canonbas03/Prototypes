@@ -58,6 +58,7 @@ public class ReceptionRequestsController : Controller
         if (request == null) return NotFound();
 
         request.Status = ServiceRequestStatus.Completed;
+        request.CompletedAt = DateTime.Now;
         await _context.SaveChangesAsync();
 
         bool hasRequests = await _context.ServiceRequests.AnyAsync(r => r.RoomId == request.RoomId && r.Status == ServiceRequestStatus.New);

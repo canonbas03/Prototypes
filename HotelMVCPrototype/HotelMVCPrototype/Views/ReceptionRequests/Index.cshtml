@@ -37,55 +37,90 @@ else
                         </small>
                     </div>
 
-                    <form asp-action="Complete" method="post" class="ms-3">
-                        <input type="hidden" name="id" value="@req.Id" />
-                        <button class="btn btn-success btn-sm">
-                            ✓ Done
-                        </button>
-                    </form>
+                    <button class="btn btn-success btn-sm"
+                            onclick="completeRequest(@req.Id)">
+                        ✓ Done
+                    </button>
+
 
                 </div>
             </div>
         }
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header">
-            <strong>Fulfilled Requests (History)</strong>
-        </div>
 
-        <div class="card-body p-2">
-            @if (!Model.CompletedRequests.Any())
-            {
-                <p class="text-muted text-center mb-0">
-                    No fulfilled requests yet
-                </p>
-            }
-            else
-            {
-                <div class="list-group">
-                    @foreach (var req in Model.CompletedRequests)
-                    {
-                        <div class="list-group-item p-3">
-                            <h6 class="mb-1">
-                                Room <span class="badge bg-secondary">@req.Room.Number</span>
-                            </h6>
+    
 
-                            <ul class="mb-1 ps-3">
-                                @foreach (var item in req.Items)
-                                {
-                                    <li>@item.RequestItem.Name × @item.Quantity</li>
-                                }
-                            </ul>
-
-                            <small class="text-muted">
-                                Requested at @req.CreatedAt.ToShortTimeString()
-                            </small>
-                        </div>
-                    }
-                </div>
-            }
-        </div>
-    </div>
 
 }
+<div class="card shadow-sm">
+    <div class="card-header">
+        <strong>Fulfilled Requests (History)</strong>
+    </div>
+
+    <div class="card-body p-2">
+        @if (!Model.CompletedRequests.Any())
+        {
+            <p class="text-muted text-center mb-0">
+                No fulfilled requests yet
+            </p>
+        }
+        else
+        {
+            <div class="list-group">
+                @foreach (var req in Model.CompletedRequests)
+                {
+                    <div class="list-group-item p-3">
+
+                        <!-- TOP ROW -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center gap-3">
+                                <h6 class="mb-0">
+                                    Room <span class="badge bg-secondary">@req.Room.Number</span>
+                                </h6>
+
+                                <small class="text-muted">
+                                    Requested @req.CreatedAt.ToShortTimeString()
+                                </small>
+
+                                @if (req.CompletedAt != null)
+                                {
+                                    <small class="text-success">
+                                        Completed @req.CompletedAt.Value.ToShortTimeString()
+                                    </small>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- ITEMS -->
+                        <ul class="mb-0 ps-3">
+                            @foreach (var item in req.Items)
+                            {
+                                <li>@item.RequestItem.Name × @item.Quantity</li>
+                            }
+                        </ul>
+
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    async function completeRequest(id) {
+        const res = await fetch('/ReceptionRequests/Complete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `id=${id}`
+        });
+
+        if (res.ok) {
+
+            location.reload();
+        }
+    }
+</script>
+
