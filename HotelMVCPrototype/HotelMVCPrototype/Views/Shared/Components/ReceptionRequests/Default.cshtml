@@ -1,9 +1,11 @@
 ﻿@model List<HotelMVCPrototype.Models.ServiceRequest>
 
 <div class="card shadow-sm">
-    <div class="card-header bg-primary-action text-white">
+    <a href="@Url.Action("Index", "ReceptionRequests")"
+       class="card-header bg-primary-action text-white text-decoration-none">
         <strong>New Requests</strong>
-    </div>
+    </a>
+
 
     <div class="card-body p-2">
         @if (!Model.Any())

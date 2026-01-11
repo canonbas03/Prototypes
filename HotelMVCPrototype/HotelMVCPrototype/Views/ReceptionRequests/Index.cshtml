@@ -1,8 +1,9 @@
-﻿@model List<HotelMVCPrototype.Models.ServiceRequest>
+﻿@model ReceptionRequestsIndexViewModel
+
 
 <h4 class="mb-3">Guest Requests</h4>
 
-@if (Model == null || !Model.Any())
+@if (Model.NewRequests == null || !Model.NewRequests.Any())
 {
     <div class="alert alert-secondary text-center">
         No active guest requests
@@ -11,7 +12,7 @@
 else
 {
     <div class="list-group shadow-sm">
-        @foreach (var req in Model)
+        @foreach (var req in Model.NewRequests)
         {
             <div class="list-group-item p-3">
                 <div class="d-flex justify-content-between align-items-start">
@@ -44,4 +45,44 @@ else
             </div>
         }
     </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <strong>Fulfilled Requests (History)</strong>
+        </div>
+
+        <div class="card-body p-2">
+            @if (!Model.CompletedRequests.Any())
+            {
+                <p class="text-muted text-center mb-0">
+                    No fulfilled requests yet
+                </p>
+            }
+            else
+            {
+                <div class="list-group">
+                    @foreach (var req in Model.CompletedRequests)
+                    {
+                        <div class="list-group-item p-3">
+                            <h6 class="mb-1">
+                                Room <span class="badge bg-secondary">@req.Room.Number</span>
+                            </h6>
+
+                            <ul class="mb-1 ps-3">
+                                @foreach (var item in req.Items)
+                                {
+                                    <li>@item.RequestItem.Name × @item.Quantity</li>
+                                }
+                            </ul>
+
+                            <small class="text-muted">
+                                Requested at @req.CreatedAt.ToShortTimeString()
+                            </small>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
 }

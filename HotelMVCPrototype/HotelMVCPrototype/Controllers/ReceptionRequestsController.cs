@@ -21,17 +21,30 @@ public class ReceptionRequestsController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var requests = await _context.ServiceRequests
-        .Include(r => r.Room)
-        .Include(r => r.Items)
-            .ThenInclude(i => i.RequestItem)
+        var newRequests = await _context.ServiceRequests
+            .Include(r => r.Room)
+            .Include(r => r.Items)
+                .ThenInclude(i => i.RequestItem)
             .Where(r => r.Status == ServiceRequestStatus.New)
             .OrderBy(r => r.CreatedAt)
-            .Take(5)
-        .ToListAsync();
+            .ToListAsync();
 
-        return View(requests);
+        var completedRequests = await _context.ServiceRequests
+            .Include(r => r.Room)
+            .Include(r => r.Items)
+                .ThenInclude(i => i.RequestItem)
+            .Where(r => r.Status == ServiceRequestStatus.Completed)
+            .OrderByDescending(r => r.CreatedAt)
+            .Take(50)
+            .ToListAsync();
+
+        return View(new ReceptionRequestsIndexViewModel
+        {
+            NewRequests = newRequests,
+            CompletedRequests = completedRequests
+        });
     }
+
     public IActionResult PartialRequests()
     {
         return ViewComponent("ReceptionRequests");
