@@ -46,10 +46,19 @@ else
                     <td>@room.Number</td>
                     <td>@room.Type</td>
                     <td>
+                        <div class="d-flex gap-2">
                         <form asp-action="MarkCleaned" method="post">
                             <input type="hidden" name="id" value="@room.Id" />
                             <button class="btn btn-success btn-sm">Mark Cleaned</button>
                         </form>
+
+                        <a class="btn btn-danger btn-sm"
+                           asp-controller="SecurityIncidents"
+                           asp-action="Create"
+                           asp-route-roomId="@room.Id">
+                            🚨
+                        </a>
+                        </div>
                     </td>
                 </tr>
             }

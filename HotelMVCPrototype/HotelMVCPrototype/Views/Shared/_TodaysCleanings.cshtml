@@ -23,6 +23,15 @@
 
                         @* Optional: you could have a "Notes" button or just show static notes *@
                         <span class="badge bg-info">🧹</span>
+                        <div>
+                            <a class="btn btn-danger btn-sm"
+                               asp-controller="SecurityIncidents"
+                               asp-action="Create"
+                               asp-route-roomId="@log.RoomId">
+                                🚨
+                            </a>
+                        </div>
+
                     </div>
 
                     @if (!string.IsNullOrWhiteSpace(log.Notes))
