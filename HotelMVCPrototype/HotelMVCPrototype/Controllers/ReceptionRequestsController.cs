@@ -35,7 +35,7 @@ public class ReceptionRequestsController : Controller
                 .ThenInclude(i => i.RequestItem)
             .Where(r => r.Status == ServiceRequestStatus.Completed)
             .OrderByDescending(r => r.CreatedAt)
-            .Take(50)
+            .Take(10)
             .ToListAsync();
 
         return View(new ReceptionRequestsIndexViewModel
