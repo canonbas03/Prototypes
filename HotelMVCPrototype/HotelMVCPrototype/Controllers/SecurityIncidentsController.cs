@@ -65,6 +65,6 @@ public class SecurityIncidentsController : Controller
         _context.SecurityIncidents.Add(incident);
         await _context.SaveChangesAsync();
 
-        return RedirectToAction("Index", "Reception"); // or dashboard
+        return RedirectToAction("Index", "Home");
     }
 }
