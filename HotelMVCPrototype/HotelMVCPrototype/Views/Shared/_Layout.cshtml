@@ -51,6 +51,14 @@
                                 <a class="nav-link text-white" asp-controller="GuestAssignments" asp-action="Index">Guest Check-In</a>
                             </li>
                         }
+                        <li>
+                            <a class="btn btn-danger btn-sm"
+                               asp-controller="SecurityIncidents"
+                               asp-action="Create"
+                               asp-route-roomId="18">
+                                🚨 Report Security Issue
+                            </a>
+                        </li>
                     </ul>
 
                     <partial name="_LoginPartial" />

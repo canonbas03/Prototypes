@@ -1,0 +1,82 @@
+﻿@using HotelMVCPrototype.Models.Enums
+@model List<SecurityIncident>
+
+<h3 class="mb-3">Security Incidents</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-secondary text-center">
+        No security incidents reported
+    </div>
+}
+else
+{
+    <div class="list-group shadow-sm">
+
+        @foreach (var incident in Model)
+        {
+            <div class="list-group-item p-3
+                        @(incident.Status == SecurityIncidentStatus.New ? "border-danger" :
+                                   incident.Status == SecurityIncidentStatus.Acknowledged ? "border-warning" :
+                                   "border-success")">
+
+                <!-- TOP ROW -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge
+                                    @(incident.Status == SecurityIncidentStatus.New ? "bg-danger" :
+                                                            incident.Status == SecurityIncidentStatus.Acknowledged ? "bg-warning text-dark" :
+                                                            "bg-success")">
+                    @incident.Status
+                </span>
+
+                        <strong>@incident.Type</strong>
+
+                @if (incident.Room != null)
+                        {
+                            <span class="badge bg-secondary">
+                                Room @incident.Room.Number
+                            </span>
+                        }
+
+                        <small class="text-muted">
+                            @incident.CreatedAt.ToShortTimeString()
+                        </small>
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="d-flex gap-2">
+                        @if (incident.Status == SecurityIncidentStatus.New)
+                        {
+                            <form asp-action="Acknowledge" method="post">
+                                <input type="hidden" name="id" value="@incident.Id" />
+                                <button class="btn btn-warning btn-sm">
+                                    👀 Acknowledge
+                                </button>
+                            </form>
+                        }
+
+                        @if (incident.Status != SecurityIncidentStatus.Resolved)
+                        {
+                            <form asp-action="Resolve" method="post">
+                                <input type="hidden" name="id" value="@incident.Id" />
+                                <button class="btn btn-success btn-sm">
+                                    ✔ Resolve
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+
+                <!-- DETAILS -->
+                @if (!string.IsNullOrEmpty(incident.Description))
+                {
+                    <div class="text-muted">
+                        @incident.Description
+                    </div>
+                }
+
+            </div>
+        }
+    </div>
+}

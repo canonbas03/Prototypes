@@ -9,7 +9,7 @@ namespace HotelMVCPrototype.Data
         {
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] roles = { "Admin", "Reception", "Housekeeping", "Maintenance", "Bar" };
+            string[] roles = { "Admin", "Reception", "Housekeeping", "Maintenance", "Bar","Security" };
 
             foreach (var role in roles)
             {
