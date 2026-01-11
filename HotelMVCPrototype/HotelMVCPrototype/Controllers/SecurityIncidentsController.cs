@@ -3,6 +3,7 @@ using HotelMVCPrototype.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [Authorize]
 public class SecurityIncidentsController : Controller
@@ -19,13 +20,29 @@ public class SecurityIncidentsController : Controller
     }
 
     // GET: /SecurityIncidents/Create
-    public IActionResult Create(int? roomId)
+    public async Task<IActionResult> Create(int? roomId)
     {
-        return View(new CreateSecurityIncidentViewModel
+        var model = new CreateSecurityIncidentViewModel
         {
             RoomId = roomId
-        });
+        };
+
+        if (roomId != null)
+        {
+            var room = await _context.Rooms
+                .Where(r => r.Id == roomId)
+                .Select(r => new { r.Number })
+                .FirstOrDefaultAsync();
+
+            if (room != null)
+            {
+                model.RoomNumber = room.Number;
+            }
+        }
+
+        return View(model);
     }
+
 
     // POST: /SecurityIncidents/Create
     [HttpPost]

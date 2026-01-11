@@ -10,6 +10,8 @@ namespace HotelMVCPrototype.Models
 
         public int? RoomId { get; set; }
 
+        public int? RoomNumber { get; set; }
+
         [MaxLength(500)]
         public string? Description { get; set; }
     }
