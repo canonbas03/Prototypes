@@ -37,8 +37,33 @@ public class BarController : Controller
         if (order == null) return NotFound();
 
         order.Status = OrderStatus.Completed;
+        order.CompletedAt = DateTime.Now;
+
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> History(int? days)
+    {
+        var query = _context.Orders
+            .Include(o => o.Room)
+            .Include(o => o.Items).ThenInclude(i => i.MenuItem)
+            .Where(o => o.Status == OrderStatus.Completed);
+
+        if(days.HasValue)
+        {
+            var fromDate = DateTime.Now.AddDays(-days.Value);
+            query = query
+                .Where(o => o.CompletedAt >= fromDate); 
+        }
+
+        var completedOrders = await query
+            .OrderByDescending(o => o.CompletedAt)
+            .ToListAsync();
+
+        ViewBag.SelectedDays = days;
+
+        return View(completedOrders);
     }
 }

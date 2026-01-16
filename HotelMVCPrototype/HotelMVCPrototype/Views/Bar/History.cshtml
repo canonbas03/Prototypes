@@ -1,0 +1,84 @@
+﻿@model List<HotelMVCPrototype.Models.Order>
+@{
+    int? selected = ViewBag.SelectedDays as int?;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Bar Orders – History</h2>
+
+    <a class="btn btn-outline-primary" asp-action="Index">
+        ← Back to New Orders
+    </a>
+</div>
+
+<div class="btn-group mb-3" role="group">
+    <a class="btn @(selected == 1 ? "btn-primary" : "btn-outline-primary")"
+       asp-action="History"
+       asp-route-days="1">
+        Today
+    </a>
+
+    <a class="btn @(selected == 7 ? "btn-primary" : "btn-outline-primary")"
+       asp-action="History"
+       asp-route-days="7">
+        Last 7 days
+    </a>
+
+    <a class="btn @(selected == 30 ? "btn-primary" : "btn-outline-primary")"
+       asp-action="History"
+       asp-route-days="30">
+        Last 30 days
+    </a>
+
+    <a class="btn @(selected == null ? "btn-primary" : "btn-outline-primary")"
+       asp-action="History">
+        All
+    </a>
+</div>
+
+
+@if (!Model.Any())
+{
+    <div class="alert alert-secondary text-center">
+        No completed orders yet.
+    </div>
+}
+else
+{
+    <div class="list-group shadow-sm">
+        @foreach (var order in Model)
+        {
+            <div class="list-group-item p-3">
+                <!-- TOP ROW -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <h6 class="mb-0">
+                            Room <span class="badge bg-secondary">@order.Room.Number</span>
+                        </h6>
+
+                        <small class="text-muted">
+                            Ordered @order.CreatedAt.ToShortTimeString()
+                        </small>
+
+                        @if (order.CompletedAt != null)
+                        {
+                            <small class="text-success">
+                                Completed @order.CompletedAt.Value.ToShortTimeString()
+                            </small>
+                        }
+                    </div>
+
+                    <span class="badge bg-success">Completed</span>
+                </div>
+
+                <!-- ITEMS -->
+                <ul class="mb-0 ps-3">
+                    @foreach (var item in order.Items)
+                    {
+                        <li>@item.MenuItem.Name × @item.Quantity</li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+}

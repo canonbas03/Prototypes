@@ -12,6 +12,8 @@ namespace HotelMVCPrototype.Models
         public Room Room { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CompletedAt { get; set; }
+
 
         public OrderStatus Status { get; set; } = OrderStatus.New;
 
