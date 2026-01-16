@@ -19,13 +19,12 @@ public class BarController : Controller
     public async Task<IActionResult> Index()
     {
         var orders = await _context.Orders
-     .Include(o => o.Room)
-     .Include(o => o.Items)
-         .ThenInclude(i => i.MenuItem)
-     .Where(o => o.Status == OrderStatus.New)
-     .OrderBy(o => o.CreatedAt) // <-- FIFO queue
-     .ToListAsync();
-
+             .Include(o => o.Room)
+             .Include(o => o.Items)
+             .ThenInclude(i => i.MenuItem)
+             .Where(o => o.Status == OrderStatus.New)
+             .OrderBy(o => o.CreatedAt) // <-- FIFO queue
+             .ToListAsync();
 
         return View(orders);
     }

@@ -42,16 +42,44 @@
     </tbody>
 </table>
 
+<audio id="newOrderSound" preload="auto">
+    <source src="@Url.Content("~/sounds/notification-bar.mp3")" type="audio/mpeg" />
+</audio>
+
+
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
     <script>
+        // Unlock audio after the first user gesture
+        document.addEventListener("click", async () => {
+            const sound = document.getElementById("newOrderSound");
+            try {
+                sound.volume = 0.8;
+                await sound.play();
+                sound.pause();
+                sound.currentTime = 0;
+                console.log("Audio unlocked ✅");
+            } catch (e) {
+                console.warn("Audio unlock failed:", e);
+            }
+        }, { once: true });
+    </script>
+
+    <script>
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/barHub")
+            .withUrl("/hotelHub")
             .build();
 
         connection.on("ReceiveNewOrder", function(orderId) {
-            // Reload the dashboard or fetch new orders via AJAX
-            location.reload();
+            const sound = document.getElementById("newOrderSound");
+
+            // sound.currentTime = 0;
+            sound.play().catch(err =>
+                {
+                    console.warn("Autoplay blocked!", err);
+                });
+
+            setTimeout(() => location.reload(), 800);
         });
 
         connection.start().catch(err => console.error(err.toString()));
