@@ -39,6 +39,10 @@ namespace HotelMVCPrototype
                 options.Cookie.IsEssential = true;
             });
 
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IAuditLogger, AuditLogger>();
+
+
             var app = builder.Build();
 
             app.UseSession();

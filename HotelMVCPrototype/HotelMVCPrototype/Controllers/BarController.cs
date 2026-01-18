@@ -1,6 +1,7 @@
 ﻿using HotelMVCPrototype.Data;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
+using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,12 @@ using Microsoft.EntityFrameworkCore;
 public class BarController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditLogger _audit;
 
-    public BarController(ApplicationDbContext context)
+    public BarController(ApplicationDbContext context, IAuditLogger audit)
     {
         _context = context;
+        _audit = audit;
     }
 
     // Show all new orders
@@ -40,6 +43,14 @@ public class BarController : Controller
         order.CompletedAt = DateTime.Now;
 
         await _context.SaveChangesAsync();
+
+        await _audit.LogAsync(
+            action: "OrderCompleted",
+            entityType: "Order",
+            entityId: order.Id,
+            description: $"Order {order.Id} completed",
+            data: new { order.RoomId, order.CompletedAt }
+        );
 
         return RedirectToAction(nameof(Index));
     }

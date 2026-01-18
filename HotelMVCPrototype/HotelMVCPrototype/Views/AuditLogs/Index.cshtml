@@ -1,0 +1,65 @@
+﻿@model List<AuditLog>
+
+<h3 class="mb-3">Audit Logs</h3>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-2">
+        <input class="form-control" name="user" placeholder="User" value="@Context.Request.Query["user"]" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" name="action" placeholder="Action" value="@Context.Request.Query["action"]" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" name="entityType" placeholder="EntityType" value="@Context.Request.Query["entityType"]" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" name="entityId" placeholder="EntityId" value="@Context.Request.Query["entityId"]" />
+    </div>
+    <div class="col-md-2">
+        <select class="form-select" name="days">
+            @{
+                var days = (int)(ViewBag.Days ?? 7);
+            }
+            <option value="1" selected="@(days == 1)">Today</option>
+            <option value="7" selected="@(days == 7)">Last 7 days</option>
+            <option value="30" selected="@(days == 30)">Last 30 days</option>
+            <option value="365" selected="@(days == 365)">Last year</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filter</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-secondary text-center">No logs found</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var l in Model)
+                {
+                    <tr>
+                        <td>@l.CreatedAt.ToString("dd.MM HH:mm:ss")</td>
+                        <td>@l.UserName</td>
+                        <td><span class="badge bg-dark">@l.Action</span></td>
+                        <td>@l.EntityType #@l.EntityId</td>
+                        <td>@l.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
