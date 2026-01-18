@@ -21,4 +21,7 @@ public class Guest
     public Nationality? Nationality { get; set; }
 
     public string? Phone { get; set; }
+
+    public bool IsActive { get; set; } = true;
+    public DateTime? DepartedAt { get; set; }
 }

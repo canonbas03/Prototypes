@@ -143,6 +143,7 @@ namespace HotelMVCPrototype.Controllers
         {
             var stay = await _context.GuestAssignments
                 .Include(g => g.Room)
+                .Include(ga => ga.Guests)
                 .FirstOrDefaultAsync(g => g.Id == assignmentId && g.IsActive);
 
             if (stay == null)
@@ -151,17 +152,64 @@ namespace HotelMVCPrototype.Controllers
             stay.IsActive = false;
             stay.CheckOutDate = DateTime.Now;
 
+            foreach (var g in stay.Guests)
+            {
+                if (g.IsActive)
+                {
+                    g.IsActive = false;
+                    g.DepartedAt = DateTime.Now;
+                }
+            }
+
             stay.Room.Status = RoomStatus.Cleaning;
 
-            _context.GuestAssignments.Update(stay);
-            _context.Rooms.Update(stay.Room);
+            //_context.GuestAssignments.Update(stay);
+            //_context.Rooms.Update(stay.Room);
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction("RoomDetails", new { id = stay.RoomId });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DepartGuest(int guestId)
+        {
+            var guest = await _context.Guests
+                .Include(g => g.GuestAssignment)
+                    .ThenInclude(ga => ga.Room)
+                .FirstOrDefaultAsync(g => g.Id == guestId);
 
+            if (guest == null) return NotFound();
+
+            // mark this guest departed
+            if (guest.IsActive)
+            {
+                guest.IsActive = false;
+                guest.DepartedAt = DateTime.Now;
+            }
+
+            // load assignment with all guests to decide if room should be checked out
+            var stay = await _context.GuestAssignments
+                .Include(ga => ga.Room)
+                .Include(ga => ga.Guests)
+                .FirstOrDefaultAsync(ga => ga.Id == guest.GuestAssignmentId && ga.IsActive);
+
+            if (stay != null)
+            {
+                // if no active guests remain -> end stay + set room cleaning
+                if (stay.Guests.All(g => !g.IsActive))
+                {
+                    stay.IsActive = false;
+                    stay.CheckOutDate = DateTime.Now;
+                    stay.Room.Status = RoomStatus.Cleaning;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("RoomDetails", new { id = guest.GuestAssignment.RoomId });
+        }
 
     }
 }

@@ -53,16 +53,42 @@
 
             <h6>Guests</h6>
             <ul class="list-group">
-                @foreach (var g in stay.Guests)
+                @foreach (var g in stay.Guests.OrderByDescending(x => x.IsActive))
                 {
-                    <li class="list-group-item">
-                        <strong>@g.FirstName @g.LastName</strong><br />
-                        <small>
-                            @g.Nationality · @g.Sex · Born @g.BirthDate.ToString("dd.MM.yyyy")
-                        </small>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>@g.FirstName @g.LastName</strong><br />
+                            <small>
+                                @g.Nationality · @g.Sex · Born @g.BirthDate.ToString("dd.MM.yyyy")
+                            </small>
+
+                            @if (!g.IsActive && g.DepartedAt != null)
+                            {
+                                <div class="text-muted mt-1">
+                                    Departed: @g.DepartedAt.Value.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                            }
+                        </div>
+
+                        @if (g.IsActive)
+                        {
+                            <form asp-action="DepartGuest" method="post" class="mb-0"
+                                  onsubmit="return confirm('Depart only this guest?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="guestId" value="@g.Id" />
+                                <button class="btn btn-outline-danger btn-sm">
+                                    Depart guest
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Departed</span>
+                        }
                     </li>
                 }
             </ul>
+
         </div>
     </div>
 }
