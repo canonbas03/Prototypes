@@ -36,11 +36,12 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <strong>Current Stay</strong>
             <form asp-action="Depart" method="post"
-                  onsubmit="return confirm('Are you sure you want to check out this room?');" class="mb-0">
+                  onsubmit="return confirm('Depart all guests and set room to Cleaning?');"
+                  class="mb-0">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="assignmentId" value="@stay.Id" />
                 <button class="btn btn-danger btn-sm">
-                    Early Departure
+                    Depart Room
                 </button>
             </form>
         </div>
