@@ -42,6 +42,8 @@ namespace HotelMVCPrototype.Data
         public DbSet<SecurityIncident> SecurityIncidents { get; set; }
 
         public DbSet<Guest> Guests { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
+
 
 
 

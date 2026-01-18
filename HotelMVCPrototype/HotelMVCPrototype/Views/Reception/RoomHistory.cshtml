@@ -1,0 +1,63 @@
+﻿@model RoomHistoryViewModel
+
+<h3 class="mb-3">Room @Model.RoomNumber – History</h3>
+
+<a class="btn btn-secondary mb-3"
+   asp-action="RoomDetails"
+   asp-route-id="@Model.RoomId">
+    ← Back to Room
+</a>
+
+@if (!Model.Assignments.Any())
+{
+    <div class="alert alert-secondary text-center">
+        No history for this room.
+    </div>
+}
+else
+{
+    <div class="list-group shadow-sm">
+        @foreach (var stay in Model.Assignments)
+        {
+            <div class="list-group-item p-3">
+                <!-- TOP ROW -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <strong>
+                            @stay.CheckInDate.ToString("dd MMM yyyy")
+                            —
+                            @(stay.CheckOutDate != default ? stay.CheckOutDate.ToString("dd MMM yyyy") : "Still active")
+                        </strong>
+
+                        <span class="badge @(stay.IsActive ? "bg-success" : "bg-secondary")">
+                            @(stay.IsActive ? "Active" : "Closed")
+                        </span>
+                    </div>
+                </div>
+
+                <!-- GUESTS -->
+                @if (stay.Guests.Any())
+                {
+                    <ul class="mb-0 ps-3">
+                        @foreach (var g in stay.Guests)
+                        {
+                            <li>
+                                @g.FirstName @g.LastName
+                                @if (g.DepartedAt != null)
+                                {
+                                    <span class="text-muted">
+                                        (departed @g.DepartedAt.Value.ToString("dd.MM.yyyy HH:mm"))
+                                    </span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="text-muted">No guests recorded for this stay.</div>
+                }
+            </div>
+        }
+    </div>
+}

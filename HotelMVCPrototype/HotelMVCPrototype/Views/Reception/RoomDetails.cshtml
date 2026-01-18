@@ -17,12 +17,21 @@
         </div>
 
         <!-- RIGHT BUTTON -->
-        <a class="btn btn-danger btn-sm"
-           asp-controller="SecurityIncidents"
-           asp-action="Create"
-           asp-route-roomId="@Model.Id">
-            🚨 Report an Issue
-        </a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary btn-sm"
+               asp-action="RoomHistory"
+               asp-route-roomId="@Model.Id">
+                📜 Room History
+            </a>
+
+            <a class="btn btn-danger btn-sm"
+               asp-controller="SecurityIncidents"
+               asp-action="Create"
+               asp-route-roomId="@Model.Id">
+                🚨 Report an Issue
+            </a>
+        </div>
+
 
     </div>
 </div>

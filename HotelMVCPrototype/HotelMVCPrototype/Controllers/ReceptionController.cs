@@ -211,5 +211,28 @@ namespace HotelMVCPrototype.Controllers
             return RedirectToAction("RoomDetails", new { id = guest.GuestAssignment.RoomId });
         }
 
+        public async Task<IActionResult> RoomHistory(int roomId)
+        {
+            var room = await _context.Rooms
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+
+            if (room == null) return NotFound();
+
+            var assignments = await _context.GuestAssignments
+                .Where(ga => ga.RoomId == roomId)
+                .Include(ga => ga.Guests)
+                .OrderByDescending(ga => ga.CheckInDate)
+                .ToListAsync();
+
+            var vm = new RoomHistoryViewModel
+            {
+                RoomId = room.Id,
+                RoomNumber = room.Number,
+                Assignments = assignments
+            };
+
+            return View(vm);
+        }
+
     }
 }
