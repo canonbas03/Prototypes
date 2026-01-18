@@ -178,13 +178,61 @@
         if (!el) return;
         el.textContent = value;
     }
-
-
-
-
 </script>
 
 
+<audio id="newRequestSound" preload="auto">
+    <source src="@Url.Content("~/sounds/notification-bar.mp3")" type="audio/mpeg" />
+</audio>
+
+<script>
+    document.addEventListener("click", async () => {
+        const sound = document.getElementById("newRequestSound");
+        try {
+            sound.volume = 0.8;
+            await sound.play();
+            sound.pause();
+            sound.currentTime = 0;
+            console.log("Reception audio unlocked ✅");
+        } catch (e) {
+            console.warn("Reception audio unlock failed:", e);
+        }
+    }, { once: true });
+</script>
+<script>
+    connection.on("NewRequest", async (roomId) => {
+        // 🔊 sound
+        const sound = document.getElementById("newRequestSound");
+        if (sound) {
+            try {
+                sound.currentTime = 0;
+                await sound.play();
+            } catch (err) {
+                console.warn("Autoplay blocked (Reception)!", err);
+            }
+        }
+
+        // 🔁 reload right-side requests card
+        const res = await fetch('/ReceptionRequests/PartialRequests');
+        const html = await res.text();
+        const container = document.getElementById("requests-container");
+        if (container) container.innerHTML = html;
+
+        // 🔔 add badge on room (if roomId provided)
+        if (roomId) {
+            const room = document.getElementById(`room-${roomId}`);
+            if (room) {
+                let badge = room.querySelector(".request-badge");
+                if (!badge) {
+                    badge = document.createElement("span");
+                    badge.className = "badge bg-danger text-white request-badge";
+                    badge.textContent = "🔔";
+                    room.querySelector(".room-badges").appendChild(badge);
+                }
+            }
+        }
+    });
+</script>
 
 
 
