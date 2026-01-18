@@ -13,11 +13,13 @@ namespace HotelMVCPrototype.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IRoomStatisticsService _statsService;
+        private readonly IAuditLogger _audit;
 
-        public ReceptionController(ApplicationDbContext context, IRoomStatisticsService statsService)
+        public ReceptionController(ApplicationDbContext context, IRoomStatisticsService statsService, IAuditLogger audit)
         {
             _context = context;
             _statsService = statsService;
+            _audit = audit;
         }
 
 
@@ -116,6 +118,19 @@ namespace HotelMVCPrototype.Controllers
             assignment.Room = room;
             _context.GuestAssignments.Add(assignment);
             await _context.SaveChangesAsync();
+
+            await _audit.LogAsync(
+                action: "RoomCheckedIn",
+                entityType: "GuestAssignment",
+                entityId: assignment.Id,
+                description: $"Room {room.Number} checked in",
+                data: new
+                {
+                    assignment.RoomId,
+                    assignment.CheckInDate
+                }
+            );
+
 
             return RedirectToAction(nameof(Index));
         }

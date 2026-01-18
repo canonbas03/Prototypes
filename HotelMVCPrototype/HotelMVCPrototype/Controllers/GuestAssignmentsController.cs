@@ -1,6 +1,7 @@
 ﻿using HotelMVCPrototype.Data;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
+using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,12 @@ namespace HotelMVCPrototype.Controllers
     public class GuestAssignmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuditLogger _audit;
 
-        public GuestAssignmentsController(ApplicationDbContext context)
+        public GuestAssignmentsController(ApplicationDbContext context, IAuditLogger audit)
         {
             _context = context;
+            _audit = audit;
         }
 
         // GET: GuestAssignments
@@ -94,6 +97,19 @@ namespace HotelMVCPrototype.Controllers
             _context.GuestAssignments.Add(stay);
             _context.Rooms.Update(room);
             await _context.SaveChangesAsync();
+
+            await _audit.LogAsync(
+                action: "RoomCheckedIn",
+                entityType: "GuestAssignment",
+                entityId: stay.Id,
+                description: $"Room {room.Number} checked in",
+                data: new
+                {
+                    stay.RoomId,
+                    stay.CheckInDate
+                }
+            );
+
 
             return RedirectToAction("RoomDetails", "Reception", new { id = model.RoomId });
         }
