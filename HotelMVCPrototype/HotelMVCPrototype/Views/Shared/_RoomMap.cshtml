@@ -29,13 +29,17 @@
 
             <div class="room-badges">
 
+                @if (room.IsDND)
+                {
+                    <span class="badge bg-warning text-black dnd-badge">DND</span>
+                }
                 @* Reception only *@
                 @if (Model.Mode == RoomMapMode.Reception)
                 {
-                    if (room.IsDND)
+                   @*  if (room.IsDND)
                     {
                         <span class="badge bg-warning text-black dnd-badge">DND</span>
-                    }
+                    } *@
 
                     if (room.HasOpenRequest)
                     {
@@ -46,6 +50,7 @@
                 @* Housekeeping only *@
                 @if (Model.Mode == RoomMapMode.Housekeeping)
                 {
+
                     <span class="badge bg-info">🧹</span>
                 }
 

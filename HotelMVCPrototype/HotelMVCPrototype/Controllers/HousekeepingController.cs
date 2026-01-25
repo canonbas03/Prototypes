@@ -42,7 +42,8 @@ namespace HotelMVCPrototype.Controllers
                     LeftPercent = r.MapLeftPercent,
                     WidthPercent = r.MapWidthPercent,
                     HeightPercent = r.MapHeightPercent,
-                    StatusColor = "#0dcaf0"
+                    StatusColor = "#0dcaf0",
+                    IsDND = r.IsDND
                 })
                 .ToList();
 
