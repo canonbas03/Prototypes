@@ -3,6 +3,7 @@ using HotelMVCPrototype.Data;
 using HotelMVCPrototype.Hubs;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
+using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +13,16 @@ public class GuestOrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly IHubContext<HotelHub> _hubContext;
+    private readonly IAuditLogger _audit;
     private const string CART_KEY = "GuestCart";
     public GuestOrdersController(
         ApplicationDbContext context,
-        IHubContext<HotelHub> hubContext)
+        IHubContext<HotelHub> hubContext,
+        IAuditLogger audit)
     {
         _context = context;
         _hubContext = hubContext;
+        _audit = audit;
     }
 
     public async Task<IActionResult> Index(int roomId)
@@ -80,6 +84,24 @@ public class GuestOrdersController : Controller
         await _context.SaveChangesAsync();
 
         await _hubContext.Clients.All.SendAsync("ReceiveNewOrder", order.Id);
+
+        await _audit.LogAsync(
+    action: "OrderPlaced",
+    entityType: "Order",
+    entityId: order.Id,
+    description: $"Order {order.Id} placed for room {order.RoomId}",
+    data: new
+    {
+        order.RoomId,
+        order.CreatedAt,
+        Items = order.Items.Select(i => new
+        {
+            i.MenuItemId,
+            i.Quantity
+        })
+    }
+);
+
 
         return RedirectToAction(nameof(ThankYou), new { id = order.Id });
     }

@@ -1,0 +1,40 @@
+﻿@using System.Text.Json
+@model AuditLog
+
+<h3 class="mb-3">Audit Log Details</h3>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div><strong>Time:</strong> @Model.CreatedAt</div>
+        <div><strong>User:</strong> @Model.UserName (@Model.UserId)</div>
+        <div><strong>Action:</strong> @Model.Action</div>
+        <div><strong>Entity:</strong> @Model.EntityType #@Model.EntityId</div>
+        <div><strong>Description:</strong> @Model.Description</div>
+
+        <hr />
+
+        <h6>Data</h6>
+
+        @if (string.IsNullOrWhiteSpace(Model.DataJson))
+        {
+            <div class="text-muted">No extra data</div>
+        }
+        else
+        {
+            try
+            {
+                var doc = JsonDocument.Parse(Model.DataJson);
+                <partial name="_JsonViewer" model="doc.RootElement" />
+            }
+            catch
+            {
+                <div class="alert alert-warning mb-0">
+                    DataJson is not valid JSON. Showing raw value:
+                    <pre class="bg-light p-2 rounded mt-2 mb-0" style="white-space:pre-wrap">@Model.DataJson</pre>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary mt-3">← Back</a>

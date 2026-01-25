@@ -90,6 +90,9 @@ namespace HotelMVCPrototype.Controllers
                     Nationality = g.Nationality,
                     Phone = g.Phone
                 });
+
+               
+
             }
 
             room.Status = RoomStatus.Occupied;
@@ -99,14 +102,23 @@ namespace HotelMVCPrototype.Controllers
             await _context.SaveChangesAsync();
 
             await _audit.LogAsync(
-                action: "RoomCheckedIn",
+                action: "GuestsAssignedToRoom",
                 entityType: "GuestAssignment",
                 entityId: stay.Id,
-                description: $"Room {room.Number} checked in",
+                description: $"Guests assigned to room {room.Number}",
                 data: new
                 {
-                    stay.RoomId,
-                    stay.CheckInDate
+                    RoomId = room.Id,
+                    RoomNumber = room.Number,
+                    CheckInDate = stay.CheckInDate,
+                    CheckOutDate = stay.CheckOutDate,
+                    Guests = stay.Guests.Select(x => new
+                    {
+                        x.Id,
+                        x.FirstName,
+                        x.LastName,
+                        x.EGN
+                    })
                 }
             );
 

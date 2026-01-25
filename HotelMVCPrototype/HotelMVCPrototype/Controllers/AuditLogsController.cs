@@ -45,4 +45,12 @@ public class AuditLogsController : Controller
         ViewBag.Days = days;
         return View(logs);
     }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var log = await _context.AuditLogs.FirstOrDefaultAsync(x => x.Id == id);
+        if (log == null) return NotFound();
+        return View(log);
+    }
+
 }

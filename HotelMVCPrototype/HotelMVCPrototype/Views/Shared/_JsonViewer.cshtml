@@ -1,0 +1,38 @@
+﻿@using System.Text.Json
+@model JsonElement
+
+<ul class="list-unstyled ms-2">
+    @foreach (var prop in Model.EnumerateObject())
+    {
+        <li class="mb-1">
+            <strong>@prop.Name:</strong>
+
+            @if (prop.Value.ValueKind == JsonValueKind.Object)
+            {
+                <partial name="_JsonViewer" model="prop.Value" />
+            }
+            else if (prop.Value.ValueKind == JsonValueKind.Array)
+            {
+                <ul class="ms-3">
+                    @foreach (var item in prop.Value.EnumerateArray())
+                    {
+                        <li>
+                            @if (item.ValueKind == JsonValueKind.Object)
+                            {
+                                <partial name="_JsonViewer" model="item" />
+                            }
+                            else
+                            {
+                                @item.ToString()
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span class="text-muted">@prop.Value.ToString()</span>
+            }
+        </li>
+    }
+</ul>

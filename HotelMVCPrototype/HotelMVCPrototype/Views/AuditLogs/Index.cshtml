@@ -52,11 +52,16 @@ else
                 @foreach (var l in Model)
                 {
                     <tr>
-                        <td>@l.CreatedAt.ToString("dd.MM HH:mm:ss")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@l.Id" class="text-decoration-none">
+                                @l.CreatedAt.ToString("dd.MM HH:mm:ss")
+                            </a>
+                        </td>
                         <td>@l.UserName</td>
                         <td><span class="badge bg-dark">@l.Action</span></td>
                         <td>@l.EntityType #@l.EntityId</td>
                         <td>@l.Description</td>
+
                     </tr>
                 }
             </tbody>
