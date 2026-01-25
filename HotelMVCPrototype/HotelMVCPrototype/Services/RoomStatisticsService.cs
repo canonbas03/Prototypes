@@ -22,7 +22,7 @@ namespace HotelMVCPrototype.Services
             {
                 Available = await _context.Rooms.CountAsync(r => r.Status == RoomStatus.Available),
                 Occupied = await _context.Rooms.CountAsync(r => r.Status == RoomStatus.Occupied),
-                Cleaning = await _context.Rooms.CountAsync(r => r.Status == RoomStatus.Cleaning),
+                Cleaning = await _context.Rooms.CountAsync(r => r.Status == RoomStatus.Cleaning || r.NeedsDailyCleaning),
                 Maintenance = await _context.Rooms.CountAsync(r => r.Status == RoomStatus.Maintenance)
             };
         }

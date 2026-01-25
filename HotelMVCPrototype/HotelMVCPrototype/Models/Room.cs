@@ -35,5 +35,6 @@ namespace HotelMVCPrototype.Models
         public double MapHeightPercent { get; set; }
         public int Floor { get; set; }
 
+        public bool NeedsDailyCleaning { get; set; }
     }
 }

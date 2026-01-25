@@ -65,6 +65,25 @@
                                 <a class="nav-link text-white" asp-controller="MenuItems" asp-action="Index">Menu</a>
                             </li>
                         }
+                        @if (User.IsInRole("Housekeeping"))
+                        {
+                            <li class="nav-item">
+                                <form asp-controller="Housekeeping"
+                                      asp-action="StartHousekeepingDay"
+                                      method="post"
+                                      class="d-inline">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="nav-link btn btn-link text-white p-0"
+                                            onclick="return confirm('Start daily housekeeping for all rooms?');">
+                                        Restart
+                                    </button>
+                                </form>
+                            </li>
+                        }
+
                     </ul>
 
                     <partial name="_LoginPartial" />

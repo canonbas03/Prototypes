@@ -1,9 +1,11 @@
 ﻿using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Models.Enums;
 using HotelMVCPrototype.Models.ViewModels;
 using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -120,7 +122,5 @@ public class AdminController : Controller
 
         return RedirectToAction("Index");
     }
-
-
 }
 

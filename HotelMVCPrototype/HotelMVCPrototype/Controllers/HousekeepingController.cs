@@ -30,7 +30,9 @@ namespace HotelMVCPrototype.Controllers
         public async Task<IActionResult> Index(int floor = 1)
         {
             var cleaningRooms = await _context.Rooms
-    .Where(r => r.Status == RoomStatus.Cleaning && r.Floor == floor)
+    .Where(r => r.Floor == floor && (
+        r.Status == RoomStatus.Cleaning || r.NeedsDailyCleaning
+    ))
     .ToListAsync();
 
             var roomMap = cleaningRooms
@@ -82,14 +84,20 @@ namespace HotelMVCPrototype.Controllers
             var room = await _context.Rooms.FindAsync(id);
             if (room == null) return NotFound();
 
-            if (room.Status != RoomStatus.Cleaning)
+            if (room.Status != RoomStatus.Cleaning && !room.NeedsDailyCleaning)
             {
                 return BadRequest("Room is not in cleaning state.");
             }
 
+            if (room.Status == RoomStatus.Cleaning)
+            {
+                room.Status = RoomStatus.Available;
+            }
+            else if(room.NeedsDailyCleaning)
+            {
+                room.NeedsDailyCleaning = false;
+            }
 
-
-            room.Status = RoomStatus.Available;
             _context.Rooms.Update(room);
 
 
@@ -121,5 +129,25 @@ namespace HotelMVCPrototype.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Housekeeping")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartHousekeepingDay()
+        {
+            var rooms = await _context.Rooms
+                .Where(r => r.Status == RoomStatus.Occupied)
+                .ToListAsync();
+
+            foreach (var room in rooms)
+            {
+                room.NeedsDailyCleaning = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
