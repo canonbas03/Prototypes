@@ -223,6 +223,20 @@ namespace HotelMVCPrototype.Controllers
 
             await _context.SaveChangesAsync();
 
+            await _audit.LogAsync(
+                action: "GuestDeparted",
+                entityType: "Guest",
+                entityId: guest.Id,
+                description: $"Guest {guest.FirstName} {guest.LastName} departed room {stay.Room.Number}",
+                data: new
+                {
+                    guest.GuestAssignmentId,
+                    RoomId = stay.Room.Id,
+                    DepartedAt = guest.DepartedAt
+                }
+            );
+
+
             return RedirectToAction("RoomDetails", new { id = guest.GuestAssignment.RoomId });
         }
 
