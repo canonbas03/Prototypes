@@ -1,8 +1,295 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-3">
+
+    <!-- HERO -->
+    <div class="card shadow-sm border-0 overflow-hidden mb-4">
+        <div class="row g-0 align-items-stretch">
+            <div class="col-lg-6 p-4 p-lg-5 bg-soft-mint">
+                <span class="badge bg-secondary-sage text-dark mb-3">Guest Portal</span>
+
+                <h1 class="mb-2" style="font-weight:800; letter-spacing:-0.5px;">
+                    Welcome to <span class="text-primary-action">Le Vins</span>
+                </h1>
+
+                <p class="mb-4" style="max-width: 44ch;">
+                    Everything you need during your stay – dining, room service, facilities, and local experiences.
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-primary bg-primary-action border-0"
+                       asp-controller="GuestOrders" asp-action="Index" asp-route-roomId="0">
+                        🍽️ Order Food & Drinks
+                    </a>
+
+                    <a class="btn btn-outline-dark"
+                       asp-controller="ReceptionRequests" asp-action="Index">
+                        🛎️ Request Service
+                    </a>
+
+                    <a class="btn btn-danger"
+                       asp-controller="SecurityIncidents" asp-action="Create">
+                        🚨 Report an Issue
+                    </a>
+                </div>
+
+                <div class="mt-4 d-flex flex-wrap gap-3 small text-dark-moss">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-white text-primary-action border">Wi-Fi</span>
+                        <span><strong>HotelGuest</strong> · Password: <strong>••••••</strong></span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-white text-primary-action border">Checkout</span>
+                        <span><strong>12:00</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <!-- Replace src later -->
+                <img src="~/images/guest/hero.png"
+                     alt="Hotel view"
+                     class="w-100 h-100"
+                     style="object-fit:cover; min-height: 280px;" />
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK INFO STRIP -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary-action">🍳</span>
+                        <strong>Breakfast</strong>
+                    </div>
+                    <div class="text-muted">07:00 – 10:30</div>
+                    <div class="small text-muted mt-1">Restaurant · Ground floor</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary-action">🏊</span>
+                        <strong>Pool</strong>
+                    </div>
+                    <div class="text-muted">09:00 – 19:00</div>
+                    <div class="small text-muted mt-1">Towels available at reception</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary-action">💪</span>
+                        <strong>Gym</strong>
+                    </div>
+                    <div class="text-muted">06:00 – 22:00</div>
+                    <div class="small text-muted mt-1">Access with room card</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary-action">🧖</span>
+                        <strong>Spa</strong>
+                    </div>
+                    <div class="text-muted">10:00 – 20:00</div>
+                    <div class="small text-muted mt-1">Book at reception</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURED SECTIONS -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 overflow-hidden h-100">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <!-- Replace src later -->
+                        <img src="~/images/guest/dining.png"
+                             alt="Dining"
+                             class="w-100 h-100"
+                             style="object-fit:cover; min-height: 220px;" />
+                    </div>
+                    <div class="col-md-7 p-4">
+                        <h5 class="mb-2">Dining & Room Service</h5>
+                        <p class="text-muted mb-3">
+                            Enjoy fresh meals, snacks, and drinks. Order from your room anytime.
+                        </p>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-sm btn-primary bg-primary-action border-0"
+                               asp-controller="GuestOrders" asp-action="Index" asp-route-roomId="0">
+                                View Menu
+                            </a>
+                            <a class="btn btn-sm btn-outline-dark"
+                               asp-controller="GuestOrders" asp-action="Checkout" asp-route-roomId="0">
+                                Checkout
+                            </a>
+                        </div>
+
+                        <div class="small text-muted mt-3">
+                            Tip: For allergies, add a note in your request.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <h5 class="mb-2">Need something?</h5>
+                    <p class="text-muted mb-3">Send a request to our staff. Fast and simple.</p>
+
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-outline-dark"
+                           asp-controller="ReceptionRequests" asp-action="Index">
+                            🛎️ Service Requests
+                        </a>
+
+                        <a class="btn btn-outline-dark"
+                           asp-controller="SecurityIncidents" asp-action="Create">
+                            🚨 Safety / Noise / Security
+                        </a>
+
+                        <a class="btn btn-outline-dark"
+                           asp-controller="Home" asp-action="Contact">
+                            ☎️ Contact Reception
+                        </a>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="small text-muted">
+                        <div><strong>Reception:</strong> 24/7</div>
+                        <div><strong>Emergency:</strong> 112</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPERIENCES / TRIPS -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Recommended Experiences</h4>
+        <a class="text-primary-action text-decoration-none" href="#">View all →</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100 overflow-hidden">
+                <!-- Replace src later -->
+                <img src="~/images/guest/experience-1.png"
+                     class="w-100"
+                     style="height:180px; object-fit:cover;"
+                     alt="Experience" />
+
+                <div class="card-body">
+                    <h6 class="mb-1">Coastal Walk & Sunset</h6>
+                    <div class="text-muted small mb-2">2 hours · Starts at 18:00</div>
+                    <p class="text-muted small mb-3">
+                        A guided evening walk with scenic views and photo spots.
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-soft-mint text-dark border">From 25 lv</span>
+                        <a class="btn btn-sm btn-primary bg-primary-action border-0" href="#">
+                            Book
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div><div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100 overflow-hidden">
+                <!-- Replace src later -->
+                <img src="~/images/guest/experience-2.png"
+                     class="w-100"
+                     style="height:180px; object-fit:cover;"
+                     alt="Experience" />
+
+                <div class="card-body">
+                    <h6 class="mb-1">Le Vins Gerden Lounge</h6>
+                    <div class="text-muted small mb-2">2 hours · Starts at 18:00</div>
+                    <p class="text-muted small mb-3">
+                        A guided evening walk with scenic views and photo spots.
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-soft-mint text-dark border">From 25 lv</span>
+                        <a class="btn btn-sm btn-primary bg-primary-action border-0" href="#">
+                            Book
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100 overflow-hidden">
+                <!-- Replace src later -->
+                <img src="~/images/guest/experience-3.png"
+                     class="w-100"
+                     style="height:180px; object-fit:cover;"
+                     alt="Experience" />
+
+                <div class="card-body">
+                    <h6 class="mb-1">Coastal Walk & Sunset</h6>
+                    <div class="text-muted small mb-2">2 hours · Starts at 18:00</div>
+                    <p class="text-muted small mb-3">
+                        A guided evening walk with scenic views and photo spots.
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-soft-mint text-dark border">From 25 lv</span>
+                        <a class="btn btn-sm btn-primary bg-primary-action border-0" href="#">
+                            Book
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GALLERY -->
+    <h4 class="mb-2">Hotel Gallery</h4>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 overflow-hidden">
+                <img src="~/images/guest/gallery-1.jpg" class="w-100" style="height:160px; object-fit:cover;" alt="Gallery">
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 overflow-hidden">
+                <img src="~/images/guest/gallery-2.jpg" class="w-100" style="height:160px; object-fit:cover;" alt="Gallery">
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 overflow-hidden">
+                <img src="~/images/guest/gallery-3.jpg" class="w-100" style="height:160px; object-fit:cover;" alt="Gallery">
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 overflow-hidden">
+                <img src="~/images/guest/gallery-4.jpg" class="w-100" style="height:160px; object-fit:cover;" alt="Gallery">
+            </div>
+        </div>
+    </div>
+
+    <!-- SMALL FOOTNOTE (optional) -->
+    <div class="text-center text-muted small pb-2">
+        Need help? Contact reception anytime.
+    </div>
 </div>
