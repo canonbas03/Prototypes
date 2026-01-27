@@ -4,38 +4,54 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - HotelMVCPrototype</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
+
 <body class="d-flex flex-column min-vh-100 bg-background text-dark-moss">
 
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary-action shadow-sm mb-3">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-primary-action shadow-sm mb-3">
             <div class="container-fluid">
                 @{
                     var roleName = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
                     var landingController = string.IsNullOrEmpty(roleName) ? "Home" : roleName;
                 }
-                <a class="navbar-brand text-white" asp-area="" asp-controller="@landingController" asp-action="Index">
-                    HotelMVCPrototype
+
+                <!-- Brand / Logo -->
+                <a class="navbar-brand d-flex align-items-center me-4"
+                   asp-area=""
+                   asp-controller="@landingController"
+                   asp-action="Index">
+
+                    <!-- Put your logo in: wwwroot/images/logo.png (or change path) -->
+                    <img src="~/images/le-vins-logo.png"
+                         alt="Hotel Logo"
+                         class="navbar-logo" />
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" 
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-sm-0 align-items-sm-center gap-sm-1">
+
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="@landingController" asp-action="Index">Home</a>
+                            <a class="nav-link text-white"
+                               asp-area=""
+                               asp-controller="@landingController"
+                               asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Profile" asp-action="Index">Profile</a>
-                        </li>
+
+                        <li class="nav-item"> <a class="nav-link text-white" asp-controller="Profile" asp-action="Index">Profile</a> </li>
+
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
@@ -44,27 +60,25 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-controller="Admin" asp-action="Index">Roles</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="AuditLogs" asp-action="Index">Audit Logs</a>
+                            </li>
                         }
+
                         @if (User.IsInRole("Admin") || User.IsInRole("Reception"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-controller="GuestAssignments" asp-action="Index">Guest Check-In</a>
                             </li>
                         }
-                        <li>
-                            <a class="btn btn-danger btn-sm"
-                               asp-controller="SecurityIncidents"
-                               asp-action="Create"
-                               asp-route-roomId="18">
-                                🚨 Report Security Issue
-                            </a>
-                        </li>
+
                         @if (User.IsInRole("Bar"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-controller="MenuItems" asp-action="Index">Menu</a>
                             </li>
                         }
+
                         @if (User.IsInRole("Housekeeping"))
                         {
                             <li class="nav-item">
@@ -72,7 +86,6 @@
                                       asp-action="StartHousekeepingDay"
                                       method="post"
                                       class="d-inline">
-
                                     @Html.AntiForgeryToken()
 
                                     <button type="submit"
@@ -84,9 +97,21 @@
                             </li>
                         }
 
+                        <!-- Security button -->
+                        <li class="nav-item ms-sm-2">
+                            <a class="btn btn-danger btn-sm"
+                               asp-controller="SecurityIncidents"
+                               asp-action="Create"
+                               asp-route-roomId="18">
+                                🚨 Report Security Issue
+                            </a>
+                        </li>
                     </ul>
 
-                    <partial name="_LoginPartial" />
+                    <!-- Login/Logout -->
+                    <div class="d-flex align-items-center">
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
@@ -97,13 +122,6 @@
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top bg-surface text-dark-moss py-3 mt-auto">
-        <div class="container">
-            &copy; 2025 - HotelMVCPrototype - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-primary-action">Privacy</a>
-        </div>
-    </footer>
-
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

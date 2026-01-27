@@ -349,3 +349,26 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 6px 14px rgba(0,0,0,0.25);
 }
 
+/* Make login partial readable on dark navbar */
+.navbar .navbar-text,
+.navbar .nav-link,
+.navbar a,
+.navbar button {
+    color: #fff !important;
+}
+
+/* Make logout button look like a nav link */
+.navbar .btn-link {
+    color: #fff !important;
+    text-decoration: none;
+}
+
+    .navbar .btn-link:hover {
+        text-decoration: underline;
+    }
+
+.navbar-logo {
+    height: 28px;
+    transform: scale(1.9);
+    transform-origin: left center;
+}
