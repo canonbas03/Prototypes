@@ -29,3 +29,21 @@
 </table>
 
 <p>Total: @Model.Items.Sum(i => i.Quantity * i.MenuItem.Price).ToString("C")</p>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Find existing header / navbar
+        const header = document.querySelector("header");
+        if (!header) return;
+
+        // Replace it with guest-style header
+        header.outerHTML = `
+            <header class="guest-header text-center py-3">
+                <a href="/">
+                    <img src="/images/le-vins-logo.png"
+                         alt="Hotel Logo"
+                         class="guest-logo" />
+                </a>
+            </header>
+        `;
+    });
+</script>

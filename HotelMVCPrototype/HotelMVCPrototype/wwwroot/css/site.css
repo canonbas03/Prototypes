@@ -215,7 +215,7 @@ h1, h2, h3, h4, h5, h6 {
 .guest-body {
     background-color: #F0F4F2;
     margin: 0;
-    font-family: 'Kalnia', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .guest-header {
@@ -348,6 +348,96 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.03);
     box-shadow: 0 6px 14px rgba(0,0,0,0.25);
 }
+@media (min-width: 992px) {
+
+    /* Smaller top logo bar */
+    .guest-header {
+        padding: 8px 0;        /* less height */
+    }
+
+    .guest-logo {
+        height: 64px;          /* smaller logo on desktop */
+        max-width: 520px;      /* prevents huge logo */
+    }
+
+    main {
+        padding: 24px 16px;
+    }
+
+     /*Put the 2 main cards side-by-side */
+    /*.card-collection {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }*/
+
+/*     Action cards closer and side-by-side 
+*/    /*.action-cards {
+        grid-template-columns: 1fr 1fr;  DND + Report in same row 
+        gap: 12px;
+        margin-top: 14px;
+    }*/
+
+/*     Optional: tighten title spacing 
+*/    /*.room-title {
+        margin: 8px auto 14px;
+        max-width: 980px;
+    }*/
+
+
+    /*.card-collection {
+        display: flex !important;
+        gap: 22px !important;
+        align-items: stretch;
+    }*/
+
+        /*.card-collection .room-card {
+            flex: 1 1 0;
+            min-width: 0;*/ /* prevents overflow pushing items down */
+        /*}*/
+
+    /* Action cards row: keep together with a normal gap */
+    .action-cards {
+        display: flex !important;
+        gap: 12px !important;
+        justify-content: center !important;  or flex-start 
+        align-items: stretch;
+        flex-wrap: nowrap;
+    }
+}
+
+@media (min-width: 992px) {
+    .card-collection {
+        display: flex !important;
+        justify-content: center;  keeps them centered 
+        align-items: stretch;
+        gap: 22px !important;
+        margin-bottom: 40px;
+    }
+
+        .card-collection .room-card {
+            width: auto; /* stop fixed width */
+            margin: 0; /* remove auto centering that can cause weirdness */
+            flex: 0 1 360px; /* each card ~360px and equal */
+            max-width: 380px; /* prevents huge cards on large screens */
+        }
+
+    /*.card-inner {
+        height: 100%;*/ /* equal height */
+        /*display: flex;
+        flex-direction: column;
+    }*/
+
+    /*.card-image {
+        aspect-ratio: 4 / 3;  consistent image height 
+        object-fit: cover;
+    }*/
+
+    .card-text {
+        margin-top: 10px;
+    }
+}
+
+
 
 /* Make login partial readable on dark navbar */
 .navbar .navbar-text,
@@ -372,3 +462,4 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.9);
     transform-origin: left center;
 }
+
