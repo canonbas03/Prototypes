@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "_GuestLayout";
-    ViewData["Title"] = "Welcome";
+    ViewData["Title"] = "Le Vins - Welcome!";
 }
 
 <div class="container py-3">
@@ -21,17 +21,17 @@
 
                 <div class="d-flex flex-wrap gap-2">
                     <a class="btn btn-primary bg-primary-action border-0"
-                       asp-controller="GuestOrders" asp-action="Index" asp-route-roomId="0">
+                       asp-controller="Home" asp-action="GuestHowTo">
                         🍽️ Order Food & Drinks
                     </a>
 
                     <a class="btn btn-outline-dark"
-                       asp-controller="ReceptionRequests" asp-action="Index">
+                       asp-controller="Home" asp-action="GuestHowTo">
                         🛎️ Request Service
                     </a>
 
                     <a class="btn btn-danger"
-                       asp-controller="SecurityIncidents" asp-action="Create">
+                       asp-controller="Home" asp-action="GuestHowTo">
                         🚨 Report an Issue
                     </a>
                 </div>
@@ -133,11 +133,11 @@
 
                         <div class="d-flex flex-wrap gap-2">
                             <a class="btn btn-sm btn-primary bg-primary-action border-0"
-                               asp-controller="GuestOrders" asp-action="Index" asp-route-roomId="0">
+                               asp-controller="Home" asp-action="GuestHowTo">
                                 View Menu
                             </a>
                             <a class="btn btn-sm btn-outline-dark"
-                               asp-controller="GuestOrders" asp-action="Checkout" asp-route-roomId="0">
+                               asp-controller="Home" asp-action="GuestHowTo">
                                 Checkout
                             </a>
                         </div>
@@ -158,17 +158,17 @@
 
                     <div class="d-grid gap-2">
                         <a class="btn btn-outline-dark"
-                           asp-controller="ReceptionRequests" asp-action="Index">
+                           asp-controller="Home" asp-action="GuestHowTo">
                             🛎️ Service Requests
                         </a>
 
                         <a class="btn btn-outline-dark"
-                           asp-controller="SecurityIncidents" asp-action="Create">
+                           asp-controller="Home" asp-action="GuestHowTo">
                             🚨 Safety / Noise / Security
                         </a>
 
                         <a class="btn btn-outline-dark"
-                           asp-controller="Home" asp-action="Contact">
+                           asp-controller="Home" asp-action="GuestHowTo">
                             ☎️ Contact Reception
                         </a>
                     </div>
