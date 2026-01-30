@@ -1,4 +1,5 @@
-﻿@model IEnumerable<HotelMVCPrototype.Models.Room>
+﻿@model IEnumerable<RoomIssue>
+
 @{
     ViewData["Title"] = "Maintenance Dashboard";
 }
@@ -14,20 +15,24 @@ else
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Room Number</th>
-                <th>Type</th>
+                <th>Room</th>
+                <th>Room Type</th>
+                <th>Issue Type</th>
+                <th>Notes</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var room in Model)
+            @foreach (var i in Model)
             {
                 <tr>
-                    <td>@room.Number</td>
-                    <td>@room.Type</td>
+                    <td>@(i.Room?.Number.ToString() ?? "—")</td>
+                    <td>@(i.Room?.Type.ToString() ?? "—")</td>
+                    <td>@i.TypeKey</td>
+                    <td class="text-muted">@(!string.IsNullOrWhiteSpace(i.Description) ? i.Description : "—")</td>
                     <td>
                         <form asp-action="MarkDone" method="post">
-                            <input type="hidden" name="id" value="@room.Id" />
+                            <input type="hidden" name="issueId" value="@i.Id" />
                             <button class="btn btn-success btn-sm">Mark Done</button>
                         </form>
                     </td>
@@ -35,4 +40,5 @@ else
             }
         </tbody>
     </table>
+
 }

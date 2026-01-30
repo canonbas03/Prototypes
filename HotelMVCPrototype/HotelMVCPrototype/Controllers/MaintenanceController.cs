@@ -20,11 +20,15 @@ namespace HotelMVCPrototype.Controllers
         public async Task<IActionResult> Index()
         {
             // Show only rooms needing maintenance
-            var maintenanceRooms = await _context.Rooms
-                .Where(r => r.Status == RoomStatus.Maintenance)
-                .ToListAsync();
+            var issues = await _context.RoomIssues
+        .Include(i => i.Room)
+        .Where(i =>
+            i.Category == IssueCategory.Maintenance &&
+            i.Status != IssueStatus.Resolved)
+        .OrderByDescending(i => i.CreatedAt)
+        .ToListAsync();
 
-            return View(maintenanceRooms);
+            return View(issues);
         }
 
         // POST: Mark Maintenance Done

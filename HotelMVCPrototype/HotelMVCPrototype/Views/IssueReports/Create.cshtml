@@ -1,0 +1,126 @@
+﻿@model CreateIssueReportViewModel
+
+<h4 class="mb-3">Report an Issue</h4>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    @* Room selector *@
+    @if (Model.RoomId.HasValue)
+    {
+        <div class="mb-2">
+            <strong>Room:</strong>
+            <span class="badge bg-secondary">@Model.RoomNumber</span>
+        </div>
+        <input type="hidden" asp-for="RoomId" />
+    }
+    else
+    {
+        <div class="mb-3">
+            <label class="form-label">Room</label>
+            <select asp-for="RoomId" asp-items="Model.Rooms" class="form-select">
+                <option value="">Select a room...</option>
+            </select>
+            <span class="text-danger" asp-validation-for="RoomId"></span>
+        </div>
+    }
+
+    @* Category buttons *@
+    <input type="hidden" asp-for="Category" id="categoryInput" />
+
+    <div class="row g-2 mb-3">
+        <div class="col-md-4">
+            <button type="button" class="btn btn-outline-primary w-100 category-btn" data-category="Housekeeping">
+                🧹 Housekeeping
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="button" class="btn btn-outline-primary w-100 category-btn" data-category="Maintenance">
+                🛠 Maintenance
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="button" class="btn btn-outline-danger w-100 category-btn" data-category="Security">
+                🚨 Security
+            </button>
+        </div>
+    </div>
+
+    @* Type dropdown (changes based on category) *@
+    <div class="mb-3">
+        <label class="form-label">Issue Type</label>
+        <select asp-for="TypeKey" class="form-select" id="typeSelect"></select>
+        <span class="text-danger" asp-validation-for="TypeKey"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Details (optional)</label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">
+            Submit Report
+        </button>
+
+        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
+            Cancel
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const typeOptions = {
+            Housekeeping: [
+                { value: "Spill", text: "Spill / Stain" },
+                { value: "ExtraTowels", text: "Extra towels" },
+                { value: "DailyCleaning", text: "Daily cleaning request" },
+                { value: "Other", text: "Other" }
+            ],
+            Maintenance: [
+                { value: "BurstPipe", text: "Burst pipe / Leak" },
+                { value: "NoHotWater", text: "No hot water" },
+                { value: "ElectricIssue", text: "Electric issue" },
+                { value: "ACNotWorking", text: "A/C not working" },
+                { value: "Other", text: "Other" }
+            ],
+            Security: [
+                { value: "WeirdNoise", text: "Weird noise" },
+                { value: "Scream", text: "Scream / shout" },
+                { value: "BreakingThings", text: "Breaking things" },
+                { value: "SuspiciousPerson", text: "Suspicious person" },
+                { value: "Other", text: "Other" }
+            ]
+        };
+
+        const categoryInput = document.getElementById("categoryInput");
+        const typeSelect = document.getElementById("typeSelect");
+        const buttons = document.querySelectorAll(".category-btn");
+
+        function setCategory(cat) {
+            categoryInput.value = cat;
+
+            // highlight active button
+            buttons.forEach(b => b.classList.toggle("active", b.dataset.category === cat));
+
+            // populate types
+            typeSelect.innerHTML = "";
+            (typeOptions[cat] || []).forEach(o => {
+                const opt = document.createElement("option");
+                opt.value = o.value;
+                opt.textContent = o.text;
+                typeSelect.appendChild(opt);
+            });
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => setCategory(btn.dataset.category));
+        });
+
+        // initial category (from server default)
+        setCategory("@Model.Category");
+    </script>
+}

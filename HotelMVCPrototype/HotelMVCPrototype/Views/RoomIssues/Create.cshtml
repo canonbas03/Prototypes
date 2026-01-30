@@ -1,0 +1,159 @@
+﻿@using HotelMVCPrototype.Models.Enums
+@model CreateRoomIssueViewModel
+
+<h4 class="mb-3">Report an Issue</h4>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    @* Room selector *@
+    @if (Model.RoomId.HasValue)
+    {
+        <div class="mb-2">
+            <strong>Room:</strong>
+            <span class="badge bg-secondary">@Model.RoomNumber</span>
+        </div>
+        <input type="hidden" asp-for="RoomId" />
+    }
+    else
+    {
+        <div class="mb-3">
+            <label class="form-label">Room</label>
+            <select asp-for="RoomId"
+                    class="form-select"
+                    asp-items="@(ViewBag.Rooms as List<SelectListItem>)">
+                <option value="">Select room…</option>
+            </select>
+            <span class="text-danger" asp-validation-for="RoomId"></span>
+        </div>
+    }
+
+    @* Category buttons *@
+    <input type="hidden" asp-for="Category" id="categoryInput" />
+
+    <div class="row g-2 mb-3">
+        <div class="col-md-4">
+            <button type="button"
+                    class="btn btn-outline-primary w-100 category-btn"
+                    data-category="Housekeeping">
+                🧹 Housekeeping
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="button"
+                    class="btn btn-outline-primary w-100 category-btn"
+                    data-category="Maintenance">
+                🛠 Maintenance
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="button"
+                    class="btn btn-outline-danger w-100 category-btn"
+                    data-category="Security">
+                🚨 Security
+            </button>
+        </div>
+    </div>
+
+    @* Type dropdown changes based on selected category *@
+    <div class="mb-3">
+        <label class="form-label">Issue Type</label>
+        <select asp-for="TypeKey" class="form-select" id="typeSelect"></select>
+        <span class="text-danger" asp-validation-for="TypeKey"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Details (optional)</label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">Submit Report</button>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Options map (keys should match your IssueCategory enum values as strings)
+        const typeOptions = {
+            Housekeeping: [
+                { value: "Spill", text: "Spill / Stain" },
+                { value: "ExtraTowels", text: "Extra towels" },
+                { value: "ExtraBedding", text: "Extra bedding" },
+                { value: "DailyClean", text: "Daily cleaning request" },
+                { value: "Other", text: "Other" }
+            ],
+            Maintenance: [
+                { value: "BurstPipe", text: "Burst pipe / Leak" },
+                { value: "NoHotWater", text: "No hot water" },
+                { value: "ElectricalIssue", text: "Electrical issue" },
+                { value: "ACNotWorking", text: "A/C not working" },
+                { value: "Other", text: "Other" }
+            ],
+            Security: [
+                { value: "WeirdNoise", text: "Weird noise" },
+                { value: "Scream", text: "Scream / shout" },
+                { value: "BreakingThings", text: "Breaking things" },
+                { value: "SuspiciousPerson", text: "Suspicious person" },
+                { value: "Other", text: "Other" }
+            ]
+        };
+
+        const categoryInput = document.getElementById("categoryInput");
+        const typeSelect = document.getElementById("typeSelect");
+        const buttons = document.querySelectorAll(".category-btn");
+
+        // Keep the server value if it exists; otherwise default to Housekeeping
+        const initialCategory = "@Model.Category".trim() || "Housekeeping";
+        const initialType = "@(Model.TypeKey ?? "")".trim();
+
+        function setCategory(cat) {
+            categoryInput.value = cat;
+
+            // highlight active
+            buttons.forEach(b => {
+                const isActive = b.dataset.category === cat;
+                b.classList.toggle("active", isActive);
+                b.classList.toggle("btn-primary", isActive);
+                b.classList.toggle("btn-outline-primary", !isActive && b.dataset.category !== "Security");
+                if (b.dataset.category === "Security") {
+                    b.classList.toggle("btn-danger", isActive);
+                    b.classList.toggle("btn-outline-danger", !isActive);
+                }
+            });
+
+            // populate types
+            typeSelect.innerHTML = "";
+            const opts = typeOptions[cat] || [];
+
+            // add a placeholder option
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = "Select…";
+            typeSelect.appendChild(placeholder);
+
+            opts.forEach(o => {
+                const opt = document.createElement("option");
+                opt.value = o.value;
+                opt.textContent = o.text;
+                typeSelect.appendChild(opt);
+            });
+
+            // preserve selected TypeKey if it exists and is valid in this category
+            if (initialType) {
+                const has = opts.some(o => o.value === initialType);
+                typeSelect.value = has ? initialType : "";
+            } else {
+                typeSelect.value = "";
+            }
+        }
+
+        buttons.forEach(btn => btn.addEventListener("click", () => setCategory(btn.dataset.category)));
+
+        // initialize
+        setCategory(initialCategory);
+    </script>
+}
