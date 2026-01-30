@@ -30,6 +30,7 @@ namespace HotelMVCPrototype.Controllers
 
             var availableRooms = await _context.Rooms
                 .Where(r => r.Status == RoomStatus.Available)
+                .OrderBy(r => r.Number)
                 .ToListAsync();
 
             ViewBag.AvailableRooms = availableRooms;

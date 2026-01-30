@@ -38,7 +38,10 @@
         If you need anything else, feel free to place another request.
     </div>
 
-    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+    @* <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+        Back to Home
+    </a> *@
+    <a asp-controller="GuestRoom" asp-action="Index" asp-route-roomId =" @Model.RoomId" class="btn btn-primary mt-3">
         Back to Home
     </a>
 </div>

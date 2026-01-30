@@ -102,6 +102,7 @@ public class GuestOrdersController : Controller
     }
 );
 
+        HttpContext.Session.Remove(CART_KEY);
 
         return RedirectToAction(nameof(ThankYou), new { id = order.Id });
     }

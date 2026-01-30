@@ -28,7 +28,17 @@
     </tbody>
 </table>
 
+
+
 <p>Total: @Model.Items.Sum(i => i.Quantity * i.MenuItem.Price).ToString("C")</p>
+
+<div class="text-center mt-3">
+    <a asp-controller="GuestRoom" asp-action="Index" asp-route-roomId=" @Model.RoomId" class="btn btn-primary mt-3">
+        Back to Home
+    </a>
+</div>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         // Find existing header / navbar
