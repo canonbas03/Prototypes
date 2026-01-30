@@ -35,17 +35,17 @@
 <div class="action-cards">
     <partial name="_DndToggle" model="Model" />
 
-    @* Change this *@
-    <a asp-action="Index"
-       asp-controller="GuestRequests"
+
+
+    <a asp-controller="RoomIssues"
+       asp-action="Create"
        asp-route-roomId="@Model.Id"
-       class="card-link">
-
-        <div class="report-card">
-            <div class="dnd-text">Report</div>
-        </div>
-
+       class="report-card">
+        <span class="report-text">Report</span>
     </a>
+
+
+   
 </div>
 
 @section Scripts {

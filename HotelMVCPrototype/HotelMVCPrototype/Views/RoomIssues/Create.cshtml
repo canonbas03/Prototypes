@@ -1,4 +1,7 @@
 ﻿@using HotelMVCPrototype.Models.Enums
+@* @{
+    Layout = "_GuestLayout";
+} *@
 @model CreateRoomIssueViewModel
 
 <h4 class="mb-3">Report an Issue</h4>
@@ -157,3 +160,23 @@
         setCategory(initialCategory);
     </script>
 }
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Find existing header / navbar
+        const header = document.querySelector("header");
+        if (!header) return;
+
+        // Replace it with guest-style header
+        header.outerHTML = `
+            <header class="guest-header text-center py-3">
+                <a href="/">
+                    <img src="/images/le-vins-logo.png"
+                         alt="Hotel Logo"
+                         class="guest-logo" />
+                </a>
+            </header>
+        `;
+    });
+</script>
