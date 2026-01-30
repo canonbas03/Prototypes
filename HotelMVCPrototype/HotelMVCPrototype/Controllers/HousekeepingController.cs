@@ -71,6 +71,17 @@ namespace HotelMVCPrototype.Controllers
                 .OrderByDescending(l => l.CreatedAt)
                 .ToListAsync();
 
+            var roomIds = allRoomsNeedingCleaning.Select(r => r.Id).ToList();
+
+            var openIssues = await _context.RoomIssues
+                .Where(i =>
+                    i.Category == IssueCategory.Housekeeping &&
+                    i.Status != IssueStatus.Resolved &&
+                    i.RoomId != null &&
+                    roomIds.Contains(i.RoomId.Value))
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
+
             var vm = new HousekeepingDashboardViewModel
             {
                 Rooms = allRoomsNeedingCleaning,
@@ -81,8 +92,10 @@ namespace HotelMVCPrototype.Controllers
                     Mode = RoomMapMode.Housekeeping,
                     Rooms = roomMap
                 },
-                TodaysCleanings = todaysCleanings
+                TodaysCleanings = todaysCleanings,
+                OpenHousekeepingIssues = openIssues,
             };
+
 
             return View(vm);
         }
@@ -122,6 +135,19 @@ namespace HotelMVCPrototype.Controllers
             };
             _context.CleaningLogs.Add(log);
 
+
+            var issue = await _context.RoomIssues
+    .Where(i => i.RoomId == room.Id
+             && i.Category == IssueCategory.Housekeeping
+             && i.Status != IssueStatus.Resolved)
+    .OrderByDescending(i => i.CreatedAt)
+    .FirstOrDefaultAsync();
+
+            if (issue != null)
+            {
+                issue.Status = IssueStatus.Resolved;
+                issue.ResolvedAt = DateTime.Now;
+            }
 
             await _context.SaveChangesAsync();
 

@@ -13,5 +13,8 @@
         public RoomMapPageViewModel RoomMapPage { get; set; }
 
         public List<CleaningLog> TodaysCleanings { get; set; } = new();
+
+        public List<RoomIssue> OpenHousekeepingIssues { get; set; } = new();
+
     }
 }

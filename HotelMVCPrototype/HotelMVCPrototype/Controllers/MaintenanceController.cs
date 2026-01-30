@@ -33,18 +33,18 @@ namespace HotelMVCPrototype.Controllers
 
         // POST: Mark Maintenance Done
         [HttpPost]
-        public async Task<IActionResult> MarkDone(int id)
+        [HttpPost]
+        public async Task<IActionResult> MarkDone(int issueId)
         {
-            var room = await _context.Rooms.FindAsync(id);
-            if (room == null) return NotFound();
+            var issue = await _context.RoomIssues.FindAsync(issueId);
+            if (issue == null) return NotFound();
 
-            if (room.Status != RoomStatus.Maintenance)
-                return BadRequest("Room is not in maintenance state.");
+            issue.Status = IssueStatus.Resolved;
+            issue.ResolvedAt = DateTime.Now;
 
-            room.Status = RoomStatus.Available;
             await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index));
         }
+
     }
 }
