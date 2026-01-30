@@ -16,22 +16,24 @@ public class SecurityController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var incidents = await _context.SecurityIncidents
-            .Include(i => i.Room)
-            .OrderBy(i => i.Status)
-            .ThenByDescending(i => i.CreatedAt)
-            .ToListAsync();
+        var issues = await _context.RoomIssues
+           .Include(i => i.Room)
+           .Where(i => i.Category == IssueCategory.Security && i.Status != IssueStatus.Resolved)
+           .OrderByDescending(i => i.CreatedAt)
+           .ToListAsync();
 
-        return View(incidents);
+        return View(issues);
     }
 
     [HttpPost]
     public async Task<IActionResult> Acknowledge(int id)
     {
-        var incident = await _context.SecurityIncidents.FindAsync(id);
-        if (incident == null) return NotFound();
+        var issue = await _context.RoomIssues.FindAsync(id);
+        if (issue == null) return NotFound();
+        if (issue.Category != IssueCategory.Security) return BadRequest();
 
-        incident.Status = SecurityIncidentStatus.Acknowledged;
+        // "Acknowledged" == InProgress
+        issue.Status = IssueStatus.InProgress;
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
@@ -40,11 +42,12 @@ public class SecurityController : Controller
     [HttpPost]
     public async Task<IActionResult> Resolve(int id)
     {
-        var incident = await _context.SecurityIncidents.FindAsync(id);
-        if (incident == null) return NotFound();
+        var issue = await _context.RoomIssues.FindAsync(id);
+        if (issue == null) return NotFound();
+        if (issue.Category != IssueCategory.Security) return BadRequest();
 
-        incident.Status = SecurityIncidentStatus.Resolved;
-        incident.ResolvedAt = DateTime.Now;
+        issue.Status = IssueStatus.Resolved;
+        issue.ResolvedAt = DateTime.Now;
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
