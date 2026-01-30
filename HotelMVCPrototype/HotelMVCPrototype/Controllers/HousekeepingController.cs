@@ -29,13 +29,25 @@ namespace HotelMVCPrototype.Controllers
         [Authorize(Roles = "Housekeeping")]
         public async Task<IActionResult> Index(int floor = 1)
         {
-            var cleaningRooms = await _context.Rooms
-    .Where(r => r.Floor == floor && (
-        r.Status == RoomStatus.Cleaning || r.NeedsDailyCleaning
-    ))
-    .ToListAsync();
 
-            var roomMap = cleaningRooms
+            var allRoomsNeedingCleaning = await _context.Rooms
+               .Where(r => r.Status == RoomStatus.Cleaning || r.NeedsDailyCleaning)
+               .OrderBy(r => r.Floor)
+               .ThenBy(r => r.Number)
+               .ToListAsync();
+
+            var floorRoomsNeedingCleaning = allRoomsNeedingCleaning
+       .Where(r => r.Floor == floor)
+       .ToList();
+
+
+    //        var cleaningRooms = await _context.Rooms
+    //.Where(r => r.Floor == floor && (
+    //    r.Status == RoomStatus.Cleaning || r.NeedsDailyCleaning
+    //))
+    //.ToListAsync();
+
+            var roomMap = floorRoomsNeedingCleaning
                 .Select(r => new RoomMapViewModel
                 {
                     RoomId = r.Id,
@@ -61,7 +73,7 @@ namespace HotelMVCPrototype.Controllers
 
             var vm = new HousekeepingDashboardViewModel
             {
-                Rooms = cleaningRooms,
+                Rooms = allRoomsNeedingCleaning,
                 RoomStatistics = await _statsService.GetStatisticsAsync(),
                 RoomMapPage = new RoomMapPageViewModel
                 {
