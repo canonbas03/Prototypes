@@ -1,4 +1,5 @@
-﻿@model IEnumerable<RoomIssue>
+﻿@using HotelMVCPrototype.Models.Enums
+@model IEnumerable<RoomIssue>
 
 @{
     ViewData["Title"] = "Maintenance Dashboard";
@@ -17,6 +18,7 @@ else
             <tr>
                 <th>Room</th>
                 <th>Room Type</th>
+                <th>Status</th>
                 <th>Issue Type</th>
                 <th>Notes</th>
                 <th>Action</th>
@@ -28,13 +30,37 @@ else
                 <tr>
                     <td>@(i.Room?.Number.ToString() ?? "—")</td>
                     <td>@(i.Room?.Type.ToString() ?? "—")</td>
+                    <td>
+                        @{
+                            var badge =
+                            i.Status == IssueStatus.New ? "bg-danger" :
+                            i.Status == IssueStatus.InProgress ? "bg-warning text-dark" :
+                            "bg-success";
+                        }
+                        <span class="badge @badge">@i.Status</span>
+                    </td>
                     <td>@i.TypeKey</td>
                     <td class="text-muted">@(!string.IsNullOrWhiteSpace(i.Description) ? i.Description : "—")</td>
                     <td>
-                        <form asp-action="MarkDone" method="post">
-                            <input type="hidden" name="issueId" value="@i.Id" />
-                            <button class="btn btn-success btn-sm">Mark Done</button>
-                        </form>
+                        <div class="d-flex gap-2">
+                            @if (i.Status == IssueStatus.New)
+                            {
+                                <form asp-action="Acknowledge" method="post" class="mb-0">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@i.Id" />
+                                    <button class="btn btn-warning btn-sm">👀 Acknowledge</button>
+                                </form>
+                            }
+
+                            @if (i.Status != IssueStatus.Resolved)
+                            {
+                                <form asp-action="Resolve" method="post" class="mb-0">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@i.Id" />
+                                    <button class="btn btn-success btn-sm">✔ Resolve</button>
+                                </form>
+                            }
+                        </div>
                     </td>
                 </tr>
             }

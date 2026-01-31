@@ -16,28 +16,39 @@ namespace HotelMVCPrototype.Controllers
             _context = context;
         }
 
-        // GET: /Maintenance
         public async Task<IActionResult> Index()
         {
-            // Show only rooms needing maintenance
             var issues = await _context.RoomIssues
-        .Include(i => i.Room)
-        .Where(i =>
-            i.Category == IssueCategory.Maintenance &&
-            i.Status != IssueStatus.Resolved)
-        .OrderByDescending(i => i.CreatedAt)
-        .ToListAsync();
+                .Include(i => i.Room)
+                .Where(i => i.Category == IssueCategory.Maintenance &&
+                            i.Status != IssueStatus.Resolved)
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
 
             return View(issues);
         }
 
-        // POST: Mark Maintenance Done
         [HttpPost]
-        [HttpPost]
-        public async Task<IActionResult> MarkDone(int issueId)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Acknowledge(int id)
         {
-            var issue = await _context.RoomIssues.FindAsync(issueId);
+            var issue = await _context.RoomIssues.FindAsync(id);
             if (issue == null) return NotFound();
+            if (issue.Category != IssueCategory.Maintenance) return BadRequest();
+
+            issue.Status = IssueStatus.InProgress;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Resolve(int id)
+        {
+            var issue = await _context.RoomIssues.FindAsync(id);
+            if (issue == null) return NotFound();
+            if (issue.Category != IssueCategory.Maintenance) return BadRequest();
 
             issue.Status = IssueStatus.Resolved;
             issue.ResolvedAt = DateTime.Now;
@@ -46,5 +57,9 @@ namespace HotelMVCPrototype.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Optional: keep MarkDone for compatibility (calls Resolve)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public Task<IActionResult> MarkDone(int issueId) => Resolve(issueId);
     }
 }

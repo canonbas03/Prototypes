@@ -36,6 +36,7 @@ else
             <tr>
                 <th>Room Number</th>
                 <th>Type</th>
+                <th>Issue</th>
                 <th>Notes</th>
                 <th>Action</th>
             </tr>
@@ -47,6 +48,13 @@ else
                 <tr>
                     <td>@room.Number</td>
                     <td>@room.Type</td>
+                    <td class="text-muted">
+                        @{
+                            var type = Model.OpenHousekeepingIssues
+                            .FirstOrDefault(i => i.RoomId == room.Id)?.TypeKey;
+                        }
+                        @(string.IsNullOrWhiteSpace(type) ? "Regular" : type)
+                    </td>
                     <td class="text-muted">
                         @{
                             var note = Model.OpenHousekeepingIssues
