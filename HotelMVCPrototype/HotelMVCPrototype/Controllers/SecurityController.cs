@@ -1,5 +1,6 @@
 ﻿using HotelMVCPrototype.Data;
 using HotelMVCPrototype.Models.Enums;
+using HotelMVCPrototype.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +9,12 @@ using Microsoft.EntityFrameworkCore;
 public class SecurityController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditLogger _audit;
 
-    public SecurityController(ApplicationDbContext context)
+    public SecurityController(ApplicationDbContext context, IAuditLogger audit)
     {
         _context = context;
+        _audit = audit;
     }
 
     public async Task<IActionResult> Index()
@@ -36,6 +39,24 @@ public class SecurityController : Controller
         issue.Status = IssueStatus.InProgress;
         await _context.SaveChangesAsync();
 
+
+        // Audit Log
+        await _audit.LogAsync(
+        action: "SecurityAcknowledged",
+        entityType: "RoomIssue",
+        entityId: issue.Id,
+        description: $"Security acknowledged: {issue.TypeKey} (Room {(issue.Room?.Number.ToString() ?? "—")})",
+        data: new
+        {
+            issue.Id,
+            RoomId = issue.RoomId,
+            RoomNumber = issue.Room?.Number,
+            issue.TypeKey,
+            issue.Description,
+            NewStatus = issue.Status.ToString()
+        }
+    );
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -49,6 +70,24 @@ public class SecurityController : Controller
         issue.Status = IssueStatus.Resolved;
         issue.ResolvedAt = DateTime.Now;
         await _context.SaveChangesAsync();
+
+
+        // Audit Log
+        await _audit.LogAsync(
+    action: "SecurityResolved",
+    entityType: "RoomIssue",
+    entityId: issue.Id,
+    description: $"Security resolved: {issue.TypeKey} (Room {(issue.Room?.Number.ToString() ?? "—")})",
+    data: new
+    {
+        issue.Id,
+        RoomId = issue.RoomId,
+        RoomNumber = issue.Room?.Number,
+        issue.TypeKey,
+        issue.ResolvedAt,
+        issue.Description
+    }
+);
 
         return RedirectToAction(nameof(Index));
     }
