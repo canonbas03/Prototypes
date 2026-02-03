@@ -1,9 +1,17 @@
 ﻿@model List<HotelMVCPrototype.Models.CleaningLog>
 
 <div class="card shadow-sm">
-    <div class="card-header bg-primary-action text-white">
+    <div class="card-header bg-primary-action text-white d-flex align-items-center">
         <strong>Today's Cleanings</strong>
+
+        <a asp-controller="RoomIssues"
+           asp-action="History"
+           asp-route-category="Housekeeping"
+           class="ms-auto text-white text-decoration-none small fw-semibold opacity-75">
+            View history →
+        </a>
     </div>
+
 
     <div class="card-body p-2">
         @if (!Model.Any())
