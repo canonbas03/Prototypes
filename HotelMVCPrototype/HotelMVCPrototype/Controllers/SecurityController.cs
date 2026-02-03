@@ -29,33 +29,36 @@ public class SecurityController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Acknowledge(int id)
     {
-        var issue = await _context.RoomIssues.FindAsync(id);
+        var issue = await _context.RoomIssues
+            .Include(i => i.Room)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
         if (issue == null) return NotFound();
         if (issue.Category != IssueCategory.Security) return BadRequest();
 
-        // "Acknowledged" == InProgress
         issue.Status = IssueStatus.InProgress;
         await _context.SaveChangesAsync();
 
+        var roomLabel = issue.Room != null ? $"Room {issue.Room.Number}" : "No room";
 
-        // Audit Log
         await _audit.LogAsync(
-        action: "SecurityAcknowledged",
-        entityType: "RoomIssue",
-        entityId: issue.Id,
-        description: $"Security acknowledged: {issue.TypeKey} (Room {(issue.Room?.Number.ToString() ?? "—")})",
-        data: new
-        {
-            issue.Id,
-            RoomId = issue.RoomId,
-            RoomNumber = issue.Room?.Number,
-            issue.TypeKey,
-            issue.Description,
-            NewStatus = issue.Status.ToString()
-        }
-    );
+            action: "SecurityAcknowledged",
+            entityType: "RoomIssue",
+            entityId: issue.Id,
+            description: $"Security acknowledged: [{issue.TypeKey}] ({roomLabel})",
+            data: new
+            {
+                issue.Id,
+                issue.RoomId,
+                RoomNumber = issue.Room?.Number,
+                issue.TypeKey,
+                issue.Description,
+                NewStatus = issue.Status.ToString()
+            }
+        );
 
         return RedirectToAction(nameof(Index));
     }
@@ -63,7 +66,10 @@ public class SecurityController : Controller
     [HttpPost]
     public async Task<IActionResult> Resolve(int id)
     {
-        var issue = await _context.RoomIssues.FindAsync(id);
+        var issue = await _context.RoomIssues
+            .Include(i => i.Room)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
         if (issue == null) return NotFound();
         if (issue.Category != IssueCategory.Security) return BadRequest();
 
@@ -71,23 +77,23 @@ public class SecurityController : Controller
         issue.ResolvedAt = DateTime.Now;
         await _context.SaveChangesAsync();
 
+        var roomLabel = issue.Room != null ? $"Room {issue.Room.Number}" : "No room";
 
-        // Audit Log
         await _audit.LogAsync(
-    action: "SecurityResolved",
-    entityType: "RoomIssue",
-    entityId: issue.Id,
-    description: $"Security resolved: {issue.TypeKey} (Room {(issue.Room?.Number.ToString() ?? "—")})",
-    data: new
-    {
-        issue.Id,
-        RoomId = issue.RoomId,
-        RoomNumber = issue.Room?.Number,
-        issue.TypeKey,
-        issue.ResolvedAt,
-        issue.Description
-    }
-);
+            action: "SecurityResolved",
+            entityType: "RoomIssue",
+            entityId: issue.Id,
+            description: $"Security resolved: [{issue.TypeKey}] ({roomLabel})",
+            data: new
+            {
+                issue.Id,
+                issue.RoomId,
+                RoomNumber = issue.Room?.Number,
+                issue.TypeKey,
+                issue.ResolvedAt,
+                issue.Description
+            }
+        );
 
         return RedirectToAction(nameof(Index));
     }
