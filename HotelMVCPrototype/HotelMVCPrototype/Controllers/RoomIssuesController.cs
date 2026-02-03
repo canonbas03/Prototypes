@@ -176,4 +176,27 @@ public class RoomIssuesController : Controller
             _ => new() { new("Other", "Other") }
         };
     }
+
+    public async Task<IActionResult> History(IssueCategory? category, int days = 7)
+    {
+        var from = DateTime.Now.AddDays(-days);
+
+        var q = _context.RoomIssues
+            .Include(i => i.Room)
+            .Where(i => i.Status == IssueStatus.Resolved && i.ResolvedAt != null)
+            .Where(i => i.ResolvedAt >= from);
+
+        if (category.HasValue)
+            q = q.Where(i => i.Category == category.Value);
+
+        var resolved = await q
+            .OrderByDescending(i => i.ResolvedAt)
+            .Take(500)
+            .ToListAsync();
+
+        ViewBag.Days = days;
+        ViewBag.Category = category;
+
+        return View(resolved);
+    }
 }

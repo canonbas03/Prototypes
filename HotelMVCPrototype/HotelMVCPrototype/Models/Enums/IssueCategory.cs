@@ -3,7 +3,7 @@
     public enum IssueCategory
     {
         Housekeeping,
-        Maintenace,
+        Maintenance,
         Security
     }
 }

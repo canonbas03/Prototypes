@@ -1,0 +1,85 @@
+﻿@using HotelMVCPrototype.Models.Enums
+@model List<RoomIssue>
+
+@{
+    ViewData["Title"] = "Resolved Issues History";
+    var days = (int)(ViewBag.Days ?? 7);
+    IssueCategory? cat = ViewBag.Category as IssueCategory?;
+}
+
+<h4 class="mb-3">Resolved Issues (History)</h4>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <select class="form-select" name="category">
+            <option value="">All categories</option>
+            @foreach (IssueCategory c in Enum.GetValues(typeof(IssueCategory)))
+            {
+                <option value="@c" selected="@(cat.HasValue && cat.Value == c)">@c</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <select class="form-select" name="days">
+            <option value="1" selected="@(days == 1)">Today</option>
+            <option value="7" selected="@(days == 7)">Last 7 days</option>
+            <option value="30" selected="@(days == 30)">Lasta 30 days</option>
+            <option value="365" selected="@(days == 365)">Last year</option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filter</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-secondary text-center">
+        No resolved issues found
+    </div>
+}
+else
+{
+    <div class="list-group shadow-sm">
+        @foreach (var i in Model)
+        {
+            <div class="list-group-item p-3">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="badge bg-success">Resolved</span>
+                        <span class="badge bg-dark">@i.Category</span>
+                        <strong>@i.TypeKey</strong>
+
+                        @if (i.Room != null)
+                        {
+                            <span class="badge bg-secondary">Room @i.Room.Number</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">No room</span>
+                        }
+                    </div>
+
+                    <div class="text-muted small">
+                        Created: @i.CreatedAt.ToString("dd.MM HH:mm")
+                        @if (i.ResolvedAt.HasValue)
+                        {
+                            <span class="ms-2 text-success">
+                                Resolved: @i.ResolvedAt.Value.ToString("dd.MM HH:mm")
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(i.Description))
+                {
+                    <div class="text-muted mt-2">
+                        @i.Description
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
