@@ -2,34 +2,60 @@
 
 <h3 class="mb-3">Audit Logs</h3>
 
-<form method="get" class="row g-2 mb-3">
+<form method="get" class="row g-2 mb-3 align-items-end">
     <div class="col-md-2">
-        <input class="form-control" name="user" placeholder="User" value="@Context.Request.Query["user"]" />
+        <input class="form-control" name="user" placeholder="User"
+               value="@(ViewBag.User ?? Context.Request.Query["user"].ToString())" />
     </div>
-    <div class="col-md-2">
-        <input class="form-control" name="action" placeholder="Action" value="@Context.Request.Query["action"]" />
+
+    <div class="col-md-1">
+        <input class="form-control" name="auditAction" placeholder="Action"
+               value="@(ViewBag.AuditAction ?? Context.Request.Query["auditAction"].ToString())" />
     </div>
-    <div class="col-md-2">
-        <input class="form-control" name="entityType" placeholder="EntityType" value="@Context.Request.Query["entityType"]" />
+
+   @*  <div class="col-md-2">
+        <input class="form-control" name="entityType" placeholder="EntityType (partial)"
+               value="@(ViewBag.EntityType ?? Context.Request.Query["entityType"].ToString())" />
+    </div> *@
+
+    <div class="col-md-1">
+        <input class="form-control" name="entityId" placeholder="EntityId"
+               value="@(ViewBag.EntityId ?? Context.Request.Query["entityId"].ToString())" />
     </div>
-    <div class="col-md-2">
-        <input class="form-control" name="entityId" placeholder="EntityId" value="@Context.Request.Query["entityId"]" />
+
+    <!-- ✅ exact room number -->
+    <div class="col-md-1">
+        <input class="form-control" name="room" placeholder="Room # (exact)"
+               value="@(ViewBag.Room ?? Context.Request.Query["room"].ToString())" />
     </div>
+
+    <!-- optional: partial description -->
+   @*  <div class="col-md-2">
+        <input class="form-control" name="description" placeholder="Description (partial)"
+               value="@(ViewBag.Description ?? Context.Request.Query["description"].ToString())" />
+    </div> *@
+
     <div class="col-md-2">
+        @{
+            var days = (int)(ViewBag.Days ?? 7);
+        }
         <select class="form-select" name="days">
-            @{
-                var days = (int)(ViewBag.Days ?? 7);
-            }
             <option value="1" selected="@(days == 1)">Today</option>
             <option value="7" selected="@(days == 7)">Last 7 days</option>
             <option value="30" selected="@(days == 30)">Last 30 days</option>
             <option value="365" selected="@(days == 365)">Last year</option>
         </select>
     </div>
+
     <div class="col-md-2">
         <button class="btn btn-primary w-100">Filter</button>
     </div>
+
+    <div class="col-md-2 ms-auto">
+        <a asp-action="Index" class="btn btn-secondary w-100">Cancel</a>
+    </div>
 </form>
+
 
 @if (!Model.Any())
 {

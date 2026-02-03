@@ -14,28 +14,59 @@ public class AuditLogsController : Controller
     }
 
     public async Task<IActionResult> Index(
-        string? user,
-        string? auditAction,
-        string? entityType,
-        int? entityId,
-        int days = 7)
+    string? user,
+    string? auditAction,
+    string? entityType,
+    int? entityId,
+    string? room,     
+    string? description,   
+    int days = 7)
     {
         var from = DateTime.Now.AddDays(-days);
 
         var q = _context.AuditLogs
+            .AsNoTracking()
             .Where(l => l.CreatedAt >= from);
 
+        // ✅ partial
         if (!string.IsNullOrWhiteSpace(user))
-            q = q.Where(l => l.UserName!.Contains(user));
+            q = q.Where(l => l.UserName != null && l.UserName.Contains(user));
 
+        // ✅ partial
         if (!string.IsNullOrWhiteSpace(auditAction))
-            q = q.Where(l => l.Action == auditAction);
+            q = q.Where(l => l.Action.Contains(auditAction));
 
+        // ✅ partial
         if (!string.IsNullOrWhiteSpace(entityType))
-            q = q.Where(l => l.EntityType == entityType);
+            q = q.Where(l => l.EntityType.Contains(entityType));
 
+        // same as before
         if (entityId.HasValue)
             q = q.Where(l => l.EntityId == entityId);
+
+        // ✅ exact room match (Number -> Room.Id -> filter logs)
+        if (!string.IsNullOrWhiteSpace(room))
+        {
+            if (int.TryParse(room, out var roomNumber))
+            {
+                q =
+                    from l in q
+                    join i in _context.RoomIssues.AsNoTracking() on l.EntityId equals i.Id
+                    where l.EntityType == "RoomIssue"
+                       && i.Room != null
+                       && i.Room.Number == roomNumber
+                    select l;
+            }
+            else
+            {
+                q = q.Where(_ => false);
+            }
+        }
+
+
+        // ✅ optional partial description filter
+        if (!string.IsNullOrWhiteSpace(description))
+            q = q.Where(l => l.Description != null && l.Description.Contains(description));
 
         var logs = await q
             .OrderByDescending(l => l.CreatedAt)
@@ -43,8 +74,16 @@ public class AuditLogsController : Controller
             .ToListAsync();
 
         ViewBag.Days = days;
+        ViewBag.User = user;
+        ViewBag.AuditAction = auditAction;
+        ViewBag.EntityType = entityType;
+        ViewBag.EntityId = entityId;
+        ViewBag.Room = room;
+        ViewBag.Description = description;
+
         return View(logs);
     }
+
 
     public async Task<IActionResult> Details(int id)
     {
