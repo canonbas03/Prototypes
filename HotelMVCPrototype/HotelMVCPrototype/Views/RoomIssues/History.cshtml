@@ -9,7 +9,7 @@
 
 <h4 class="mb-3">Resolved Issues (History)</h4>
 
-<form method="get" class="row g-2 mb-3">
+<form method="get" class="row g-2 mb-3 align-items-end">
     <div class="col-md-3">
         <select class="form-select" name="category">
             <option value="">All categories</option>
@@ -24,7 +24,7 @@
         <select class="form-select" name="days">
             <option value="1" selected="@(days == 1)">Today</option>
             <option value="7" selected="@(days == 7)">Last 7 days</option>
-            <option value="30" selected="@(days == 30)">Lasta 30 days</option>
+            <option value="30" selected="@(days == 30)">Last 30 days</option>
             <option value="365" selected="@(days == 365)">Last year</option>
         </select>
     </div>
@@ -32,7 +32,17 @@
     <div class="col-md-2">
         <button class="btn btn-primary w-100">Filter</button>
     </div>
+
+    <!-- Cancel -->
+    <div class="col-md-2 ms-auto">
+        <a asp-action="Index"
+           asp-controller="Home"
+           class="btn btn-secondary w-100">
+            Cancel
+        </a>
+    </div>
 </form>
+
 
 @if (!Model.Any())
 {

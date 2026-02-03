@@ -5,10 +5,17 @@
     ViewData["Title"] = "Maintenance Dashboard";
 }
 
-<h2>Rooms Needing Maintenance</h2>
-<a asp-controller="RoomIssues" asp-action="History" asp-route-category="Maintenance" class="btn btn-outline-secondary btn-sm">
-    🕘 History
-</a>
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">Rooms Needing Maintenance</h2>
+
+    <a asp-controller="RoomIssues"
+       asp-action="History"
+       asp-route-category="Maintenance"
+       class="btn btn-outline-secondary btn-sm ms-auto">
+        🕘 History
+    </a>
+</div>
+
 
 
 @if (!Model.Any())
