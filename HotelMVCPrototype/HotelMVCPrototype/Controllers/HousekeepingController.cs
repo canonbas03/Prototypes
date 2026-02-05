@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelMVCPrototype.Controllers
 {
-    [Authorize(Roles = "Housekeeping")]
+    [Authorize(Roles = "Housekeeping, Admin")]
     public class HousekeepingController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,7 +26,6 @@ namespace HotelMVCPrototype.Controllers
 
 
         // GET: Housekeeping
-        [Authorize(Roles = "Housekeeping")]
         public async Task<IActionResult> Index(int floor = 1)
         {
 
@@ -169,7 +168,6 @@ namespace HotelMVCPrototype.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Housekeeping")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> StartHousekeepingDay()
         {

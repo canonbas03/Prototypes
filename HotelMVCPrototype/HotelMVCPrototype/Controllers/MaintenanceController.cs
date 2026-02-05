@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelMVCPrototype.Controllers
 {
-    [Authorize(Roles = "Maintenance")]
+    [Authorize(Roles = "Maintenance, Admin")]
     public class MaintenanceController : Controller
     {
         private readonly ApplicationDbContext _context;

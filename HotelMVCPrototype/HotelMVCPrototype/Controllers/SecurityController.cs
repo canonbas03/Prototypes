@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Authorize(Roles = "Security")]
+[Authorize(Roles = "Security, Admin")]
 public class SecurityController : Controller
 {
     private readonly ApplicationDbContext _context;

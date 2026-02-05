@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
-[Authorize(Roles = "Reception")]
+[Authorize(Roles = "Reception, Admin")]
 public class ReceptionRequestsController : Controller
 {
     private readonly ApplicationDbContext _context;

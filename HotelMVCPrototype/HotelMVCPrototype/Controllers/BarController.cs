@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Authorize(Roles = "Bar")]
+[Authorize(Roles = "Bar, Admin")]
 public class BarController : Controller
 {
     private readonly ApplicationDbContext _context;

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelMVCPrototype.Controllers
 {
-    [Authorize(Roles = "Reception")]
+    [Authorize(Roles = "Reception, Admin")]
     public class ReceptionController : Controller
     {
         private readonly ApplicationDbContext _context;

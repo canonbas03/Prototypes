@@ -2,12 +2,15 @@
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using HotelMVCPrototype.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelMVCPrototype.Controllers
 {
+    [Authorize(Roles = "Reception, Admin")]
+
     public class GuestAssignmentsController : Controller
     {
         private readonly ApplicationDbContext _context;

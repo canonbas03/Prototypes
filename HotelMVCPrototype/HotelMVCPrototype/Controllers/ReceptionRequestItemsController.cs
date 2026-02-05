@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Authorize(Roles = "Reception")]
+[Authorize(Roles = "Reception, Admin")]
 public class ReceptionRequestItemsController : Controller
 {
     private readonly ApplicationDbContext _context;
