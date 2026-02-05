@@ -1,6 +1,29 @@
 ﻿@model List<UserWithRolesViewModel>
 
-<h2>Admin Dashboard - Users</h2>
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="d-flex flex-wrap gap-3 mb-4">
+    <a asp-controller="Reception" asp-action="Index" class="role-tile tile-reception">
+        Reception
+    </a>
+
+    <a asp-controller="Housekeeping" asp-action="Index" class="role-tile tile-housekeeping">
+        Housekeeping
+    </a>
+
+    <a asp-controller="Bar" asp-action="Index" class="role-tile tile-bar">
+        Bar
+    </a>
+
+    <a asp-controller="Maintenance" asp-action="Index" class="role-tile tile-maintenance">
+        Maintenance
+    </a>
+
+    <a asp-controller="Security" asp-action="Index" class="role-tile tile-security">
+        Security
+    </a>
+</div>
+
 
 <a asp-action="CreateStaff" class="btn btn-success mb-3">Create Staff User</a>
 <table class="table">

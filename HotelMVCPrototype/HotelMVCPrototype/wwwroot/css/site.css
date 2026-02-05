@@ -463,3 +463,46 @@ h1, h2, h3, h4, h5, h6 {
     transform-origin: left center;
 }
 
+/*Admin Dashboard*/
+.role-tile {
+    width: 160px;
+    height: 120px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-decoration: none;
+    color: #0F172A;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+    .role-tile:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+        text-decoration: none;
+        color: #0F172A;
+    }
+
+/* Pastel colors */
+.tile-reception {
+    background-color: #E0F2FE; /* soft blue */
+}
+
+.tile-housekeeping {
+    background-color: #DCFCE7; /* mint green */
+}
+
+.tile-bar {
+    background-color: #FEF3C7; /* warm amber */
+}
+
+.tile-maintenance {
+    background-color: #EDE9FE; /* lavender */
+}
+
+.tile-security {
+    background-color: #FEE2E2; /* soft red */
+}
