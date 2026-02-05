@@ -1,7 +1,17 @@
 ﻿@using HotelMVCPrototype.Models.Enums
 @model List<RoomIssue>
 
-<h3 class="mb-3">Security Incidents</h3>
+
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">Security Incidents</h2>
+
+    <a asp-controller="RoomIssues"
+       asp-action="History"
+       asp-route-category="Security"
+       class="btn btn-outline-secondary btn-sm ms-auto">
+        🕘 History
+    </a>
+</div>
 
 @if (!Model.Any())
 {

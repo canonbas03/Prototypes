@@ -77,15 +77,20 @@
                         </li>
 
                             <!-- Admin-only links -->
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Rooms" asp-action="Index">Rooms</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Admin" asp-action="Index">Roles</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="AuditLogs" asp-action="Index">Audit Logs</a>
-                            </li>
+                           @if (isAdmin)
+{
+    <!-- Admin-only links -->
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-controller="Rooms" asp-action="Index">Rooms</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-controller="Admin" asp-action="Index">Roles</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-controller="AuditLogs" asp-action="Index">Audit Logs</a>
+    </li>
+}
+
                         
 
                         <!-- Reception mode links -->
