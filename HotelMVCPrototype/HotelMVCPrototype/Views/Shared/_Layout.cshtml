@@ -14,18 +14,33 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-primary-action shadow-sm mb-3">
             <div class="container-fluid">
+                @using Microsoft.AspNetCore.Http
                 @{
-                    var roleName = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
-                    var landingController = string.IsNullOrEmpty(roleName) ? "Home" : roleName;
+                    bool isAdmin = User.IsInRole("Admin");
+
+                    var claimRole = User.Claims.FirstOrDefault(c =>
+                    c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
+
+                    var activeRole = Context.Session.GetString("ActiveRole");
+
+                    // Admin can "act as" a role using session, otherwise use claim role
+                    var effectiveRole = (isAdmin && !string.IsNullOrWhiteSpace(activeRole))
+                    ? activeRole
+                    : claimRole;
+
+                    var landingController = string.IsNullOrWhiteSpace(effectiveRole) ? "Home" : effectiveRole;
+
+                    bool isReceptionMode = effectiveRole == "Reception";
+                    bool isBarMode = effectiveRole == "Bar";
+                    bool isHousekeepingMode = effectiveRole == "Housekeeping";
+                    bool isMaintenanceMode = effectiveRole == "Maintenance";
+                    bool isSecurityMode = effectiveRole == "Security";
                 }
 
                 <!-- Brand / Logo -->
                 <a class="navbar-brand d-flex align-items-center me-4"
-                   asp-area=""
                    asp-controller="@landingController"
                    asp-action="Index">
-
-                    <!-- Put your logo in: wwwroot/images/logo.png (or change path) -->
                     <img src="~/images/le-vins-logo.png"
                          alt="Hotel Logo"
                          class="navbar-logo" />
@@ -43,17 +58,25 @@
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav me-auto mb-2 mb-sm-0 align-items-sm-center gap-sm-1">
 
+                        <!-- Home -->
                         <li class="nav-item">
                             <a class="nav-link text-white"
-                               asp-area=""
                                asp-controller="@landingController"
-                               asp-action="Index">Home</a>
+                               asp-action="Index">
+                                Home
+                            </a>
                         </li>
 
-                        <li class="nav-item"> <a class="nav-link text-white" asp-controller="Profile" asp-action="Index">Profile</a> </li>
+                        <!-- Profile -->
+                        <li class="nav-item">
+                            <a class="nav-link text-white"
+                               asp-controller="Profile"
+                               asp-action="Index">
+                                Profile
+                            </a>
+                        </li>
 
-                        @if (User.IsInRole("Admin"))
-                        {
+                            <!-- Admin-only links -->
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-controller="Rooms" asp-action="Index">Rooms</a>
                             </li>
@@ -63,23 +86,34 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-controller="AuditLogs" asp-action="Index">Audit Logs</a>
                             </li>
-                        }
+                        
 
-                        @if (User.IsInRole("Admin") || User.IsInRole("Reception"))
+                        <!-- Reception mode links -->
+                        @if (isReceptionMode || isAdmin && effectiveRole == "Reception")
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="GuestAssignments" asp-action="Index">Guest Assignments</a>
+                                <a class="nav-link text-white"
+                                   asp-controller="GuestAssignments"
+                                   asp-action="Index">
+                                    Guest Assignments
+                                </a>
                             </li>
                         }
 
-                        @if (User.IsInRole("Bar"))
+                        <!-- Bar mode links -->
+                        @if (isBarMode)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="MenuItems" asp-action="Index">Menu</a>
+                                <a class="nav-link text-white"
+                                   asp-controller="MenuItems"
+                                   asp-action="Index">
+                                    Menu
+                                </a>
                             </li>
                         }
 
-                        @if (User.IsInRole("Housekeeping"))
+                        <!-- Housekeeping mode links -->
+                        @if (isHousekeepingMode)
                         {
                             <li class="nav-item">
                                 <form asp-controller="Housekeeping"
@@ -97,7 +131,13 @@
                             </li>
                         }
 
-                        <!-- Security button -->
+                        <!-- TODO: Maintenance / Security mode links can go here when you add them -->
+                        @* Example:
+                    @if (isMaintenanceMode) { ... }
+                    @if (isSecurityMode) { ... }
+                    *@
+
+                        <!-- Report issue button (visible to everyone logged in) -->
                         <li class="nav-item ms-sm-2">
                             <a asp-controller="RoomIssues"
                                asp-action="Create"
@@ -105,14 +145,47 @@
                                class="btn btn-danger btn-sm">
                                 🚨
                             </a>
-
                         </li>
                     </ul>
 
-                    <!-- Login/Logout -->
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+
+                        @if (isAdmin)
+                        {
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle text-white px-2"
+                                   href="#"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    Mode: @(string.IsNullOrWhiteSpace(effectiveRole) ? "Admin" : effectiveRole)
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                    @foreach (var r in new[] { "Admin", "Reception", "Housekeeping", "Bar", "Maintenance", "Security" })
+                                    {
+                                        <li>
+                                            <form asp-controller="Admin"
+                                                  asp-action="SetActiveRole"
+                                                  method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="role" value="@r" />
+                                                <input type="hidden" name="returnUrl"
+                                                       value="@Context.Request.Path@Context.Request.QueryString" />
+
+                                                <button type="submit" class="dropdown-item">
+                                                    @r
+                                                </button>
+                                            </form>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
                         <partial name="_LoginPartial" />
                     </div>
+
                 </div>
             </div>
         </nav>
@@ -128,5 +201,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

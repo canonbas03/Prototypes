@@ -506,3 +506,26 @@ h1, h2, h3, h4, h5, h6 {
 .tile-security {
     background-color: #FEE2E2; /* soft red */
 }
+
+
+/*Dropdown*/
+/* Fix navbar dropdown visibility */
+.navbar .dropdown-menu {
+    background-color: #164E63;
+}
+
+.navbar .dropdown-item {
+    color: #729276;
+    font-weight: 500;
+}
+
+    .navbar .dropdown-item:hover,
+    .navbar .dropdown-item:focus {
+        background-color: #86A789;
+        color: #6E8C73;
+    }
+
+/* Make the Mode label feel like part of the navbar */
+.navbar .dropdown-toggle {
+    cursor: pointer;
+}

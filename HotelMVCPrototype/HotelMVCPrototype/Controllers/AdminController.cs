@@ -122,5 +122,21 @@ public class AdminController : Controller
 
         return RedirectToAction("Index");
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult SetActiveRole(string role, string? returnUrl = null)
+    {
+        // allow only known roles
+        var allowed = new[] { "Reception", "Housekeeping", "Bar", "Maintenance", "Security", "Admin" };
+        if (!allowed.Contains(role)) return BadRequest();
+
+        HttpContext.Session.SetString("ActiveRole", role);
+
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return Redirect(returnUrl);
+
+        return RedirectToAction("Index", "Home");
+    }
 }
 
