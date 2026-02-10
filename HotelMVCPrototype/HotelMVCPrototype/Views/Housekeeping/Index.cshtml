@@ -4,24 +4,18 @@
     ViewData["Title"] = "Housekeeping";
 }
 
-
-
 <h2>Housekeeping Dashboard</h2>
 
 <div class="row mb-4">
     <div class="col-md-8">
         <partial name="_RoomStatistics" model="Model.RoomStatistics" />
-
         <partial name="_RoomMap" model="Model.RoomMapPage" />
-
-
     </div>
 
     <div class="col-md-4" id="cleanings-container">
         @await Html.PartialAsync("_TodaysCleanings", Model.TodaysCleanings)
     </div>
 </div>
-
 
 <h2>Rooms That Need Cleaning</h2>
 
@@ -45,37 +39,66 @@ else
         <tbody>
             @foreach (var room in Model.Rooms)
             {
+                var issues = Model.OpenHousekeepingIssues
+                .Where(i => i.RoomId.HasValue && i.RoomId.Value == room.Id)
+                .OrderByDescending(i => i.CreatedAt)
+                .ToList();
+
+                var uniqueTypes = issues
+                .Select(i => i.TypeKey)
+                .Where(t => !string.IsNullOrWhiteSpace(t))
+                .Distinct()
+                .ToList();
+
                 <tr>
                     <td>@room.Number</td>
                     <td>@room.Type</td>
+
                     <td class="text-muted">
-                        @{
-                            var type = Model.OpenHousekeepingIssues
-                            .FirstOrDefault(i => i.RoomId == room.Id)?.TypeKey;
+                        @if (!uniqueTypes.Any())
+                        {
+                            <span>Regular</span>
                         }
-                        @(string.IsNullOrWhiteSpace(type) ? "Regular" : type)
+                        else
+                        {
+                            <ul class="mb-0 ps-3">
+                                @foreach (var t in uniqueTypes)
+                                {
+                                    <li>@t</li>
+                                }
+                            </ul>
+                        }
                     </td>
+
                     <td class="text-muted">
-                        @{
-                            var note = Model.OpenHousekeepingIssues
-                            .FirstOrDefault(i => i.RoomId == room.Id)?.Description;
+                        @if (!issues.Any())
+                        {
+                            <span>—</span>
                         }
-                        @(string.IsNullOrWhiteSpace(note) ? "—" : note)
+                        else
+                        {
+                            <ul class="mb-0 ps-3">
+                                @foreach (var i in issues)
+                                {
+                                    <li>@(string.IsNullOrWhiteSpace(i.Description) ? "—" : i.Description)</li>
+                                }
+                            </ul>
+                        }
                     </td>
 
                     <td>
                         <div class="d-flex gap-2">
-                        <form asp-action="MarkCleaned" method="post">
-                            <input type="hidden" name="id" value="@room.Id" />
-                            <button class="btn btn-success btn-sm">Mark Cleaned</button>
-                        </form>
+                            <form asp-action="MarkCleaned" method="post" class="mb-0">
+                                <input type="hidden" name="id" value="@room.Id" />
+                                <button class="btn btn-success btn-sm">Mark Cleaned</button>
+                            </form>
 
-                        <a class="btn btn-danger btn-sm"
-                           asp-controller="SecurityIncidents"
-                           asp-action="Create"
-                           asp-route-roomId="@room.Id">
-                            🚨
-                        </a>
+                            <a class="btn btn-danger btn-sm"
+                               asp-controller="SecurityIncidents"
+                               asp-action="Create"
+                               asp-route-roomId="@room.Id">
+                                🚨
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -92,7 +115,6 @@ else
     </audio>
 
     <script>
-        // Unlock audio after first click (required by browsers)
         document.addEventListener("click", async () => {
             const sound = document.getElementById("newRequestSound");
             if (!sound) return;
@@ -119,7 +141,6 @@ else
             const category = data.Category ?? data.category;
             if (category !== "Housekeeping") return;
 
-            // 🔊 play sound
             const sound = document.getElementById("newRequestSound");
             if (sound) {
                 try {
@@ -130,7 +151,6 @@ else
                 }
             }
 
-            // 🔁 refresh
             setTimeout(() => location.reload(), 600);
         });
 
