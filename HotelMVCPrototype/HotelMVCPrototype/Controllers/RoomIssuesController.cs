@@ -1,10 +1,12 @@
 ﻿using HotelMVCPrototype.Data;
+using HotelMVCPrototype.Hubs;
 using HotelMVCPrototype.Models;
 using HotelMVCPrototype.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -12,11 +14,16 @@ public class RoomIssuesController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly IHubContext<HotelHub> _hub;
 
-    public RoomIssuesController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+    public RoomIssuesController(
+        ApplicationDbContext context,
+        UserManager<IdentityUser> userManager,
+        IHubContext<HotelHub> hub)
     {
         _context = context;
         _userManager = userManager;
+        _hub = hub;
     }
 
     [HttpGet]
@@ -109,6 +116,28 @@ public class RoomIssuesController : Controller
         }
 
         await _context.SaveChangesAsync();
+
+        int? roomNumber = null;
+        if (issue.RoomId.HasValue)
+        {
+            roomNumber = await _context.Rooms
+                .Where(r => r.Id == issue.RoomId.Value)
+                .Select(r => (int?)r.Number)
+                .FirstOrDefaultAsync();
+        }
+
+        await _hub.Clients.All.SendAsync("RoomIssueCreated", new
+        {
+            IssueId = issue.Id,
+            Category = issue.Category.ToString(),   // "Maintenance", "Housekeeping", "Security"
+            RoomId = issue.RoomId,
+            RoomNumber = roomNumber,
+            TypeKey = issue.TypeKey,
+            Description = issue.Description,
+            Status = issue.Status.ToString(),
+            CreatedAt = DateTime.Now
+        });
+
 
         return RedirectToAction("Index", "Home");
     }
