@@ -93,3 +93,59 @@ else
         }
     </div>
 }
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+
+    <audio id="newRequestSound" preload="auto">
+        <source src="@Url.Content("~/sounds/notification-bar.mp3")" type="audio/mpeg" />
+    </audio>
+
+    <script>
+        // Unlock audio after first click (required by browsers)
+        document.addEventListener("click", async () => {
+            const sound = document.getElementById("newRequestSound");
+            if (!sound) return;
+
+            try {
+                sound.volume = 0.8;
+                await sound.play();
+                sound.pause();
+                sound.currentTime = 0;
+                console.log("Security audio unlocked ✅");
+            } catch (e) {
+                console.warn("Security audio unlock failed:", e);
+            }
+        }, { once: true });
+
+        const hkConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/hotelHub")
+            .withAutomaticReconnect()
+            .build();
+
+        hkConnection.on("RoomIssueCreated", async (data) => {
+            console.log("✅ RoomIssueCreated received (HK):", data);
+
+            const category = data.Category ?? data.category;
+            if (category !== "Security") return;
+
+            // 🔊 play sound
+            const sound = document.getElementById("newRequestSound");
+            if (sound) {
+                try {
+                    sound.currentTime = 0;
+                    await sound.play();
+                } catch (err) {
+                    console.warn("Autoplay blocked (HK)!", err);
+                }
+            }
+
+            // 🔁 refresh
+            setTimeout(() => location.reload(), 600);
+        });
+
+        hkConnection.start()
+            .then(() => console.log("✅ SignalR connected (Security)"))
+            .catch(err => console.error("❌ SignalR connect failed (HK):", err));
+    </script>
+}
