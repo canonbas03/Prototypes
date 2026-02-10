@@ -75,10 +75,21 @@ namespace HotelMVCPrototype
 
             using (var scope = app.Services.CreateScope())
             {
+                // Only auto-migrate in Development (LocalDB, empty DB, etc.)
+                if (app.Environment.IsDevelopment())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    await db.Database.MigrateAsync();
+                }
+
+                // Seeding should be idempotent (safe to run multiple times)
                 await SeedData.SeedRolesAsync(scope.ServiceProvider);
                 await SeedData.SeedAdminAsync(scope.ServiceProvider);
                 await SeedData.SeedMenuItemsAsync(scope.ServiceProvider);
             }
+
+
+
 
 
             //app.MapHub<BarHub>("/barHub");

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelMVCPrototype.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260130182518_AddRoomIssues")]
-    partial class AddRoomIssues
+    [Migration("20260210124845_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
